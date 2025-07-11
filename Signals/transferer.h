@@ -1,7 +1,14 @@
 #ifndef __TRANSFERER_H_INCLUDED__
 #define __TRANSFERER_H_INCLUDED__
 
-enum class Operation {
+#ifdef SIGNALS_EXPORTS
+#define SIGNALS_API __declspec(dllexport)
+#else
+#define SIGNALS_API __declspec(dllimport)
+#endif
+
+
+enum class SIGNALS_API Operation {
     function = 0,
     plus = 1,
     minus = 2,
@@ -15,11 +22,12 @@ enum class Operation {
     eq = 14,
     numel = 30,
     flattenstruct = 40,
-    identity = 50
+    identity = 50,
+    nop = 51 // no operation
 };
 
 
-class Transferer {
+class SIGNALS_API Transferer {
 private:
     enum Operation opCode { Operation::identity };
     bool workingInputChanges{ false };
