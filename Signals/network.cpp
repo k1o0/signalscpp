@@ -125,6 +125,7 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t
         return -1;
     }
     node->set_transferer(t_op);
+    node->appendValues = t_appendValues;
     std::vector<Network::Node*> input_nodes;
     for (const long& input_id : t_inputs) {
         if (input_id < 0 || input_id >= static_cast<long>(n_nodes())) {
@@ -146,6 +147,25 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t
     node->set_inputs(std::move(input_nodes));
     return node->get_id();
 };
+
+/// Attach a user-supplied callable to a function-op node.
+/// Callable signature: (latest_input_values, current_node_value) -> Value
+/// Returning monostate signals "no output this tick".
+bool Network::set_node_callable(long node_id,
+    std::function<signals::Value(const std::vector<signals::Value>&,
+                                const signals::Value&)> fn) {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) {
+        std::cerr << "Error: set_node_callable: node ID " << node_id << " out of range.\n";
+        return false;
+    }
+    Node* node = &nodes[static_cast<size_t>(node_id)];
+    if (!node->inUse) {
+        std::cerr << "Error: set_node_callable: node " << node_id << " is not active.\n";
+        return false;
+    }
+    node->set_callable(std::move(fn));
+    return true;
+}
 
 /// Disconnect and deactivate a node, freeing its slot for reuse.
 /// For each input of this node, removes the node from that input's targets set.
@@ -222,17 +242,38 @@ std::vector<long> Network::transact(long node_id, const signals::Value& value) {
 }
 
 /// Commit working values from transact() into current values and clear working state.
+/// When appendValues is true and the working value is a double or vector<double>,
+/// it is concatenated onto the current value (accumulate pattern used by buffer/bufferUpTo).
 /// Legacy analogue: the working->current loop inside sqApply() in network.c
 void Network::apply(const std::vector<long>& affected_ids) {
     for (long nid : affected_ids) {
         if (nid < 0 || static_cast<size_t>(nid) >= nodes.size()) continue;
         Node& n = nodes[static_cast<size_t>(nid)];
-        if (signals::has_value(n.workingValue)) {
+        if (!signals::has_value(n.workingValue)) continue;
+
+        if (n.appendValues) {
+            // Concatenate working value onto current value.
+            // Supported: double -> vector<double>, vector<double> -> vector<double>.
+            // First commit: initialise current as empty vector.
+            if (!std::holds_alternative<std::vector<double>>(n.currentValue))
+                n.currentValue = std::vector<double>{};
+            auto& acc = std::get<std::vector<double>>(n.currentValue);
+            std::visit([&acc](const auto& wv) {
+                using T = std::decay_t<decltype(wv)>;
+                if constexpr (std::is_same_v<T, double>) {
+                    acc.push_back(wv);
+                } else if constexpr (std::is_same_v<T, std::vector<double>>) {
+                    acc.insert(acc.end(), wv.begin(), wv.end());
+                }
+                // bool / string / monostate: no-op (not appendable types)
+            }, n.workingValue);
+            n.currentValueSet = true;
+        } else {
             n.currentValue = std::move(n.workingValue);
             n.currentValueSet = true;
-            n.workingValue = signals::Value{};  // reset to monostate
-            n.workingValueSet = false;
         }
+        n.workingValue = signals::Value{};
+        n.workingValueSet = false;
     }
 }
 
@@ -257,14 +298,15 @@ Network::Node::Node(Network* t_net, long t_id, Operation t_op) {
 }
 
 void Network::Node::destroy() {
-	inUse = false;  // mark the node as not in use
-	queued = false;  // mark the node as not queued
-	workingValueSet = false;  // reset working value flag
-	currentValueSet = false;  // reset current value flag
-	workingValue = signals::Value{};  // reset to monostate
-	currentValue = signals::Value{};  // reset to monostate
-	inputs.clear();  // clear input nodes
-	targets.clear();  // clear target nodes
+	inUse = false;
+	queued = false;
+	workingValueSet = false;
+	currentValueSet = false;
+	workingValue = signals::Value{};
+	currentValue = signals::Value{};
+	inputs.clear();
+	targets.clear();
+	callable = nullptr;  // release any stored function
 }
 
 long Network::Node::get_id() const {
@@ -325,7 +367,8 @@ bool Network::Node::transfer() {
 
     bool produced_output = false;
 
-    if (op_int > 0 && op_int < 20) {  // binary ops: plus(1)...eq(14)
+    // ── Binary arithmetic and comparison ops (opcodes 1-14) ──────────────────
+    if (op_int >= 1 && op_int <= 14) {
         if (inputs.size() >= 2 &&
             (signals::has_value(inputs[0]->workingValue) ||
              signals::has_value(inputs[1]->workingValue))) {
@@ -333,7 +376,7 @@ bool Network::Node::transfer() {
             const signals::Value& rv = latest(inputs[1]);
             if (signals::has_value(lv) && signals::has_value(rv)) {
                 try {
-                    signals::Value result;  // defaults to monostate
+                    signals::Value result;
                     switch (op) {
                         case Operation::plus:    result = signals::add(lv, rv);      break;
                         case Operation::minus:   result = signals::subtract(lv, rv); break;
@@ -345,7 +388,7 @@ bool Network::Node::transfer() {
                         case Operation::lt:      result = signals::lt(lv, rv);       break;
                         case Operation::le:      result = signals::le(lv, rv);       break;
                         case Operation::eq:      result = signals::eq(lv, rv);       break;
-                        default: break;  // unknown: leave result as monostate
+                        default: break;
                     }
                     if (signals::has_value(result)) {
                         workingValue = std::move(result);
@@ -357,16 +400,169 @@ bool Network::Node::transfer() {
                 }
             }
         }
-    } else if (op == Operation::identity) {
-        // Pass the first input's working value through unchanged.
+    }
+
+    // ── identity (50) ────────────────────────────────────────────────────────
+    else if (op == Operation::identity) {
         if (!inputs.empty() && signals::has_value(inputs[0]->workingValue)) {
             workingValue = inputs[0]->workingValue;
             workingValueSet = true;
             produced_output = true;
         }
     }
-    // nop (51) / function (0): source nodes — transact() sets their value
-    // directly, transfer() is never meaningfully called on them.
+
+    // ── merge (20) ───────────────────────────────────────────────────────────
+    // First input with a new working value wins.  Mirrors sig.transfer.merge.
+    else if (op == Operation::merge) {
+        for (Node* inp : inputs) {
+            if (signals::has_value(inp->workingValue)) {
+                workingValue = inp->workingValue;
+                workingValueSet = true;
+                produced_output = true;
+                break;
+            }
+        }
+    }
+
+    // ── at_op (21) ───────────────────────────────────────────────────────────
+    // inputs = [what, when]
+    // Gate: fires latest 'what' (working OR current) only when 'when' has a
+    // *new* truthy working value.  Mirrors sig.transfer.at.
+    else if (op == Operation::at_op) {
+        if (inputs.size() >= 2) {
+            const signals::Value& when_wv = inputs[1]->workingValue;
+            if (signals::has_value(when_wv) && signals::is_truthy(when_wv)) {
+                const signals::Value& what = latest(inputs[0]);
+                if (signals::has_value(what)) {
+                    workingValue = what;
+                    workingValueSet = true;
+                    produced_output = true;
+                }
+            }
+        }
+    }
+
+    // ── keep_when (22) ───────────────────────────────────────────────────────
+    // inputs = [what, when]
+    // Like at_op but uses latest 'when' (working OR current) as the gate, and
+    // only fires when 'what' has a new working value.  Mirrors sig.transfer.keepWhen.
+    else if (op == Operation::keep_when) {
+        if (inputs.size() >= 2) {
+            const signals::Value& when_latest = latest(inputs[1]);
+            if (signals::has_value(when_latest) && signals::is_truthy(when_latest)) {
+                const signals::Value& what_wv = inputs[0]->workingValue;
+                if (signals::has_value(what_wv)) {
+                    workingValue = what_wv;
+                    workingValueSet = true;
+                    produced_output = true;
+                }
+            }
+        }
+    }
+
+    // ── latch (23) ───────────────────────────────────────────────────────────
+    // inputs = [arm, release]
+    // SR-style latch: outputs bool.  Mirrors sig.transfer.latch.
+    else if (op == Operation::latch) {
+        if (inputs.size() >= 2) {
+            const signals::Value& arm_wv     = inputs[0]->workingValue;
+            const signals::Value& release_wv = inputs[1]->workingValue;
+            const bool arm_new     = signals::has_value(arm_wv);
+            const bool release_new = signals::has_value(release_wv);
+            const bool try_arm     = arm_new     && signals::is_truthy(arm_wv);
+            const bool try_release = release_new && signals::is_truthy(release_wv);
+            // current armed state
+            const bool armed = signals::has_value(currentValue) &&
+                               signals::is_truthy(currentValue);
+            if (try_release && (try_arm || armed)) {
+                workingValue = signals::Value{ false };
+                workingValueSet = true;
+                produced_output = true;
+            } else if (!armed && try_arm) {
+                workingValue = signals::Value{ true };
+                workingValueSet = true;
+                produced_output = true;
+            }
+        }
+    }
+
+    // ── skip_repeats (24) ────────────────────────────────────────────────────
+    // Suppress output if the new working value is identical to the current value.
+    // Mirrors sig.transfer.skipRepeats.
+    else if (op == Operation::skip_repeats) {
+        if (!inputs.empty() && signals::has_value(inputs[0]->workingValue)) {
+            const signals::Value& wv = inputs[0]->workingValue;
+            if (!signals::has_value(currentValue) ||
+                !signals::values_equal(wv, currentValue)) {
+                workingValue = wv;
+                workingValueSet = true;
+                produced_output = true;
+            }
+        }
+    }
+
+    // ── select_from (25) ─────────────────────────────────────────────────────
+    // inputs = [index, option0, option1, ...]
+    // Fires the selected option's latest value when the index or the selected
+    // option has a new working value.  Mirrors sig.transfer.selectFrom.
+    // Index is 0-based in C++ (MATLAB uses 1-based in the .m file).
+    else if (op == Operation::select_from) {
+        if (inputs.size() >= 2) {
+            const signals::Value& idx_latest = latest(inputs[0]);
+            if (signals::has_value(idx_latest) && std::holds_alternative<double>(idx_latest)) {
+                const size_t idx = static_cast<size_t>(std::get<double>(idx_latest));
+                const size_t n_options = inputs.size() - 1;
+                if (idx < n_options) {
+                    Node* selected = inputs[idx + 1];
+                    const bool index_changed   = signals::has_value(inputs[0]->workingValue);
+                    const bool option_changed  = signals::has_value(selected->workingValue);
+                    if (index_changed || option_changed) {
+                        const signals::Value& sel_latest = latest(selected);
+                        if (signals::has_value(sel_latest)) {
+                            workingValue = sel_latest;
+                            workingValueSet = true;
+                            produced_output = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ── function (0): user-supplied callable ──────────────────────────────────
+    // Used by map / mapn / scan / filter.  The callable receives the latest
+    // value of every input and this node's current value (scan accumulator).
+    // It returns the new working value, or monostate to suppress output.
+    else if (op == Operation::function) {
+        if (callable) {
+            // Only invoke when at least one input has a new working value.
+            bool any_new = false;
+            for (Node* inp : inputs) {
+                if (signals::has_value(inp->workingValue)) { any_new = true; break; }
+            }
+            if (any_new) {
+                std::vector<signals::Value> inp_vals;
+                inp_vals.reserve(inputs.size());
+                for (Node* inp : inputs)
+                    inp_vals.push_back(latest(inp));
+                try {
+                    signals::Value result = callable(inp_vals, currentValue);
+                    if (signals::has_value(result)) {
+                        workingValue = std::move(result);
+                        workingValueSet = true;
+                        produced_output = true;
+                    }
+                } catch (const signals::Error&) {
+                    // propagate signals errors upward
+                    throw;
+                } catch (...) {
+                    // swallow unexpected exceptions to keep the graph alive
+                }
+            }
+        }
+    }
+    // nop (51): source node — value set externally via transact(); transfer()
+    // is never meaningfully called on nop nodes.
 
     if (produced_output) return true;
 

@@ -74,8 +74,9 @@ this — wait for a real use case.
 | `Node` class with id, inputs, targets, working/current value | `network.c` node struct | ✅ | `inputs` and `targets` are `std::vector<Node*>` pointing into the reserved `nodes` vector. Working and current values are `signals::Value`. |
 | `NodeId` handle type | implicit (legacy uses int indices) | ❌ | Not introduced — `Node*` pointers used internally; `long` for the public API. See architecture decision above. |
 | `add_node(inputs, op, appendValues)` | `addNode` in `network.c` | ✅ | Implemented; validates input IDs, wires targets on input nodes. |
-| `delete_node` | `deleteNode` in `network.c` | ⚪ | Stub commented out in `network.h`. |
-| Node destruction / network teardown | `network.c` cleanup paths | ✅ | `Node::destroy` resets all fields and clears pointer vectors. `Network::destroy` delegates to `NetFactory`. No manual `delete` (values held by value). |
+| `delete_node` | `deleteNode` in `network.c` | ✅ | Disconnects node from its inputs' `targets` sets and its targets' `inputs` vectors, then calls `Node::destroy()`. |
+| Callable slot (`std::function`) on `Node` | — | ✅ | `Node::callable` stores `f(inputs, current_value) → Value` for `Operation::function` nodes. Set via `Network::set_node_callable(id, fn)`. Returning `monostate` suppresses output that tick. Cleared on `destroy()`. |
+| Node destruction / network teardown | `network.c` cleanup paths | ✅ | `Node::destroy` resets all fields and clears pointer vectors, releases callable. `Network::destroy` delegates to `NetFactory`. No manual `delete` (values held by value). |
 
 ### Value handling
 
@@ -84,27 +85,35 @@ this — wait for a real use case.
 | `signals::Value` (`std::variant`) | ✅ | Defined in `Signals/value.h`. Alternatives: `monostate`, `double`, `bool`, `std::string`, `std::vector<double>`. Replaces `DataContainer` experiment in `datawrapper.h`. |
 | `signals::Error`, `signals::TypeError` | ✅ | Defined in `Signals/value.h`; `TypeError` subclasses `Error`. |
 | `Value` arithmetic / comparison via `std::visit` | ✅ | Implemented in `Signals/value.cpp`: `add`, `subtract`, `multiply`, `rdivide`, `ldivide`, `gt`, `ge`, `lt`, `le`, `eq`. Scalar broadcast (double↔vector) supported for arithmetic. `eq` additionally handles `bool==bool` and `string==string`. |
+| `is_truthy(Value)` | ✅ | Inline helper in `value.h`. `monostate`→false, `bool` as-is, `double`≠0→true, non-empty string→true, `vector<double>` truthy if any element ≠ 0. |
+| `values_equal(Value, Value)` | ✅ | Exported function in `value.h`/`value.cpp`. Type-index mismatch → false; `vector<double>` uses element-wise comparison. |
 
 ### Transaction engine
 
 | Item | Legacy reference | Status | Notes |
 |---|---|---|---|
 | `Network::transact(node_id, value)` — propagate update through graph | `network.c` `transact` + `sqTransact` | ✅ | BFS from seed node using `Node::queued` flag to deduplicate. Returns `std::vector<long>` of affected node IDs. |
-| `Network::apply(affected_ids)` — commit working → current | `network.c` `sqApply` | ✅ | Moves `workingValue` into `currentValue` for each affected node; resets working to monostate. |
+| `Network::apply(affected_ids)` — commit working → current | `network.c` `sqApply` | ✅ | Moves `workingValue` into `currentValue` for each affected node; resets working to monostate. When `appendValues` is true, concatenates onto a `vector<double>` accumulator instead of replacing. |
 | `Node::transfer()` — recompute working value from inputs | `network.c` `transfer` | ✅ | Dispatches on `Operation` enum; uses `LATEST_VALUE` semantics (working preferred over current). Clears working and propagates if output becomes unset. |
 | Topological propagation order | `network.c` | ✅ | BFS queue matches legacy `QUEUE_PUT_ALL` / `QUEUE_GET` ordering. |
 | Working-value vs. current-value semantics | `network.c` + primer | ✅ | Implemented: `transact` sets working; `apply` commits to current; bindings call both. |
-| `appendValues` behaviour | `network.c` | ⚪ | Field exists on `Node`; semantics not yet wired into `apply`. |
+| `appendValues` behaviour | `network.c` | ✅ | `Node::appendValues` flag wired into `apply()`. Supported types: `double` → `vector<double>`, `vector<double>` → `vector<double>`. Other types (bool/string) are no-ops on the accumulator. |
 
 ### Operations (`Transferer` / `Operation`)
 
 | Op | Status | Notes |
 |---|---|---|
 | `nop`, `identity` | ✅ | `nop`: source nodes — `transact` sets their value directly, `transfer` is never called on them. `identity`: passes first input's working value through. |
-| `function` | ⚪ | Requires a callable stored on the `Node`; not yet designed. |
+| `function` (map / mapn / scan / filter) | ✅ | Invokes `Node::callable(latest_inputs, current_value) → Value` when any input has a new working value. Returning `monostate` suppresses output. Used by binding layers to implement `map`, `mapn`, `scan`, `filter`. |
 | Arithmetic: `plus`, `minus`, `mtimes`, `rdivide`, `mdivide` | ✅ | Implemented in `value.cpp` and wired into `Node::transfer()`. Scalar broadcast (double↔vector) supported. |
 | Comparison: `gt`, `ge`, `lt`, `le`, `eq` | ✅ | Implemented in `value.cpp` and wired into `Node::transfer()`. |
-| `numel`, `flattenstruct` | ⚪ | Lower priority; defer until basic transactions work. |
+| `merge` | ✅ | First input with a new working value wins. Mirrors `+sig/+transfer/merge.m`. |
+| `at_op` | ✅ | Gate: fires latest `what` (working or current) when `when` has a **new truthy** working value. Mirrors `+sig/+transfer/at.m`. |
+| `keep_when` | ✅ | Gate: fires new `what` working value when the latest `when` (working or current) is truthy. Mirrors `+sig/+transfer/keepWhen.m`. |
+| `latch` | ✅ | SR-style latch — inputs `[arm, release]`, output `bool`. `release` wins when both fire in the same tick. Mirrors `+sig/+transfer/latch.m`. |
+| `skip_repeats` | ✅ | Suppresses output when the new working value equals the current value (`values_equal`). Passes through on the first value. Mirrors `+sig/+transfer/skipRepeats.m`. |
+| `select_from` | ✅ | inputs `[index, option0, option1, …]`. Fires the selected option's latest value when the index or the selected option has a new working value. **0-based** (MATLAB `.m` file is 1-based — convert at MEX boundary). Mirrors `+sig/+transfer/selectFrom.m`. |
+| `numel`, `flattenstruct` | ⚪ | Language-specific; implemented in binding layer. Opcodes reserved as placeholders. |
 
 ### Higher-level signal operators
 
@@ -113,13 +122,19 @@ and combinations of nodes. Port after the engine is solid.
 
 | Operator | Status | Notes |
 |---|---|---|
-| `map` | ⚪ | |
-| `scan` | ⚪ | |
-| `merge` | ⚪ | |
-| `at` | ⚪ | |
-| `keepWhen` | ⚪ | |
-| `delay` | ⚪ | |
-| `subscriptable` | ⚪ | |
+| `map` | ✅ | Via `Operation::function` + `set_node_callable`. Binding wraps the user function; core drives timing. |
+| `mapn` | ✅ | Same as `map` with multiple inputs; callable receives all latest input values. |
+| `scan` | ✅ | Via `Operation::function`; callable receives `current_value` as accumulator seed. |
+| `filter` | ✅ | Via `Operation::function`; callable returns `monostate` to suppress, or the input to pass through. |
+| `merge` | ✅ | `Operation::merge` in core. |
+| `at` | ✅ | `Operation::at_op` in core. |
+| `keepWhen` | ✅ | `Operation::keep_when` in core. |
+| `latch` | ✅ | `Operation::latch` in core. |
+| `skipRepeats` | ✅ | `Operation::skip_repeats` in core. |
+| `selectFrom` | ✅ | `Operation::select_from` in core (0-based; convert at MEX boundary). |
+| `bufferUpTo` / `buffer` | 🟡 | `appendValues` flag now wired in `apply()`; the higher-level node creation logic (limiting buffer size, etc.) is not yet ported. |
+| `delay` | ⚪ | Requires timer integration. |
+| `subscriptable` | ⚪ | MATLAB-specific `subsref` forwarding; defer to MEX binding layer. |
 
 ---
 

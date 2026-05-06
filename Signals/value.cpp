@@ -161,4 +161,21 @@ Value eq(const Value& a, const Value& b) {
     return ordered_cmp(a, b, [](double x, double y) { return x == y; }, "eq");
 }
 
+// ── Equality (structural) ─────────────────────────────────────────────────────
+// Mirrors MATLAB's isequal: true only when type and all elements are identical.
+// Used by skip_repeats to suppress output when the value hasn't changed.
+bool values_equal(const Value& a, const Value& b) noexcept {
+    if (a.index() != b.index()) return false;
+    return std::visit([&](const auto& lhs) -> bool {
+        using T = std::decay_t<decltype(lhs)>;
+        const auto& rhs = std::get<T>(b);
+        if constexpr (std::is_same_v<T, std::vector<double>>) {
+            return lhs.size() == rhs.size() &&
+                   std::equal(lhs.begin(), lhs.end(), rhs.begin());
+        } else {
+            return lhs == rhs;
+        }
+    }, a);
+}
+
 } // namespace signals

@@ -78,6 +78,30 @@ using Value = std::variant<
     return !std::holds_alternative<std::monostate>(v);
 }
 
+// Returns true when the value is "truthy" in the MATLAB / Python sense:
+//   bool: true
+//   double: non-zero
+//   vector<double>: non-empty and at least one non-zero element
+//   string: non-empty
+//   monostate: false
+[[nodiscard]] inline bool is_truthy(const Value& v) noexcept {
+    return std::visit([](const auto& x) -> bool {
+        using T = std::decay_t<decltype(x)>;
+        if constexpr (std::is_same_v<T, std::monostate>)        return false;
+        if constexpr (std::is_same_v<T, bool>)                  return x;
+        if constexpr (std::is_same_v<T, double>)                return x != 0.0;
+        if constexpr (std::is_same_v<T, std::string>)           return !x.empty();
+        if constexpr (std::is_same_v<T, std::vector<double>>)   {
+            for (double d : x) if (d != 0.0) return true;
+            return false;
+        }
+    }, v);
+}
+
+// Returns true when two Values are equal in every element (mirrors MATLAB isequal).
+// monostate == monostate is true; monostate != anything else.
+[[nodiscard]] SIGNALS_API bool values_equal(const Value& a, const Value& b) noexcept;
+
 // Returns a human-readable name for the active alternative.
 // Return value is a static string — do not free it.
 [[nodiscard]] SIGNALS_API const char* type_name(const Value& v) noexcept;

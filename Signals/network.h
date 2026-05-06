@@ -11,6 +11,7 @@
 #include "transferer.h"
 #include "value.h"
 #include <algorithm>
+#include <functional>
 #include <memory>
 #include <set>
 #include <vector>
@@ -98,13 +99,20 @@ private:
             bool inUse{ false };
             bool queued{ false };
             bool appendValues{ false };
-            Transferer transferer = { 50 };
+            Transferer transferer = { Operation::nop };
             std::vector<Node*> inputs = {};
             std::set<Node*> targets = {};
             signals::Value workingValue{};
             bool workingValueSet{ false };
             signals::Value currentValue{};
             bool currentValueSet{ false };
+            // Stored callable for Operation::function nodes (map / mapn / scan / filter).
+            // Signature: f(inputs, current_node_value) -> Value
+            // The second argument is this node's current value, used by scan as
+            // the accumulator seed.  For map/mapn/filter it can be ignored.
+            // Returning monostate signals "no output this tick".
+            std::function<signals::Value(const std::vector<signals::Value>&,
+                                        const signals::Value&)> callable;
         public:
             Node(Network* t_net, long t_id, Operation t_op);
             void destroy();
@@ -115,6 +123,10 @@ private:
             void set_working_value(const signals::Value& value);
             void set_current_value(const signals::Value& value);
             void set_transferer(Operation t_op) { transferer = Transferer(t_op); }
+            void set_callable(std::function<signals::Value(const std::vector<signals::Value>&,
+                                                           const signals::Value&)> fn) {
+                callable = std::move(fn);
+            }
             void set_inputs(std::vector<Node*> t_inputs);
             void add_target(Node* target) { targets.insert(target); }
             // Recompute working value from inputs. Returns true when output may
@@ -138,6 +150,12 @@ public:
     size_t n_active_nodes();
     size_t n_nodes() { return nodes.size(); }
     long add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues);
+    // Attach a callable to a function-op node after creation.
+    // The callable receives (latest_input_values, current_node_value) and
+    // returns the new working value, or monostate to suppress output.
+    bool set_node_callable(long node_id,
+        std::function<signals::Value(const std::vector<signals::Value>&,
+                                    const signals::Value&)> fn);
     void destroy();
     // Disconnect and deactivate a node, freeing its slot for reuse.
     // Removes the node as a target from each of its inputs, and removes it
