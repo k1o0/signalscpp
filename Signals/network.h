@@ -139,7 +139,11 @@ public:
     size_t n_nodes() { return nodes.size(); }
     long add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues);
     void destroy();
-    // void delete_node(size_t node);  // todo
+    // Disconnect and deactivate a node, freeing its slot for reuse.
+    // Removes the node as a target from each of its inputs, and removes it
+    // as an input from each of its targets.
+    // Legacy analogue: sqDeleteNode / cleanupNode(disconnect=true) in network.c
+    bool delete_node(long node_id);
     // Post value to node, propagate through graph via BFS.
     // Returns IDs of all affected nodes — pass directly to apply().
     // Legacy analogues: transact() + sqTransact() in network.c

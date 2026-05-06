@@ -23,7 +23,7 @@ The port preserves these semantics exactly. Behavior parity with the legacy impl
 
 When picking up any non-trivial task in this repo, read in order:
 
-1. **`legacy/Rigbox/docs/html/SignalsPrimer.html`** and **`using_signals.html`** — the *concept* of Signals. Don't skip these; the C code is unreadable without the model in your head.
+1. **`legacy/Rigbox/docs/html/SignalsPrimer.html`**, **`using_signals.html`**, and **`advanced_signals.html`** — the *concept* of Signals. Don't skip these; the C code is unreadable without the model in your head.
 2. **`legacy/Rigbox/signals/mexnet-vs/network/network.h`** then **`network.c`** — the legacy transaction engine. The `.c` file is poorly commented; lean on the primer to interpret it.
 3. **`legacy/Rigbox/signals/+sig/Net.m`**, then **`+sig/+node/Node.m`**, then **`+sig/+node/Signal.m`** — the MATLAB-facing API. Note which methods are pure MATLAB and which call into MEX.
 4. The current state of the C++ port — start with the top-level `CMakeLists.txt` and the public headers in `include/` (or wherever they live; check the tree).

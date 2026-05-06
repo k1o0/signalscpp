@@ -147,6 +147,39 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t
     return node->get_id();
 };
 
+/// Disconnect and deactivate a node, freeing its slot for reuse.
+/// For each input of this node, removes the node from that input's targets set.
+/// For each target of this node, removes the node from that target's inputs vector.
+/// Then calls destroy() to clear the node's own state and mark it as available.
+/// Returns false if node_id is out of range or the node is not active.
+/// Legacy analogue: cleanupNode(disconnect=true) in network.c
+bool Network::delete_node(long node_id) {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) {
+        std::cerr << "Error: delete_node: node ID " << node_id << " out of range.\n";
+        return false;
+    }
+    Node* node = &nodes[static_cast<size_t>(node_id)];
+    if (!node->inUse) {
+        std::cerr << "Error: delete_node: node " << node_id << " is not active.\n";
+        return false;
+    }
+
+    // Remove this node as a target from each of its input nodes.
+    for (Node* input : node->inputs) {
+        input->targets.erase(node);
+    }
+
+    // Remove this node as an input from each of its target nodes.
+    for (Node* target : node->targets) {
+        auto& inp = target->inputs;
+        inp.erase(std::remove(inp.begin(), inp.end(), node), inp.end());
+    }
+
+    // Clear this node's own connections and mark it as available.
+    node->destroy();
+    return true;
+}
+
 /// Post a new value to a source node and propagate through the graph via BFS.
 /// The queued flag on each Node deduplicates entries so no node appears in the
 /// work queue twice within one transaction — matching the QUEUE_PUT behaviour
