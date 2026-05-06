@@ -7,6 +7,12 @@
 #include <vector>
 #include <stdexcept>
 
+#ifdef SIGNALS_EXPORTS
+#define SIGNALS_API __declspec(dllexport)
+#else
+#define SIGNALS_API __declspec(dllimport)
+#endif
+
 // ── signals::Value ────────────────────────────────────────────────────────────
 //
 // Replaces the `DataContainer` / `mxArray*` approach from the legacy C MEX
@@ -74,7 +80,7 @@ using Value = std::variant<
 
 // Returns a human-readable name for the active alternative.
 // Return value is a static string — do not free it.
-[[nodiscard]] const char* type_name(const Value& v) noexcept;
+[[nodiscard]] SIGNALS_API const char* type_name(const Value& v) noexcept;
 
 // ── Arithmetic operations ─────────────────────────────────────────────────────
 // Legacy ops: plus / minus / mtimes / rdivide / mdivide  (transferer.h)
@@ -87,11 +93,11 @@ using Value = std::variant<
 //
 // All other combinations throw TypeError.
 
-[[nodiscard]] Value add(const Value& a, const Value& b);       // legacy: plus
-[[nodiscard]] Value subtract(const Value& a, const Value& b);  // legacy: minus
-[[nodiscard]] Value multiply(const Value& a, const Value& b);  // legacy: mtimes
-[[nodiscard]] Value rdivide(const Value& a, const Value& b);   // legacy: rdivide  (a ./ b)
-[[nodiscard]] Value ldivide(const Value& a, const Value& b);   // legacy: mdivide  (a .\ b == b ./ a)
+[[nodiscard]] SIGNALS_API Value add(const Value& a, const Value& b);       // legacy: plus
+[[nodiscard]] SIGNALS_API Value subtract(const Value& a, const Value& b);  // legacy: minus
+[[nodiscard]] SIGNALS_API Value multiply(const Value& a, const Value& b);  // legacy: mtimes
+[[nodiscard]] SIGNALS_API Value rdivide(const Value& a, const Value& b);   // legacy: rdivide  (a ./ b)
+[[nodiscard]] SIGNALS_API Value ldivide(const Value& a, const Value& b);   // legacy: mdivide  (a .\ b == b ./ a)
 
 // ── Comparison operations ─────────────────────────────────────────────────────
 // Legacy ops: gt / ge / lt / le / eq  (transferer.h)
@@ -106,11 +112,11 @@ using Value = std::variant<
 //
 // All other combinations throw TypeError.
 
-[[nodiscard]] Value gt(const Value& a, const Value& b);
-[[nodiscard]] Value ge(const Value& a, const Value& b);
-[[nodiscard]] Value lt(const Value& a, const Value& b);
-[[nodiscard]] Value le(const Value& a, const Value& b);
-[[nodiscard]] Value eq(const Value& a, const Value& b);
+[[nodiscard]] SIGNALS_API Value gt(const Value& a, const Value& b);
+[[nodiscard]] SIGNALS_API Value ge(const Value& a, const Value& b);
+[[nodiscard]] SIGNALS_API Value lt(const Value& a, const Value& b);
+[[nodiscard]] SIGNALS_API Value le(const Value& a, const Value& b);
+[[nodiscard]] SIGNALS_API Value eq(const Value& a, const Value& b);
 
 } // namespace signals
 

@@ -12,6 +12,7 @@
 #include "value.h"
 #include <algorithm>
 #include <memory>
+#include <set>
 #include <vector>
 
 constexpr int CORE_LIB_VERSION_MAJOR = 0;
@@ -99,7 +100,7 @@ private:
             bool appendValues{ false };
             Transferer transferer = { 50 };
             std::vector<Node*> inputs = {};
-            std::vector<Node*> targets = {};
+            std::set<Node*> targets = {};
             signals::Value workingValue{};
             bool workingValueSet{ false };
             signals::Value currentValue{};
@@ -115,7 +116,7 @@ private:
             void set_current_value(const signals::Value& value);
             void set_transferer(Operation t_op) { transferer = Transferer(t_op); }
             void set_inputs(std::vector<Node*> t_inputs);
-            void add_target(Node* target) { targets.push_back(target); }
+            void add_target(Node* target) { targets.insert(target); }
             // Recompute working value from inputs. Returns true when output may
             // have changed and propagation should continue to targets.
             // Legacy analogue: transfer() in network.c
