@@ -7,33 +7,49 @@
 #endif
 
 // A wrapper for all signals data. This allows data to be numpy or mxArrays, etc.
-template <typename T>
 class SIGNALS_API DataContainer {
 public:
-    DataContainer(size_t size) : size_(size), data_(new T[size]) {}
+    virtual ~DataContainer() = default;
 
-    ~DataContainer() {
-        delete[] data_;
-    }
+    // Virtual interface for data access
+    virtual size_t size() const = 0;
+    virtual void* get_data() = 0;
+    virtual const void* get_data() const = 0;
 
-    T& operator[](size_t index) {
-        return data_[index];
-    }
+    // Optionally, add type info or scalar/array info
+    virtual bool is_scalar() const { return true; }
+};
 
-    const T& operator[](size_t index) const {
-        return data_[index];
-    }
 
-    size_t size() const {
-        return size_;
-    }
+template<typename T>
+class SIGNALS_API TypedDataContainer : public DataContainer {
+public:
+    TypedDataContainer(size_t size) : data_(size) {}
 
-    T* getData() { return data_; };
-
-    // is the data a single value or an array or some sort
-    const bool isScalar = true;  // todo unused
+    T* data() { return data_.data(); }
+    const T* data() const { return data_.data(); }
 
 private:
-    size_t size_;
-    T* data_;
+    std::shared_ptr<T> data_;
 };
+
+// Usage
+//DataContainer* container = new TypedDataContainer<float>(10);
+//float* float_data = container->get_data_as<float>();
+//if (float_data) {
+//    // Safe to use float_data
+//}
+
+//#include <memory>
+//
+//class NumpyArrayWrapper {
+//public:
+//    NumpyArrayWrapper(PyArrayObject* arr)
+//        : array_(arr, [](PyArrayObject* p) { /* custom deleter if needed */ }) {}
+//
+//    PyArrayObject* get() const { return array_.get(); }
+//
+//private:
+//    std::shared_ptr<PyArrayObject> array_;
+//};
+//// Similar for MEX arrays

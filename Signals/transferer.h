@@ -29,12 +29,12 @@ enum class SIGNALS_API Operation {
 
 class SIGNALS_API Transferer {
 private:
-    enum Operation opCode { Operation::identity };
+    enum Operation opCode { Operation::nop };
     bool workingInputChanges{ false };
 public:
     Transferer(Operation t_op) { opCode = t_op; };
     Transferer(int t_op) { opCode = static_cast<Operation>(t_op); };
-    Transferer() { opCode = Operation::identity; };
+    Transferer() { opCode = Operation::nop; };
 };
 
 #endif

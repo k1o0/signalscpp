@@ -13,6 +13,10 @@
 #include <algorithm>
 #include <set>
 
+constexpr int CORE_LIB_VERSION_MAJOR = 0;
+constexpr int CORE_LIB_VERSION_MINOR = 1;
+constexpr int CORE_LIB_VERSION_PATCH = 0;
+
 // https://stackoverflow.com/a/28055997
 // https://stackoverflow.com/a/56994812
 // todo destroyNetworks
