@@ -142,11 +142,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="network.cpp" />
+    <ClCompile Include="value.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="datawrapper.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="transferer.h" />
+    <ClInclude Include="value.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="skills.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

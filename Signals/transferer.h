@@ -35,6 +35,7 @@ public:
     Transferer(Operation t_op) { opCode = t_op; };
     Transferer(int t_op) { opCode = static_cast<Operation>(t_op); };
     Transferer() { opCode = Operation::nop; };
+    Operation get_op() const noexcept { return opCode; }
 };
 
 #endif

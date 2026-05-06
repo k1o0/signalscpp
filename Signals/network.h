@@ -9,9 +9,10 @@
 #endif
 
 #include "transferer.h"
-#include "datawrapper.h"
+#include "value.h"
 #include <algorithm>
-#include <set>
+#include <memory>
+#include <vector>
 
 constexpr int CORE_LIB_VERSION_MAJOR = 0;
 constexpr int CORE_LIB_VERSION_MINOR = 1;
@@ -90,31 +91,35 @@ private:
 
     class SIGNALS_API Node {
         private:
+            friend class Network;  // Network::transact needs access to private members
             Network* net;
             long id{ -1 };  // index within network
             bool inUse{ false };
             bool queued{ false };
             bool appendValues{ false };
             Transferer transferer = { 50 };
-            std::vector<Node> inputs = {};  // todo should this be a vector of pointers?
-            std::set<Node> targets = {};  // todo should this be a vector of pointers?
-            DataContainer<int>* workingValue = { 0 };
+            std::vector<Node*> inputs = {};
+            std::vector<Node*> targets = {};
+            signals::Value workingValue{};
             bool workingValueSet{ false };
-            DataContainer<int>* currentValue = { 0 };
+            signals::Value currentValue{};
             bool currentValueSet{ false };
         public:
             Node(Network* t_net, long t_id, Operation t_op);
             void destroy();
             long get_id() const;
             bool operator==(const Node& other) const { return get_id() == other.get_id(); }
-            bool operator<(const Node& other) const { return get_id() < other.get_id(); }  // for std::set
             bool is_valid() const { return inUse && net->is_valid(); }
             bool is_available() const { return !inUse; }
-            void set_working_value(DataContainer<int>* value);
-            void set_current_value(DataContainer<int>* value);
+            void set_working_value(const signals::Value& value);
+            void set_current_value(const signals::Value& value);
             void set_transferer(Operation t_op) { transferer = Transferer(t_op); }
-            void set_inputs(const std::vector<Node>& t_inputs);
-            void add_target(Node& target) { targets.insert(target); }
+            void set_inputs(std::vector<Node*> t_inputs);
+            void add_target(Node* target) { targets.push_back(target); }
+            // Recompute working value from inputs. Returns true when output may
+            // have changed and propagation should continue to targets.
+            // Legacy analogue: transfer() in network.c
+            bool transfer();
         };
 
     long id{ -1 };
@@ -134,7 +139,15 @@ public:
     long add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues);
     void destroy();
     // void delete_node(size_t node);  // todo
-    //std::vector<std::unique_ptr<Node>> transact(Node node, DataContainer<int> value);
+    // Post value to node, propagate through graph via BFS.
+    // Returns IDs of all affected nodes — pass directly to apply().
+    // Legacy analogues: transact() + sqTransact() in network.c
+    std::vector<long> transact(long node_id, const signals::Value& value);
+    // Commit working values produced by transact() into current values.
+    // Legacy analogue: sqApply() in network.c
+    void apply(const std::vector<long>& affected_ids);
+    // Read the current (committed) value of a node.
+    [[nodiscard]] signals::Value get_current_value(long node_id) const;
 
 };
 
