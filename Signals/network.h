@@ -2,7 +2,9 @@
 #ifndef __NETWORK_H_INCLUDED__
 #define __NETWORK_H_INCLUDED__
 
-#ifdef SIGNALS_EXPORTS
+#if defined(SIGNALS_STATIC_LIB)
+#define SIGNALS_API
+#elif defined(SIGNALS_EXPORTS)
 #define SIGNALS_API __declspec(dllexport)
 #else
 #define SIGNALS_API __declspec(dllimport)
@@ -141,12 +143,17 @@ private:
     std::vector<Node> nodes;
     Node* get_node(size_t idx); // todo make public but return const Node&
     Node* next_free_node();
+    // Used by NetFactory (passes an assigned ID).
     Network(long t_id, long t_max_nodes);
 
 public:
+    // Direct heap-allocation constructor — used by the MEX proxy layer.
+    // id is set to 0 and active to true immediately.
+    explicit Network(long t_max_nodes) : Network(0, t_max_nodes) { active = true; }
+
     long get_id() const { return id; }
     long get_max_nodes() const { return max_nodes; }
-    bool is_valid() { return active && 0 <= id && id <= NetFactory<Network>::MAX_NETWORKS; }
+    bool is_valid() { return active; }
     size_t n_active_nodes();
     size_t n_nodes() { return nodes.size(); }
     long add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues);
@@ -171,6 +178,12 @@ public:
     void apply(const std::vector<long>& affected_ids);
     // Read the current (committed) value of a node.
     [[nodiscard]] signals::Value get_current_value(long node_id) const;
+    // Read the working value of a node (set during transact, before apply).
+    [[nodiscard]] signals::Value get_working_value(long node_id) const;
+    // Reset the working value of a node to monostate.
+    bool clear_working_value(long node_id);
+    // Return the input node IDs of a node (for debug / introspection).
+    [[nodiscard]] std::vector<long> get_node_inputs(long node_id) const;
 
 };
 

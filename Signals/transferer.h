@@ -1,7 +1,9 @@
 #ifndef __TRANSFERER_H_INCLUDED__
 #define __TRANSFERER_H_INCLUDED__
 
-#ifdef SIGNALS_EXPORTS
+#if defined(SIGNALS_STATIC_LIB)
+#define SIGNALS_API
+#elif defined(SIGNALS_EXPORTS)
 #define SIGNALS_API __declspec(dllexport)
 #else
 #define SIGNALS_API __declspec(dllimport)

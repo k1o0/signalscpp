@@ -284,8 +284,35 @@ signals::Value Network::get_current_value(long node_id) const {
     return nodes[static_cast<size_t>(node_id)].currentValue;
 }
 
+/// Return the working value of a node (set during transact, before apply).
+signals::Value Network::get_working_value(long node_id) const {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size())
+        return signals::Value{};
+    return nodes[static_cast<size_t>(node_id)].workingValue;
+}
 
-// Node methods
+/// Reset the working value of a node to monostate.
+bool Network::clear_working_value(long node_id) {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) return false;
+    Node& n = nodes[static_cast<size_t>(node_id)];
+    if (!n.inUse) return false;
+    n.workingValue = signals::Value{};
+    n.workingValueSet = false;
+    return true;
+}
+
+/// Return the IDs of a node's inputs (read-only, for debug / introspection).
+std::vector<long> Network::get_node_inputs(long node_id) const {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) return {};
+    const Node& n = nodes[static_cast<size_t>(node_id)];
+    if (!n.inUse) return {};
+    std::vector<long> ids;
+    ids.reserve(n.inputs.size());
+    for (const Node* inp : n.inputs) ids.push_back(inp->id);
+    return ids;
+}
+
+
 Network::Node::Node(Network* t_net, long t_id, Operation t_op) {
     // assert that the network is valid
     if (!t_net || !t_net->is_valid()) {

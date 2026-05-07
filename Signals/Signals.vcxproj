@@ -145,7 +145,6 @@
     <ClCompile Include="value.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="datawrapper.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="transferer.h" />
     <ClInclude Include="value.h" />

@@ -1,0 +1,3 @@
+[submodule "extern/libmexclass"]
+	path = extern/libmexclass
+	url = https://github.com/mathworks/libmexclass.git

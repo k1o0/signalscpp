@@ -1,0 +1,8 @@
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/TypeFactory.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/Unsupported.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/Create.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/Destroy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/MethodCall.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/Proxy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/ProxyManager.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/MinSizeRel/Error.obj

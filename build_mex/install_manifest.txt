@@ -1,0 +1,9 @@
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/mexclass.lib
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/mexclass.dll
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/signalsproxy.lib
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/signalsproxy.dll
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/gateway.lib
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/gateway.mexw64
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/Identifier.m
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/Proxy.m
+c:\Users\Work\source\repos\signalscpp\install_mex/Signals/mex/matlab/+libmexclass/+proxy/signals_core.lib

@@ -1,0 +1,8 @@
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/TypeFactory.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/Unsupported.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/Create.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/Destroy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/MethodCall.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/Proxy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/ProxyManager.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/libmexclass/mexclass.dir/Release/Error.obj

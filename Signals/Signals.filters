@@ -26,8 +26,5 @@
     <ClInclude Include="transferer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="datawrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
