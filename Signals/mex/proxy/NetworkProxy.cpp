@@ -1,6 +1,8 @@
 #include "NetworkProxy.h"
+#include "NodeProxy.h"
 #include "mx_convert.h"
 
+#include "libmexclass/proxy/ProxyManager.h"
 #include "MatlabDataArray.hpp"
 
 #include <vector>
@@ -12,7 +14,7 @@ namespace sq::proxy {
 // ---------------------------------------------------------------------------
 
 NetworkProxy::NetworkProxy(long max_nodes)
-    : net_{std::make_unique<Network>(max_nodes)}
+    : net_{std::make_shared<Network>(max_nodes)}
 {
     REGISTER_METHOD(NetworkProxy, AddNode);
     REGISTER_METHOD(NetworkProxy, DeleteNode);
@@ -80,8 +82,14 @@ void NetworkProxy::AddNode(libmexclass::proxy::method::Context& ctx) {
 
     long node_id = net_->add_node(input_ids, op, append_values);
 
+    // Create a NodeProxy for this node and register it with the ProxyManager.
+    // Return the proxy ID as uint64 so MATLAB can wrap it in a sig.Node object.
+    auto node_proxy = std::make_shared<sq::proxy::NodeProxy>(net_, node_id);
+    libmexclass::proxy::ID proxy_id =
+        libmexclass::proxy::ProxyManager::manageProxy(node_proxy);
+
     matlab::data::ArrayFactory f;
-    ctx.outputs[0] = f.createScalar<double>(static_cast<double>(node_id));
+    ctx.outputs[0] = f.createScalar<uint64_t>(proxy_id);
 }
 
 void NetworkProxy::DeleteNode(libmexclass::proxy::method::Context& ctx) {

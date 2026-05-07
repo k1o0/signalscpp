@@ -17,22 +17,23 @@ fprintf('[PASS] Construction and isValid\n');
 
 % ── Test 2: addNode (source / nop) ───────────────────────────────────────────
 % op 51 = Operation::nop (source node)
-srcId = net.addNode([], 51, false);
-assert(srcId >= 0, 'addNode should return a valid id >= 0');
-fprintf('[PASS] addNode (nop source, id=%d)\n', srcId);
+srcNode = net.addNode([], 51, false);
+assert(isa(srcNode, 'sig.Node'),  'addNode should return a sig.Node');
+assert(srcNode.Id >= 0, 'node id should be >= 0');
+fprintf('[PASS] addNode (nop source, id=%d)\n', srcNode.Id);
 
 % ── Test 3: transact + apply + getCurrentValue ───────────────────────────────
-affected = net.transact(srcId, 42.0);
+affected = net.transact(srcNode, 42.0);
 assert(~isempty(affected), 'transact should return at least one affected id');
 net.apply(affected);
-v = net.getCurrentValue(srcId);
+v = net.getCurrentValue(srcNode);
 assert(isequal(v, 42.0), sprintf('Expected 42.0, got %s', mat2str(v)));
 fprintf('[PASS] transact+apply+getCurrentValue (value=%.6g)\n', v);
 
 % ── Test 4: second transact overwrites value ──────────────────────────────────
-affected = net.transact(srcId, 99.5);
+affected = net.transact(srcNode, 99.5);
 net.apply(affected);
-v2 = net.getCurrentValue(srcId);
+v2 = net.getCurrentValue(srcNode);
 assert(isequal(v2, 99.5), sprintf('Expected 99.5, got %s', mat2str(v2)));
 fprintf('[PASS] Second transact (value=%.6g)\n', v2);
 
@@ -43,35 +44,35 @@ fprintf('[PASS] nActiveNodes = %d\n', n);
 
 % ── Test 6: identity (downstream) node ───────────────────────────────────────
 % op 50 = Operation::identity
-downId = net.addNode(srcId, 50, false);
-assert(downId >= 0, 'downstream addNode should succeed');
-affected = net.transact(srcId, 7.0);
+downNode = net.addNode(srcNode, 50, false);
+assert(downNode.Id >= 0, 'downstream addNode should succeed');
+affected = net.transact(srcNode, 7.0);
 net.apply(affected);
-v_src  = net.getCurrentValue(srcId);
-v_down = net.getCurrentValue(downId);
+v_src  = net.getCurrentValue(srcNode);
+v_down = net.getCurrentValue(downNode);
 assert(isequal(v_src, 7.0), 'source should be 7.0');
 assert(isequal(v_down, 7.0), 'identity node should propagate 7.0');
 fprintf('[PASS] Identity propagation (src=%.6g, down=%.6g)\n', v_src, v_down);
 
 % ── Test 7: deleteNode ───────────────────────────────────────────────────────
-net.deleteNode(downId);
+net.deleteNode(downNode);
 n2 = net.nActiveNodes();
 assert(n2 < n + 1, 'nActiveNodes should decrease after deleteNode');
 fprintf('[PASS] deleteNode\n');
 
 % ── Test 8: string value round-trip ──────────────────────────────────────────
-strId = net.addNode([], 51, false);
-affected = net.transact(strId, "hello");
+strNode = net.addNode([], 51, false);
+affected = net.transact(strNode, "hello");
 net.apply(affected);
-sv = net.getCurrentValue(strId);
+sv = net.getCurrentValue(strNode);
 assert(isstring(sv) && sv == "hello", 'String value should round-trip');
 fprintf('[PASS] String value round-trip\n');
 
 % ── Test 9: logical value round-trip ─────────────────────────────────────────
-boolId = net.addNode([], 51, false);
-affected = net.transact(boolId, true);
+boolNode = net.addNode([], 51, false);
+affected = net.transact(boolNode, true);
 net.apply(affected);
-bv = net.getCurrentValue(boolId);
+bv = net.getCurrentValue(boolNode);
 assert(islogical(bv) && bv == true, 'Logical value should round-trip');
 fprintf('[PASS] Logical value round-trip\n');
 

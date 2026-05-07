@@ -5,16 +5,21 @@ classdef Net
 %   net = sig.Net()              % default 4 000 node slots
 %   net = sig.Net(maxNodes)      % explicit limit
 %
-% METHODS (directly wrapping NetworkProxy)
-%   nodeId   = net.addNode(inputIds, opId, appendValues)
-%   affected = net.transact(nodeId, value)
+% METHODS
+%   node     = net.addNode(inputNodes, opId, appendValues)
+%              Returns a sig.Node handle.  inputNodes may be an array of
+%              sig.Node objects, a numeric row vector of node ids, or [].
+%   affected = net.transact(node, value)
 %              net.apply(affected)
-%   value    = net.getCurrentValue(nodeId)
-%   value    = net.getWorkingValue(nodeId)
-%   ids      = net.getNodeInputs(nodeId)
+%   value    = net.getCurrentValue(node)
+%   value    = net.getWorkingValue(node)
+%   ids      = net.getNodeInputs(node)
 %   n        = net.nActiveNodes()
 %   tf       = net.isValid()
-%              net.deleteNode(nodeId)
+%              net.deleteNode(node)
+%
+% All methods that accept a node also accept a numeric node id for
+% low-level use.
 
     properties (Access = private)
         Proxy
@@ -32,19 +37,25 @@ classdef Net
 
         % -----------------------------------------------------------------
 
-        function nodeId = addNode(obj, inputIds, opId, appendValues)
-            nodeId = obj.Proxy.AddNode( ...
+        function node = addNode(obj, inputNodes, opId, appendValues)
+        % addNode  Create a new node and return a sig.Node handle.
+        %   inputNodes  — sig.Node array, numeric id vector, or [] for sources
+        %   opId        — numeric operation code (51=nop/source, 50=identity, …)
+        %   appendValues — logical scalar
+            inputIds = sig.Net.toIds(inputNodes);
+            proxyId = obj.Proxy.AddNode( ...
                 double(inputIds(:)'), ...
                 double(opId), ...
                 logical(appendValues));
+            node = sig.Node(proxyId);
         end
 
-        function deleteNode(obj, nodeId)
-            obj.Proxy.DeleteNode(double(nodeId));
+        function deleteNode(obj, node)
+            obj.Proxy.DeleteNode(double(sig.Net.toId(node)));
         end
 
-        function affected = transact(obj, nodeId, value)
-            affected = obj.Proxy.Transact(double(nodeId), value);
+        function affected = transact(obj, node, value)
+            affected = obj.Proxy.Transact(double(sig.Net.toId(node)), value);
         end
 
         function apply(obj, affected)
@@ -54,16 +65,16 @@ classdef Net
             obj.Proxy.Apply(double(affected(:)'));
         end
 
-        function value = getCurrentValue(obj, nodeId)
-            value = obj.Proxy.GetCurrentValue(double(nodeId));
+        function value = getCurrentValue(obj, node)
+            value = obj.Proxy.GetCurrentValue(double(sig.Net.toId(node)));
         end
 
-        function value = getWorkingValue(obj, nodeId)
-            value = obj.Proxy.GetWorkingValue(double(nodeId));
+        function value = getWorkingValue(obj, node)
+            value = obj.Proxy.GetWorkingValue(double(sig.Net.toId(node)));
         end
 
-        function ids = getNodeInputs(obj, nodeId)
-            ids = obj.Proxy.GetNodeInputs(double(nodeId));
+        function ids = getNodeInputs(obj, node)
+            ids = obj.Proxy.GetNodeInputs(double(sig.Net.toId(node)));
         end
 
         function n = nActiveNodes(obj)
@@ -72,6 +83,33 @@ classdef Net
 
         function tf = isValid(obj)
             tf = obj.Proxy.IsValid();
+        end
+    end
+
+    % -----------------------------------------------------------------------
+    % Static helpers: coerce a sig.Node | numeric id to a double scalar id
+    % or a double row-vector of ids.
+    % -----------------------------------------------------------------------
+    methods (Static, Access = private)
+        function id = toId(node)
+        % toId  Return numeric id from a sig.Node or a numeric scalar.
+            if isa(node, 'sig.Node')
+                id = node.Id;
+            else
+                id = double(node);
+            end
+        end
+
+        function ids = toIds(nodes)
+        % toIds  Return a double row vector from an array of sig.Node or
+        %        numeric ids, or [] for an empty input.
+            if isempty(nodes)
+                ids = double.empty(1, 0);
+            elseif isa(nodes, 'sig.Node')
+                ids = double([nodes.Id]);
+            else
+                ids = double(nodes(:)');
+            end
         end
     end
 end

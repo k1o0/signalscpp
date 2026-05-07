@@ -399,6 +399,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\CustomProxyFactory.cpp" />
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\NetworkProxy.cpp" />
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\NodeProxy.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

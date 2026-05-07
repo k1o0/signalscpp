@@ -2,6 +2,7 @@
 
 #include "libmexclass/proxy/Proxy.h"
 #include "libmexclass/proxy/method/Context.h"
+#include "libmexclass/proxy/ProxyManager.h"
 
 #include "network.h"
 
@@ -56,7 +57,7 @@ class NetworkProxy : public libmexclass::proxy::Proxy {
     void IsValid(libmexclass::proxy::method::Context& ctx);
 
   private:
-    std::unique_ptr<Network> net_;
+    std::shared_ptr<Network> net_;
 };
 
 } // namespace sq::proxy

@@ -1,2 +1,3 @@
 C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/MinSizeRel/CustomProxyFactory.obj
 C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/MinSizeRel/NetworkProxy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/MinSizeRel/NodeProxy.obj

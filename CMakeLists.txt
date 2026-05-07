@@ -42,6 +42,7 @@ if(SIGNALSCPP_BUILD_MEX)
     set(PROXY_SOURCES
         "${MEX_DIR}/proxy/CustomProxyFactory.cpp"
         "${MEX_DIR}/proxy/NetworkProxy.cpp"
+        "${MEX_DIR}/proxy/NodeProxy.cpp"
     )
 
     libmexclass_client_add_proxy_library(
