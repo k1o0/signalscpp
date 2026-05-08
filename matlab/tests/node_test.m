@@ -2,11 +2,13 @@
 %
 % Run with:
 %   cd 'c:\Users\Work\source\repos\signalscpp'
-%   node_test
+%   matlab/tests/node_test   (or run from matlab/tests/ with no args)
 
 % ── Path setup ────────────────────────────────────────────────────────────────
-addpath('c:\Users\Work\source\repos\signalscpp\install_mex\Signals\mex\matlab');
-addpath('c:\Users\Work\source\repos\signalscpp\Signals\mex\matlab');
+% matlab/ contains both +sig/ (source) and +libmexclass/ (installed MEX).
+addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
+% If running from the repo root instead, uncomment:
+% addpath('c:\Users\Work\source\repos\signalscpp\matlab');
 
 net = sig.Net(500);
 

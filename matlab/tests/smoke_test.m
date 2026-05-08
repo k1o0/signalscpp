@@ -2,13 +2,13 @@
 %
 % Run with:
 %   cd 'c:\Users\Work\source\repos\signalscpp'
-%   smoke_test
+%   matlab/tests/smoke_test   (or run from matlab/tests/ with no args)
 
 % ── Path setup ────────────────────────────────────────────────────────────────
-% The install folder contains +libmexclass/+proxy/ (gateway.mexw64 + Proxy.m)
-addpath('c:\Users\Work\source\repos\signalscpp\install_mex\Signals\mex\matlab');
-% The source tree contains +sig/ (Net.m)
-addpath('c:\Users\Work\source\repos\signalscpp\Signals\mex\matlab');
+% matlab/ contains both +sig/ (source) and +libmexclass/ (installed MEX).
+addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
+% If running from the repo root instead, uncomment:
+% addpath('c:\Users\Work\source\repos\signalscpp\matlab');
 
 % ── Test 1: construction and isValid ─────────────────────────────────────────
 net = sig.Net(1000);

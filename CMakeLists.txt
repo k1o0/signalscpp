@@ -4,6 +4,13 @@ project(CppSignals VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Default install prefix: project-root/matlab so `cmake --install` drops
+# gateway.mexw64 and +libmexclass/ directly into the MATLAB source tree.
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/matlab"
+        CACHE PATH "Install prefix (MATLAB package root)" FORCE)
+endif()
+
 # ---------------------------------------------------------------------------
 # Options
 # ---------------------------------------------------------------------------
@@ -37,8 +44,8 @@ if(SIGNALSCPP_BUILD_MEX)
     set(LIBMEXCLASS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/extern/libmexclass/libmexclass/cpp")
     add_subdirectory(${LIBMEXCLASS_SOURCE_DIR} "${CMAKE_BINARY_DIR}/libmexclass")
 
-    # Proxy sources
-    set(MEX_DIR "${CMAKE_SOURCE_DIR}/Signals/mex")
+    # Proxy sources — live in Signals-Mex/
+    set(MEX_DIR "${CMAKE_SOURCE_DIR}/Signals-Mex")
     set(PROXY_SOURCES
         "${MEX_DIR}/proxy/CustomProxyFactory.cpp"
         "${MEX_DIR}/proxy/NetworkProxy.cpp"
@@ -48,7 +55,10 @@ if(SIGNALSCPP_BUILD_MEX)
     libmexclass_client_add_proxy_library(
         NAME signalsproxy
         SOURCES ${PROXY_SOURCES}
-        INCLUDE_DIRS "${MEX_DIR}/proxy" "${MEX_DIR}/include" "${CMAKE_SOURCE_DIR}/Signals"
+        INCLUDE_DIRS
+            "${MEX_DIR}/proxy"
+            "${MEX_DIR}/include"
+            "${CMAKE_SOURCE_DIR}/Signals"
         LINK_LIBRARIES signals_core
     )
     target_compile_features(signalsproxy PRIVATE cxx_std_17)
@@ -57,14 +67,15 @@ if(SIGNALSCPP_BUILD_MEX)
     libmexclass_client_add_mex_gateway(
         NAME gateway
         CLIENT_PROXY_LIBRARY_NAME signalsproxy
-        SOURCES "${MEX_DIR}/mex/gateway.cpp"
+        SOURCES "${MEX_DIR}/gateway/gateway.cpp"
     )
 
-    # Install gateway + proxy lib + libmexclass shared lib into the MATLAB package tree
+    # Install gateway + proxy lib + libmexclass shared lib directly into
+    # matlab/ (the CMAKE_INSTALL_PREFIX set above).
     libmexclass_client_install(
         CLIENT_PROXY_LIBRARY_NAME signalsproxy
         CLIENT_MEX_GATEWAY_NAME gateway
-        DESTINATION "Signals/mex/matlab"
+        DESTINATION "."
     )
 
 endif()

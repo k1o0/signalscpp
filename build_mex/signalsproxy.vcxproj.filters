@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\CustomProxyFactory.cpp">
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\CustomProxyFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\NetworkProxy.cpp">
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NetworkProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals\mex\proxy\NodeProxy.cpp">
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NodeProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
