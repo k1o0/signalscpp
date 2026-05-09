@@ -12,15 +12,15 @@ addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
 
 net = sig.Net(500);
 
-% ── Test 1: addNode returns a sig.Node ───────────────────────────────────────
+% ── Test 1: addNode returns a sig.Signal ─────────────────────────────────────
 node = net.addNode([], 51, false);  % op 51 = nop / source
-assert(isa(node, 'sig.Node'), 'addNode must return a sig.Node');
-fprintf('[PASS] addNode returns sig.Node\n');
+assert(isa(node, 'sig.Signal'), 'addNode must return a sig.Signal');
+fprintf('[PASS] addNode returns sig.Signal\n');
 
-% ── Test 2: sig.Node.Id is a non-negative numeric scalar ─────────────────────
+% ── Test 2: sig.Signal.Id is a non-negative numeric scalar ───────────────────
 assert(isnumeric(node.Id) && isscalar(node.Id) && node.Id >= 0, ...
-    'sig.Node.Id must be a non-negative numeric scalar');
-fprintf('[PASS] sig.Node.Id = %d\n', node.Id);
+    'sig.Signal.Id must be a non-negative numeric scalar');
+fprintf('[PASS] sig.Signal.Id = %d\n', node.Id);
 
 % ── Test 3: CurrentValue is [] before any transact ───────────────────────────
 v = node.CurrentValue;
@@ -73,7 +73,7 @@ bv = boolNode.CurrentValue;
 assert(islogical(bv) && bv == false, 'Logical round-trip via CurrentValue');
 fprintf('[PASS] Logical round-trip via CurrentValue\n');
 
-% ── Test 11: multiple sig.Node objects from addNode are independent ───────────
+% ── Test 11: multiple sig.Signal objects from addNode are independent ─────────
 nodeA = net.addNode([], 51, false);
 nodeB = net.addNode([], 51, false);
 assert(nodeA.Id ~= nodeB.Id, 'Each addNode call must produce a unique id');

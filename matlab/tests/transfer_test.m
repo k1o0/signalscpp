@@ -209,7 +209,9 @@ function test_mapn_two_inputs(testCase)
     net  = testCase.TestData.net;
     srcA = net.addNode([], 51, false);
     srcB = net.addNode([], 51, false);
-    out  = net.mapn([srcA, srcB], @(a, b) a + b);
+    % Use cell array to pass node references — [srcA,srcB] is a reactive
+    % vertcat signal now that sig.Signal overrides horzcat/vertcat.
+    out  = net.mapn({srcA, srcB}, @(a, b) a + b);
 
     % Prime both sources so mapn has a latest value for each.
     net.apply(net.transact(srcA, 3));
@@ -223,7 +225,7 @@ function test_mapn_fires_when_one_input_updates(testCase)
     net  = testCase.TestData.net;
     srcA = net.addNode([], 51, false);
     srcB = net.addNode([], 51, false);
-    out  = net.mapn([srcA, srcB], @(a, b) a * b);
+    out  = net.mapn({srcA, srcB}, @(a, b) a * b);
 
     net.apply(net.transact(srcA, 4));
     net.apply(net.transact(srcB, 5));  % out = 4*5 = 20
