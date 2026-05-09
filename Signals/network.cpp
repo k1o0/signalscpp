@@ -145,10 +145,16 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op,
             std::cerr << "Error: Input node with index " << input_id << " is not valid.\n";
             return -1;
         } else {
-            std::cout << "node " << input_id << "->" << node->get_id() << ".\n";
             input_nodes.push_back(input_node);
         }
     }
+    std::cout << "create node id " << node->get_id() << " with inputs (";
+    for (size_t i = 0; i < input_nodes.size(); ++i) {
+        if (i > 0) std::cout << ", ";
+        std::cout << input_nodes[i]->get_id();
+    }
+    if (input_nodes.empty()) std::cout << "none";
+    std::cout << ").\n";
     node->set_inputs(std::move(input_nodes));
     return node->get_id();
 };

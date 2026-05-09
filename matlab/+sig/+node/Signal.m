@@ -25,7 +25,7 @@ classdef Signal < sig.Signal
         InputIds
     end
 
-    properties (Access = private)
+    properties (Access = protected)
         Net_   % parent sig.Net (value-class copy — Proxy is a shared handle)
     end
 
@@ -111,18 +111,19 @@ classdef Signal < sig.Signal
         % scan  Running fold: acc = fn(acc, new_value).
         %   seed — initial accumulator value, or a signal that resets it.
         %   If seed is a signal it is used directly as the seed node.
-        %   If seed is a constant it is wrapped as a pre-posted origin.
+        %   If seed is a constant it is wrapped in a fresh origin and posted.
             if isa(seed, 'sig.Signal') || isa(seed, 'sig.Node')
                 seedRef = seed;
             else
-                seedRef = obj.Net_.origin(seed);
+                seedRef = obj.Net_.origin();
+                seedRef.post(seed);
             end
             out = obj.Net_.addNode({obj, seedRef}, 63, false, fn);
         end
 
-        function out = numel(obj)
-        % numel  New signal whose value is numel(this_value).
-        %   Overrides sig.Signal.numel to use the dedicated C++ opcode.
+        function out = nElems(obj)
+        % nElems  New signal whose value is numel(this_value).
+        %   Overrides sig.Signal.nElems to use the dedicated C++ opcode.
             out = obj.Net_.addNode(obj, 30, false);
         end
 
@@ -227,7 +228,8 @@ classdef Signal < sig.Signal
             if isa(val, 'sig.Signal') || isa(val, 'sig.Node')
                 ref = val;
             else
-                ref = net.origin(val);
+                ref = net.origin();
+                ref.post(val);
             end
         end
 

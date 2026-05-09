@@ -1,4 +1,4 @@
-% transfer_test.m — MATLAB-level tests for map / filter / scan / numel / mapn
+% transfer_test.m — MATLAB-level tests for map / filter / scan / nElems / mapn
 % Run from the matlab/ directory (or any directory with +sig on the path).
 %
 % Usage:
@@ -138,8 +138,9 @@ end
 % ---------------------------------------------------------------------------
 function test_origin_has_constant_value(testCase)
     net = testCase.TestData.net;
-    c = net.origin(42);
-    testCase.verifyEqual(c.CurrentValue, 42.0, 'origin node should have CurrentValue = 42');
+    c = net.origin();
+    c.post(42);
+    testCase.verifyEqual(c.CurrentValue, 42.0, 'origin node should have CurrentValue = 42 after post');
 end
 
 % ---------------------------------------------------------------------------
@@ -187,7 +188,7 @@ end
 function test_numel_scalar(testCase)
     net = testCase.TestData.net;
     src = net.addNode([], 51, false);
-    n   = src.numel();
+    n   = src.nElems();
 
     v = post(net, src, 42, n);
     testCase.verifyEqual(v, 1.0, 'numel of scalar should be 1');
@@ -196,7 +197,7 @@ end
 function test_numel_vector(testCase)
     net = testCase.TestData.net;
     src = net.addNode([], 51, false);
-    n   = src.numel();
+    n   = src.nElems();
 
     v = post(net, src, [1 2 3 4 5], n);
     testCase.verifyEqual(v, 5.0, 'numel of 5-element vector should be 5');
@@ -209,9 +210,7 @@ function test_mapn_two_inputs(testCase)
     net  = testCase.TestData.net;
     srcA = net.addNode([], 51, false);
     srcB = net.addNode([], 51, false);
-    % Use cell array to pass node references — [srcA,srcB] is a reactive
-    % vertcat signal now that sig.Signal overrides horzcat/vertcat.
-    out  = net.mapn({srcA, srcB}, @(a, b) a + b);
+    out  = srcA.mapn(srcB, @(a, b) a + b);
 
     % Prime both sources so mapn has a latest value for each.
     net.apply(net.transact(srcA, 3));
@@ -225,7 +224,7 @@ function test_mapn_fires_when_one_input_updates(testCase)
     net  = testCase.TestData.net;
     srcA = net.addNode([], 51, false);
     srcB = net.addNode([], 51, false);
-    out  = net.mapn({srcA, srcB}, @(a, b) a * b);
+    out  = srcA.mapn(srcB, @(a, b) a * b);
 
     net.apply(net.transact(srcA, 4));
     net.apply(net.transact(srcB, 5));  % out = 4*5 = 20

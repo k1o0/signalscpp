@@ -93,5 +93,14 @@ assert(nAfter == nBefore - 1, ...
 fprintf('[PASS] nActiveNodes decreases after deleteNode (%d -> %d)\n', ...
     nBefore, nAfter);
 
+% ── Test 13: sig.Net.Id is a unique uint64 per network ───────────────────────
+netA = sig.Net(100);
+netB = sig.Net(100);
+assert(isa(netA.Id, 'uint64') && isscalar(netA.Id), ...
+    'net.Id must be a scalar uint64');
+assert(netA.Id ~= netB.Id, ...
+    sprintf('Two nets must have distinct Ids (%d vs %d)', netA.Id, netB.Id));
+fprintf('[PASS] sig.Net.Id is unique per network (A=%d, B=%d)\n', netA.Id, netB.Id);
+
 % ── All done ─────────────────────────────────────────────────────────────────
 fprintf('\n=== All node tests PASSED ===\n');

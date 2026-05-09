@@ -179,7 +179,8 @@ classdef (Abstract) Signal < handle
             b = a.map(@str2num);
         end
 
-        function b = numel(a)
+        function b = nElems(a)
+        % nElems  New signal whose value is numel(this_value).
             b = a.map(@numel);
         end
 
@@ -344,7 +345,8 @@ classdef (Abstract) Signal < handle
             end
         end
 
-        function b = size(a, dim)
+        function b = sz(a, dim)
+        % sz  New signal whose value is size(this_value[, dim]).
             if nargin < 2
                 b = a.map(@size);
             else

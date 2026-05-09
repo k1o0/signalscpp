@@ -5,10 +5,13 @@ classdef Net
 %   net = sig.Net()              % default 4 000 node slots
 %   net = sig.Net(maxNodes)      % explicit limit
 %
+% PROPERTIES
+%   Id           (uint64, read-only) unique identifier for this network instance
+%   nActiveNodes (double, read-only) number of nodes currently in use
+%
 % CREATING SIGNALS
-%   x = net.origin()             % sig.node.OriginSignal — post values to drive the network
-%   x = net.origin(value)        % constant origin pre-loaded with value
-%   y = x.map(fn)                % sig.node.Signal derived from x
+%   x = net.origin()   % sig.node.OriginSignal — inject values with x.post(value)
+%   y = x.map(fn)      % sig.node.Signal derived from x
 %
 % INTERNAL METHODS (used by sig.node.Signal transfer implementations)
 %   node     = net.addNode(inputNodes, opId, appendValues)
@@ -20,6 +23,11 @@ classdef Net
 
     properties (Access = private)
         Proxy
+    end
+
+    properties (Dependent)
+        Id           % uint64 — unique per network instance, set at construction
+        nActiveNodes
     end
 
     methods
@@ -80,37 +88,22 @@ classdef Net
             ids = obj.Proxy.GetNodeInputs(double(sig.Net.toId(node)));
         end
 
-        function n = nActiveNodes(obj)
+        function n = get.nActiveNodes(obj)
             n = obj.Proxy.NActiveNodes();
+        end
+
+        function id = get.Id(obj)
+            id = obj.Proxy.ID;   % uint64 assigned by ProxyManager at construction
         end
 
         function tf = isValid(obj)
             tf = obj.Proxy.IsValid();
         end
 
-        function out = mapn(obj, inputNodes, fn)
-        % mapn  Map N nodes through fn whenever any fires.
-        %   inputNodes — cell array, sig.Signal array, or numeric id vector
-        %   fn         — function handle, e.g. @(a,b) a+b
-        %   Returns a new sig.node.Signal.
-            out = obj.addNode(inputNodes, 61, false, fn);
-        end
-
-        function node = origin(obj, value)
-        % origin  Create a source (nop) node, optionally pre-posted.
-        %   origin()       — returns sig.node.OriginSignal; post values with post()
-        %   origin(value)  — pre-posts value immediately (constant seed /
-        %                    constant signal); still returns OriginSignal
+        function node = origin(obj)
+        % origin  Create a source (nop) node.  Inject values with node.post(value).
             proxyId = obj.Proxy.AddNode(double.empty(1, 0), double(51), false);
             node = sig.node.OriginSignal(proxyId, obj);
-            if nargin > 1
-                % Pre-post the constant value directly via the C++ proxy,
-                % bypassing the MATLAB-level transact/apply (no listeners yet).
-                affected = obj.Proxy.Transact(double(node.Id), value);
-                if ~isempty(affected)
-                    obj.Proxy.Apply(double(affected(:)'));
-                end
-            end
         end
     end
 
