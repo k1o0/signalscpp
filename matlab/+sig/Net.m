@@ -46,8 +46,8 @@ classdef Net
         % addNode  Create a new network node, return a sig.node.Signal.
         %   inputNodes   — sig.Signal / sig.Node array, cell-array mix, numeric
         %                  id vector, or [] for source nodes
-        %   opId         — numeric opcode (51=nop, 50=identity, 30=numel,
-        %                  60=map, 61=mapn, 62=filter, 63=scan)
+        %   opId         — sig.OpCode constant or plain double
+        %                  (see matlab/+sig/OpCode.m for the full list)
         %   appendValues — logical scalar
         %   fn           — (optional) MATLAB function handle (opcodes 60–63)
             inputIds = sig.Net.toIds(inputNodes);
@@ -102,7 +102,7 @@ classdef Net
 
         function node = origin(obj)
         % origin  Create a source (nop) node.  Inject values with node.post(value).
-            proxyId = obj.Proxy.AddNode(double.empty(1, 0), double(51), false);
+            proxyId = obj.Proxy.AddNode(double.empty(1, 0), double(sig.OpCode.nop), false);
             node = sig.node.OriginSignal(proxyId, obj);
         end
     end

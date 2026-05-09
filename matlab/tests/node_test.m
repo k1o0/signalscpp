@@ -13,7 +13,7 @@ addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
 net = sig.Net(500);
 
 % ── Test 1: addNode returns a sig.Signal ─────────────────────────────────────
-node = net.addNode([], 51, false);  % op 51 = nop / source
+node = net.addNode([], sig.OpCode.nop, false);
 assert(isa(node, 'sig.Signal'), 'addNode must return a sig.Signal');
 fprintf('[PASS] addNode returns sig.Signal\n');
 
@@ -45,7 +45,7 @@ assert(isempty(ids), 'Source node should have no input ids');
 fprintf('[PASS] InputIds is empty for source node\n');
 
 % ── Test 7: downstream node InputIds contains upstream Id ─────────────────────
-downstream = net.addNode(node, 50, false);  % op 50 = identity
+downstream = net.addNode(node, sig.OpCode.identity, false);
 inputIds = downstream.InputIds;
 assert(any(inputIds == node.Id), ...
     'downstream.InputIds should contain the upstream node Id');
@@ -60,22 +60,22 @@ assert(isequal(downstream.CurrentValue, 42.0), ...
 fprintf('[PASS] Identity propagation via CurrentValue property\n');
 
 % ── Test 9: string value round-trip via CurrentValue ─────────────────────────
-strNode = net.addNode([], 51, false);
+strNode = net.addNode([], sig.OpCode.nop, false);
 net.apply(net.transact(strNode, "world"));
 sv = strNode.CurrentValue;
 assert(isstring(sv) && sv == "world", 'String round-trip via CurrentValue');
 fprintf('[PASS] String round-trip via CurrentValue\n');
 
 % ── Test 10: logical value round-trip via CurrentValue ───────────────────────
-boolNode = net.addNode([], 51, false);
+boolNode = net.addNode([], sig.OpCode.nop, false);
 net.apply(net.transact(boolNode, false));
 bv = boolNode.CurrentValue;
 assert(islogical(bv) && bv == false, 'Logical round-trip via CurrentValue');
 fprintf('[PASS] Logical round-trip via CurrentValue\n');
 
 % ── Test 11: multiple sig.Signal objects from addNode are independent ─────────
-nodeA = net.addNode([], 51, false);
-nodeB = net.addNode([], 51, false);
+nodeA = net.addNode([], sig.OpCode.nop, false);
+nodeB = net.addNode([], sig.OpCode.nop, false);
 assert(nodeA.Id ~= nodeB.Id, 'Each addNode call must produce a unique id');
 net.apply(net.transact(nodeA, 1.0));
 net.apply(net.transact(nodeB, 2.0));

@@ -40,7 +40,7 @@ end
 % ---------------------------------------------------------------------------
 function test_map_doubles_input(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);     % nop source
+    src = net.addNode([], sig.OpCode.nop, false);
     out = src.map(@(x) x * 2);
 
     v = post(net, src, 5, out);
@@ -49,7 +49,7 @@ end
 
 function test_map_string(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     out = src.map(@(x) x + 1);
 
     v = post(net, src, 3, out);
@@ -59,12 +59,12 @@ end
 function test_map_does_not_fire_without_new_input(testCase)
     % After a second transact on an unrelated node, out should be unchanged.
     net = testCase.TestData.net;
-    src  = net.addNode([], 51, false);
+    src  = net.addNode([], sig.OpCode.nop, false);
     out  = src.map(@(x) x * 3);
     post(net, src, 2, out);  % first tick
 
     % src2 update should not affect out
-    src2 = net.addNode([], 51, false);
+    src2 = net.addNode([], sig.OpCode.nop, false);
     affected = net.transact(src2, 99);
     net.apply(affected);
     testCase.verifyEqual(out.CurrentValue, 6.0, ...
@@ -76,7 +76,7 @@ end
 % ---------------------------------------------------------------------------
 function test_filter_passes_positive(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     out = src.filter(@(x) x > 0);
 
     v = post(net, src, 7, out);
@@ -85,7 +85,7 @@ end
 
 function test_filter_blocks_negative(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     out = src.filter(@(x) x > 0);
 
     post(net, src, 5, out);   % seed a current value
@@ -99,7 +99,7 @@ end
 % ---------------------------------------------------------------------------
 function test_scan_running_sum(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     acc = src.scan(@(s, x) s + x, 0);
 
     post(net, src, 1, acc);
@@ -116,7 +116,7 @@ function test_scan_no_value_before_first_tick(testCase)
     % The seed is the initial accumulator for the fold, not the scan node's
     % initial output.  Before any item fires, the scan node has no value.
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     acc = src.scan(@(s, x) s + x, 100);
 
     testCase.verifyTrue(isempty(acc.CurrentValue), ...
@@ -125,7 +125,7 @@ end
 
 function test_scan_respects_seed(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     acc = src.scan(@(s, x) s + x, 10);
 
     post(net, src, 5, acc);
@@ -148,8 +148,8 @@ end
 % ---------------------------------------------------------------------------
 function test_scan_signal_seed_resets_accumulator(testCase)
     net  = testCase.TestData.net;
-    src  = net.addNode([], 51, false);
-    seed = net.addNode([], 51, false);   % live signal, not a constant
+    src  = net.addNode([], sig.OpCode.nop, false);
+    seed = net.addNode([], sig.OpCode.nop, false);   % live signal, not a constant
     acc  = src.scan(@(s, x) s + x, seed);
 
     % Prime the seed (acts as reset / initial accumulator).
@@ -177,8 +177,8 @@ function test_scan_does_not_fold_before_seed(testCase)
     % When the seed is a live signal (no constant bootstrap), the scan should
     % not produce output until the seed has fired at least once.
     net  = testCase.TestData.net;
-    src  = net.addNode([], 51, false);
-    seed = net.addNode([], 51, false);
+    src  = net.addNode([], sig.OpCode.nop, false);
+    seed = net.addNode([], sig.OpCode.nop, false);
     acc  = src.scan(@(s, x) s + x, seed);
 
     net.apply(net.transact(src, 99));   % item fires before seed
@@ -187,7 +187,7 @@ function test_scan_does_not_fold_before_seed(testCase)
 end
 function test_numel_scalar(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     n   = src.nElems();
 
     v = post(net, src, 42, n);
@@ -196,7 +196,7 @@ end
 
 function test_numel_vector(testCase)
     net = testCase.TestData.net;
-    src = net.addNode([], 51, false);
+    src = net.addNode([], sig.OpCode.nop, false);
     n   = src.nElems();
 
     v = post(net, src, [1 2 3 4 5], n);
@@ -208,8 +208,8 @@ end
 % ---------------------------------------------------------------------------
 function test_mapn_two_inputs(testCase)
     net  = testCase.TestData.net;
-    srcA = net.addNode([], 51, false);
-    srcB = net.addNode([], 51, false);
+    srcA = net.addNode([], sig.OpCode.nop, false);
+    srcB = net.addNode([], sig.OpCode.nop, false);
     out  = srcA.mapn(srcB, @(a, b) a + b);
 
     % Prime both sources so mapn has a latest value for each.
@@ -222,8 +222,8 @@ end
 
 function test_mapn_fires_when_one_input_updates(testCase)
     net  = testCase.TestData.net;
-    srcA = net.addNode([], 51, false);
-    srcB = net.addNode([], 51, false);
+    srcA = net.addNode([], sig.OpCode.nop, false);
+    srcB = net.addNode([], sig.OpCode.nop, false);
     out  = srcA.mapn(srcB, @(a, b) a * b);
 
     net.apply(net.transact(srcA, 4));

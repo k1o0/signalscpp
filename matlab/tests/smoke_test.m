@@ -16,8 +16,7 @@ assert(net.isValid(), 'isValid() should return true after construction');
 fprintf('[PASS] Construction and isValid\n');
 
 % ── Test 2: addNode (source / nop) ───────────────────────────────────────────
-% op 51 = Operation::nop (source node)
-srcNode = net.addNode([], 51, false);
+srcNode = net.addNode([], sig.OpCode.nop, false);
 assert(isa(srcNode, 'sig.Node'),  'addNode should return a sig.Node');
 assert(srcNode.Id >= 0, 'node id should be >= 0');
 fprintf('[PASS] addNode (nop source, id=%d)\n', srcNode.Id);
@@ -43,8 +42,7 @@ assert(n >= 1, 'Should have at least 1 active node');
 fprintf('[PASS] nActiveNodes = %d\n', n);
 
 % ── Test 6: identity (downstream) node ───────────────────────────────────────
-% op 50 = Operation::identity
-downNode = net.addNode(srcNode, 50, false);
+downNode = net.addNode(srcNode, sig.OpCode.identity, false);
 assert(downNode.Id >= 0, 'downstream addNode should succeed');
 affected = net.transact(srcNode, 7.0);
 net.apply(affected);
@@ -61,7 +59,7 @@ assert(n2 < n + 1, 'nActiveNodes should decrease after deleteNode');
 fprintf('[PASS] deleteNode\n');
 
 % ── Test 8: string value round-trip ──────────────────────────────────────────
-strNode = net.addNode([], 51, false);
+strNode = net.addNode([], sig.OpCode.nop, false);
 affected = net.transact(strNode, "hello");
 net.apply(affected);
 sv = net.getCurrentValue(strNode);
@@ -69,7 +67,7 @@ assert(isstring(sv) && sv == "hello", 'String value should round-trip');
 fprintf('[PASS] String value round-trip\n');
 
 % ── Test 9: logical value round-trip ─────────────────────────────────────────
-boolNode = net.addNode([], 51, false);
+boolNode = net.addNode([], sig.OpCode.nop, false);
 affected = net.transact(boolNode, true);
 net.apply(affected);
 bv = net.getCurrentValue(boolNode);

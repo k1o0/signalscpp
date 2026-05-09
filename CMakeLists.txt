@@ -65,6 +65,17 @@ if(SIGNALSCPP_BUILD_MEX)
     )
     target_compile_features(signalsproxy PRIVATE cxx_std_17)
 
+    # Regenerate matlab/+sig/OpCode.m from Signals/transferer.h before every
+    # signalsproxy build.  This keeps the MATLAB opcode enum in lockstep with the
+    # C++ enum class Operation — the two can never silently diverge.
+    add_custom_command(
+        TARGET signalsproxy PRE_BUILD
+        COMMAND powershell -NoProfile -ExecutionPolicy Bypass
+                -File "${CMAKE_SOURCE_DIR}/scripts/gen_opcodes.ps1"
+        VERBATIM
+        COMMENT "Generating matlab/+sig/OpCode.m from Signals/transferer.h"
+    )
+
     # MEX gateway
     libmexclass_client_add_mex_gateway(
         NAME gateway

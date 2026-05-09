@@ -64,7 +64,7 @@ classdef Signal < sig.Signal
 
         function out = map(obj, fn)
         % map  New signal = fn(this_value) on every update.
-            out = obj.Net_.addNode(obj, 60, false, fn);
+            out = obj.Net_.addNode(obj, sig.OpCode.map_op, false, fn);
         end
 
         function out = map2(sig1, sig2, f)
@@ -84,7 +84,7 @@ classdef Signal < sig.Signal
             end
             sig1 = sig.node.Signal.wrapConst_(net, sig1);
             sig2 = sig.node.Signal.wrapConst_(net, sig2);
-            out  = net.addNode({sig1, sig2}, 61, false, f);
+            out  = net.addNode({sig1, sig2}, sig.OpCode.mapn_op, false, f);
         end
 
         function varargout = mapn(varargin)
@@ -99,12 +99,12 @@ classdef Signal < sig.Signal
             for k = 1:numel(inputs)
                 inputs{k} = sig.node.Signal.wrapConst_(net, inputs{k});
             end
-            varargout{1} = net.addNode(inputs, 61, false, fn);
+            varargout{1} = net.addNode(inputs, sig.OpCode.mapn_op, false, fn);
         end
 
         function out = filter(obj, fn)
         % filter  Pass values through when fn(value) is truthy.
-            out = obj.Net_.addNode(obj, 62, false, fn);
+            out = obj.Net_.addNode(obj, sig.OpCode.filter_op, false, fn);
         end
 
         function out = scan(obj, fn, seed)
@@ -118,18 +118,18 @@ classdef Signal < sig.Signal
                 seedRef = obj.Net_.origin();
                 seedRef.post(seed);
             end
-            out = obj.Net_.addNode({obj, seedRef}, 63, false, fn);
+            out = obj.Net_.addNode({obj, seedRef}, sig.OpCode.scan_op, false, fn);
         end
 
         function out = nElems(obj)
         % nElems  New signal whose value is numel(this_value).
         %   Overrides sig.Signal.nElems to use the dedicated C++ opcode.
-            out = obj.Net_.addNode(obj, 30, false);
+            out = obj.Net_.addNode(obj, sig.OpCode.numel, false);
         end
 
         function out = identity(obj)
         % identity  New signal that mirrors this signal (ordering guarantee).
-            out = obj.Net_.addNode(obj, 50, false);
+            out = obj.Net_.addNode(obj, sig.OpCode.identity, false);
         end
 
         % -----------------------------------------------------------------
