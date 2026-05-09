@@ -193,10 +193,7 @@ TEST_F(TransferTest, SelectFromPicksCorrectOption) {
 
 TEST_F(TransferTest, FunctionOpMap) {
     long src = net->add_node({},    Operation::nop,      false);
-    long out = net->add_node({src}, Operation::function, false);
-
-    // Double the input value.
-    net->set_node_callable(out,
+    long out = net->add_node({src}, Operation::function, false,
         [](const std::vector<signals::Value>& ins, const signals::Value&) -> signals::Value {
             return signals::Value{ std::get<double>(ins[0]) * 2.0 };
         });
@@ -207,10 +204,7 @@ TEST_F(TransferTest, FunctionOpMap) {
 TEST_F(TransferTest, FunctionOpMapn) {
     long a   = net->add_node({},     Operation::nop,      false);
     long b   = net->add_node({},     Operation::nop,      false);
-    long out = net->add_node({a, b}, Operation::function, false);
-
-    // Sum both inputs.
-    net->set_node_callable(out,
+    long out = net->add_node({a, b}, Operation::function, false,
         [](const std::vector<signals::Value>& ins, const signals::Value&) -> signals::Value {
             return signals::Value{ std::get<double>(ins[0]) + std::get<double>(ins[1]) };
         });
@@ -221,10 +215,8 @@ TEST_F(TransferTest, FunctionOpMapn) {
 
 TEST_F(TransferTest, FunctionOpScanAccumulates) {
     long item = net->add_node({},     Operation::nop,      false);
-    long out  = net->add_node({item}, Operation::function, false);
-
-    // Running sum (scan): accumulator + new item.
-    net->set_node_callable(out,
+    long out  = net->add_node({item}, Operation::function, false,
+        // Running sum (scan): accumulator + new item.
         [](const std::vector<signals::Value>& ins, const signals::Value& acc) -> signals::Value {
             const double prev = signals::has_value(acc) ? std::get<double>(acc) : 0.0;
             return signals::Value{ prev + std::get<double>(ins[0]) };
@@ -240,10 +232,8 @@ TEST_F(TransferTest, FunctionOpScanAccumulates) {
 
 TEST_F(TransferTest, FunctionOpMonostateNoOutput) {
     long src = net->add_node({},    Operation::nop,      false);
-    long out = net->add_node({src}, Operation::function, false);
-
-    // Callable always returns monostate → no output committed.
-    net->set_node_callable(out,
+    long out = net->add_node({src}, Operation::function, false,
+        // Callable always returns monostate → no output committed.
         [](const std::vector<signals::Value>&, const signals::Value&) -> signals::Value {
             return signals::Value{};
         });

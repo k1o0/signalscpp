@@ -115,10 +115,13 @@ Network::Node* Network::get_node(size_t idx) {
 /// Add a node to the network.
 /// </summary>
 /// <param name="t_inputs">A vector of input node IDs.</param>
-/// <param name="t_op">The operation code to appy.</param>
-/// <param name="t_appendValues">Whether store new values in an array.</param>
-/// <returns>The index of the newly added node.</returns>
-long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues) {
+/// <param name="t_op">The operation code to apply.</param>
+/// <param name="t_appendValues">Whether to accumulate new values into an array.</param>
+/// <param name="callable">Optional callable for higher-order ops (map_op, mapn_op,
+///                         filter_op, scan_op).  Pass nullptr for pure-C++ opcodes.</param>
+/// <returns>The index of the newly added node, or -1 on error.</returns>
+long Network::add_node(const std::vector<long>& t_inputs, Operation t_op,
+                       bool t_appendValues, NodeCallable callable) {
     Network::Node* node = next_free_node();
     if (!node) {
         std::cerr << "Error: No free nodes available in the network.\n";
@@ -126,6 +129,8 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t
     }
     node->set_transferer(t_op);
     node->appendValues = t_appendValues;
+    if (callable)
+        node->set_callable(std::move(callable));
     std::vector<Network::Node*> input_nodes;
     for (const long& input_id : t_inputs) {
         if (input_id < 0 || input_id >= static_cast<long>(n_nodes())) {
@@ -148,22 +153,12 @@ long Network::add_node(const std::vector<long>& t_inputs, Operation t_op, bool t
     return node->get_id();
 };
 
-/// Attach a user-supplied callable to a function-op node.
-/// Callable signature: (latest_input_values, current_node_value) -> Value
-/// Returning monostate signals "no output this tick".
-bool Network::set_node_callable(long node_id,
-    std::function<signals::Value(const std::vector<signals::Value>&,
-                                const signals::Value&)> fn) {
-    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) {
-        std::cerr << "Error: set_node_callable: node ID " << node_id << " out of range.\n";
-        return false;
-    }
-    Node* node = &nodes[static_cast<size_t>(node_id)];
-    if (!node->inUse) {
-        std::cerr << "Error: set_node_callable: node " << node_id << " is not active.\n";
-        return false;
-    }
-    node->set_callable(std::move(fn));
+/// Set the current (committed) value of a node directly.
+bool Network::set_node_current_value(long node_id, const signals::Value& value) {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) return false;
+    Node& n = nodes[static_cast<size_t>(node_id)];
+    if (!n.inUse) return false;
+    n.set_current_value(value);
     return true;
 }
 
@@ -590,6 +585,144 @@ bool Network::Node::transfer() {
     }
     // nop (51): source node — value set externally via transact(); transfer()
     // is never meaningfully called on nop nodes.
+
+    // ── numel (30) ────────────────────────────────────────────────────────────
+    // Pure-C++ unary op; no callable needed.
+    // Output: number of elements in input[0]'s working value.
+    else if (op == Operation::numel) {
+        if (!inputs.empty() && signals::has_value(inputs[0]->workingValue)) {
+            const signals::Value& wv = inputs[0]->workingValue;
+            double n = std::visit([](const auto& v) -> double {
+                using T = std::decay_t<decltype(v)>;
+                if constexpr (std::is_same_v<T, std::vector<double>>)
+                    return static_cast<double>(v.size());
+                else if constexpr (std::is_same_v<T, std::monostate>)
+                    return 0.0;
+                else
+                    return 1.0;  // double, bool, string
+            }, wv);
+            workingValue = n;
+            workingValueSet = true;
+            produced_output = true;
+        }
+    }
+
+    // ── map_op (60) ───────────────────────────────────────────────────────────
+    // Gate: input[0] must have a new working value.
+    // Callable receives: {latest(input[0])}, currentValue
+    else if (op == Operation::map_op) {
+        if (!inputs.empty() && callable &&
+            signals::has_value(inputs[0]->workingValue)) {
+            try {
+                signals::Value result = callable({latest(inputs[0])}, currentValue);
+                if (signals::has_value(result)) {
+                    workingValue = std::move(result);
+                    workingValueSet = true;
+                    produced_output = true;
+                }
+            } catch (const signals::Error&) { throw; }
+              catch (...) {}
+        }
+    }
+
+    // ── mapn_op (61) ──────────────────────────────────────────────────────────
+    // Gate: at least one input has a new working value AND every input has
+    // at least a current or working value (otherwise output is undefined).
+    // Callable receives: {latest_0, …, latest_n-1}, currentValue
+    else if (op == Operation::mapn_op) {
+        if (!inputs.empty() && callable) {
+            bool any_new = false;
+            for (Node* inp : inputs)
+                if (signals::has_value(inp->workingValue)) { any_new = true; break; }
+            if (any_new) {
+                std::vector<signals::Value> vals;
+                vals.reserve(inputs.size());
+                bool all_available = true;
+                for (Node* inp : inputs) {
+                    const signals::Value& v = latest(inp);
+                    if (!signals::has_value(v)) { all_available = false; break; }
+                    vals.push_back(v);
+                }
+                if (all_available) {
+                    try {
+                        signals::Value result = callable(vals, currentValue);
+                        if (signals::has_value(result)) {
+                            workingValue = std::move(result);
+                            workingValueSet = true;
+                            produced_output = true;
+                        }
+                    } catch (const signals::Error&) { throw; }
+                      catch (...) {}
+                }
+            }
+        }
+    }
+
+    // ── filter_op (62) ────────────────────────────────────────────────────────
+    // Gate: input[0] must have a new working value.
+    // Callable receives: {working_input[0]}, currentValue  → indicator
+    // If indicator is truthy, passes input[0]'s working value as output.
+    else if (op == Operation::filter_op) {
+        if (!inputs.empty() && callable &&
+            signals::has_value(inputs[0]->workingValue)) {
+            try {
+                signals::Value indicator =
+                    callable({inputs[0]->workingValue}, currentValue);
+                if (signals::has_value(indicator) && signals::is_truthy(indicator)) {
+                    workingValue = inputs[0]->workingValue;
+                    workingValueSet = true;
+                    produced_output = true;
+                }
+            } catch (const signals::Error&) { throw; }
+              catch (...) {}
+        }
+    }
+
+    // ── scan_op (63) ──────────────────────────────────────────────────────────
+    // inputs[0] = item, inputs[1] = seed (accumulator reset), inputs[2..n] = extra fn args
+    // All inputs are nodes; constants are wrapped in root (nop) nodes by the binding layer.
+    else if (op == Operation::scan_op) {
+        if (inputs.size() >= 2 && callable) {
+            const bool item_new = signals::has_value(inputs[0]->workingValue);
+            const bool seed_new = signals::has_value(inputs[1]->workingValue);
+            bool extra_new = false;
+            for (size_t i = 2; i < inputs.size(); ++i)
+                if (signals::has_value(inputs[i]->workingValue)) { extra_new = true; break; }
+
+            if (seed_new && !item_new && !extra_new) {
+                // Pure seed (re-)set: propagate new seed value as the accumulator output.
+                workingValue = inputs[1]->workingValue;
+                workingValueSet = true;
+                produced_output = true;
+            } else if (item_new || extra_new) {
+                // Fold step.  Determine the accumulator:
+                //   • seed also fired this tick → use seed's working value (combined reset+fold)
+                //   • otherwise use committed currentValue (running result from previous tick)
+                //   • fall back to seed's latest value (bootstrap: first tick after seed set)
+                const signals::Value& acc = seed_new
+                    ? inputs[1]->workingValue
+                    : (signals::has_value(currentValue)
+                        ? currentValue
+                        : latest(inputs[1]));
+                const signals::Value& item_val = latest(inputs[0]);
+                if (signals::has_value(acc) && signals::has_value(item_val)) {
+                    std::vector<signals::Value> call_inputs;
+                    call_inputs.push_back(item_val);
+                    for (size_t i = 2; i < inputs.size(); ++i)
+                        call_inputs.push_back(latest(inputs[i]));
+                    try {
+                        signals::Value result = callable(call_inputs, acc);
+                        if (signals::has_value(result)) {
+                            workingValue = std::move(result);
+                            workingValueSet = true;
+                            produced_output = true;
+                        }
+                    } catch (const signals::Error&) { throw; }
+                      catch (...) {}
+                }
+            }
+        }
+    }
 
     if (produced_output) return true;
 

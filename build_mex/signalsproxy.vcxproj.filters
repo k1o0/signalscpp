@@ -10,6 +10,9 @@
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NodeProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\plugins\mx_ops.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Work\source\repos\signalscpp\CMakeLists.txt" />

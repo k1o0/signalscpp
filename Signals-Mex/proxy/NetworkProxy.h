@@ -25,11 +25,15 @@ class NetworkProxy : public libmexclass::proxy::Proxy {
     // Methods registered with REGISTER_METHOD and callable from MATLAB
     // -----------------------------------------------------------------------
 
-    /// AddNode(inputs_ids, op_id, append_values) -> node_id
-    ///   inputs_ids   double row vector (may be empty for source nodes)
+    /// AddNode(input_ids, op_id, append_values[, fn_handle]) -> uint64 proxy_id
+    ///   input_ids    double row vector (may be empty for source nodes)
     ///   op_id        double scalar (cast to Operation enum)
     ///   append_values logical scalar
-    /// Returns: node_id as double scalar, or -1 on failure.
+    ///   fn_handle    (optional) MATLAB function handle for callable-opcode nodes
+    ///                (map_op=60, mapn_op=61, filter_op=62, scan_op=63).
+    ///                If the opcode is scan_op the scan-specific wrapper is used
+    ///                and the seed bootstrap is applied automatically.
+    /// Returns: uint64 NodeProxy id.
     void AddNode(libmexclass::proxy::method::Context& ctx);
 
     /// DeleteNode(node_id) -> (none)

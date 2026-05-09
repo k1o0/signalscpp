@@ -1,3 +1,4 @@
 C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/Release/CustomProxyFactory.obj
 C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/Release/NetworkProxy.obj
 C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/Release/NodeProxy.obj
+C:/Users/Work/source/repos/signalscpp/build_mex/signalsproxy.dir/Release/mx_ops.obj

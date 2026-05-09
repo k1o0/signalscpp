@@ -67,6 +67,42 @@ The user may ask "have we ported X yet?" Don't guess. Check:
 
 If the answer isn't clear from the repo, say so and ask the user rather than inventing a status.
 
+## Core concepts and terminology
+
+### Node types
+
+**Origin node**
+A network input node: no input nodes, value can be posted/updated any number of times during the life of the network.  In the legacy MATLAB code this is a `sig.node.OriginSignal`, created via `net.origin('name')`.  In the port it is a `nop`-op node (opcode 51) whose value is driven exclusively by `transact()` calls issued from experiment/user code.  Only origin nodes should ever be the target of an external `post` / `transact` call.  The `sig.Node` MATLAB class must **not** expose a mechanism to post to arbitrary non-origin nodes — doing so would corrupt the reactive graph.
+
+**Root node**
+A constant source node: no input nodes, value set exactly **once** at construction (as its committed `currentValue`) and never updated again.  In the legacy code, `sig.node.from` creates root nodes automatically when a plain MATLAB value (e.g. the `2` in `y = x + 2`) is used as an input to a derived signal; the factory calls `rootNode(net, name)` and pre-sets `CurrValue`.  In the port, root nodes are created by the `nodeFrom_` / `origin(value)` helpers in `sig.Net`: a `nop` node is made, one `transact`+`apply` is called to commit the constant, and the node is then never transacted again.  Root nodes make the graph purely declarative for constant sub-expressions.
+
+The key rule: **if a node's value must be settable more than once, it is an origin node; if its value is fixed at creation, it is a root node.**
+
+---
+
+### Transaction model
+
+**`transact(node_id, value)`** (C++ `Network::transact`)
+Posts a new value to a single source node (always a origin or root node in normal use) and propagates the change through the graph via breadth-first traversal.  Each reachable node calls `transfer()` in topological order.  The result is a list of *affected* node IDs — every node whose working value was set during this pass.  Working values are **not** yet committed; the graph is left in a "pending" state until `apply` is called.  Legacy analogue: `transactNode` / `sqTransact` in `network.c`.
+
+**`apply(affected_ids)`** (C++ `Network::apply`)
+Commits working values into current values for all affected nodes, then clears the working values.  Called immediately after `transact` to close the transaction.  Nodes with `appendValues = true` (e.g. `bufferUpTo`) concatenate into the current value rather than replacing it.  After `apply`, the network is back in a stable, committed state.  Legacy analogue: `sqApply` in `network.c`.
+
+Together `transact` + `apply` form one **transaction** — the atomic unit of update in the reactive graph.
+
+---
+
+### Transfer
+
+**Transfer (per-node computation)**
+The operation a node performs to compute its output from the working/current values of its inputs.  Called on every node in the BFS frontier of a `transact`.  The C++ method is `Network::Node::transfer()`.  It returns `true` if the node produced a new working value (propagation continues to its targets) or if the node's previously-set working value was cleared (propagation must also continue so downstream nodes learn the value vanished).  Returns `false` if nothing changed.  Legacy analogue: `transfer()` in `network.c`.
+
+**Transfer function (opcode + callable)**
+The specific computation rule associated with a node's `Operation` opcode.  Pure-C++ opcodes (e.g. `nop`, `plus`, `merge`, `numel`) are implemented entirely inside `Node::transfer()`.  Higher-order opcodes (`map_op = 60`, `mapn_op = 61`, `filter_op = 62`, `scan_op = 63`) additionally carry a **callable** — a `std::function<signals::Value(inputs, acc)>` — that is set separately after the node is created.  The MEX binding wraps a MATLAB function handle into this callable via `wrap_matlab_*_fn` factories in `mx_ops.cpp`.
+
+---
+
 ## Things that are easy to get wrong
 
 - **Silent type coercion.** MATLAB freely coerces between numeric types; the C++ core is explicit. The supported types are exactly the alternatives listed in `signals::Value` — anything else is rejected at the binding boundary.

@@ -151,18 +151,29 @@ public:
     // id is set to 0 and active to true immediately.
     explicit Network(long t_max_nodes) : Network(0, t_max_nodes) { active = true; }
 
+    // Callable type for user-supplied transfer functions on map_op/mapn_op/
+    // filter_op/scan_op nodes.  Passed directly to add_node(); the binding
+    // layer (mx_ops, pybind11) wraps a language-specific function handle into
+    // this type.  Returning monostate suppresses output for that tick.
+    //   inputs  — values selected by the opcode gate (working or latest)
+    //   current — this node's committed current value (scan accumulator)
+    using NodeCallable = std::function<
+        signals::Value(const std::vector<signals::Value>&, const signals::Value&)>;
+
     long get_id() const { return id; }
     long get_max_nodes() const { return max_nodes; }
     bool is_valid() { return active; }
     size_t n_active_nodes();
     size_t n_nodes() { return nodes.size(); }
-    long add_node(const std::vector<long>& t_inputs, Operation t_op, bool t_appendValues);
-    // Attach a callable to a function-op node after creation.
-    // The callable receives (latest_input_values, current_node_value) and
-    // returns the new working value, or monostate to suppress output.
-    bool set_node_callable(long node_id,
-        std::function<signals::Value(const std::vector<signals::Value>&,
-                                    const signals::Value&)> fn);
+    // Create a new node and optionally attach a callable in one step.
+    // Pass callable = nullptr (default) for pure-C++ opcode nodes.
+    long add_node(const std::vector<long>& t_inputs, Operation t_op,
+                  bool t_appendValues, NodeCallable callable = nullptr);
+
+    // Set the current (committed) value of a node directly.
+    // Used by the binding layer to seed the accumulator of scan_op nodes
+    // before the first transact.  Also useful for testing.
+    bool set_node_current_value(long node_id, const signals::Value& value);
     void destroy();
     // Disconnect and deactivate a node, freeing its slot for reuse.
     // Removes the node as a target from each of its inputs, and removes it

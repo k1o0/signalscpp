@@ -37,17 +37,22 @@ classdef Net
 
         % -----------------------------------------------------------------
 
-        function node = addNode(obj, inputNodes, opId, appendValues)
+        function node = addNode(obj, inputNodes, opId, appendValues, fn)
         % addNode  Create a new node and return a sig.Node handle.
-        %   inputNodes  — sig.Node array, numeric id vector, or [] for sources
-        %   opId        — numeric operation code (51=nop/source, 50=identity, …)
+        %   inputNodes   — sig.Node array, numeric id vector, or [] for sources
+        %   opId         — numeric operation code (51=nop/source, 50=identity, …)
         %   appendValues — logical scalar
+        %   fn           — (optional) MATLAB function handle for callable opcodes
+        %                  (map_op=60, mapn_op=61, filter_op=62, scan_op=63)
             inputIds = sig.Net.toIds(inputNodes);
-            proxyId = obj.Proxy.AddNode( ...
-                double(inputIds(:)'), ...
-                double(opId), ...
-                logical(appendValues));
-            node = sig.Node(proxyId);
+            if nargin < 5
+                proxyId = obj.Proxy.AddNode( ...
+                    double(inputIds(:)'), double(opId), logical(appendValues));
+            else
+                proxyId = obj.Proxy.AddNode( ...
+                    double(inputIds(:)'), double(opId), logical(appendValues), fn);
+            end
+            node = sig.Node(proxyId, obj);
         end
 
         function deleteNode(obj, node)
@@ -84,13 +89,35 @@ classdef Net
         function tf = isValid(obj)
             tf = obj.Proxy.IsValid();
         end
+
+        function out = mapn(obj, inputNodes, fn)
+        % mapn  Map N nodes through fn when any of them has a new value.
+        %   inputNodes — array of sig.Node objects or numeric id vector
+        %   fn         — function handle, e.g. @(a,b) a+b
+        %   Returns a new sig.Node.
+            out = obj.addNode(inputNodes, 61, false, fn);
+        end
+
+        function node = origin(obj, value)
+        % origin  Create a constant "root" node with a pre-committed value.
+        %   value — scalar constant (double, logical, or string).
+        %   The node's CurrentValue equals value immediately; it never fires
+        %   on its own but provides a stable latest value to downstream ops.
+        %   Use this to supply constant seeds, thresholds, etc. as nodes.
+            proxyId = obj.Proxy.AddNode(double.empty(1,0), double(51), false);
+            node = sig.Node(proxyId, obj);
+            affected = obj.Proxy.Transact(double(node.Id), value);
+            if ~isempty(affected)
+                obj.Proxy.Apply(double(affected(:)'));
+            end
+        end
     end
 
     % -----------------------------------------------------------------------
     % Static helpers: coerce a sig.Node | numeric id to a double scalar id
     % or a double row-vector of ids.
     % -----------------------------------------------------------------------
-    methods (Static, Access = private)
+    methods (Static)
         function id = toId(node)
         % toId  Return numeric id from a sig.Node or a numeric scalar.
             if isa(node, 'sig.Node')

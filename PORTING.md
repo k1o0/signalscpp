@@ -197,6 +197,10 @@ relevant area is touched — flagged here so they don't get lost.
    leaves the slot in the vector — fine for now, but means ids are
    monotonic and the vector grows. Decide whether to slot-reuse before
    long-running uses.
+5. **Signals** used to be called **Squeak**: references to 'squeak' and 'sq'
+   should be renamed to 'signals' and 'sig'.
+6. Flattened struct signals can update without all input value availiable.
+   See https://github.com/cortex-lab/Rigbox/issues/275
 
 ---
 

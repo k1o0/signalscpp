@@ -1,6 +1,7 @@
 #include "NetworkProxy.h"
 #include "NodeProxy.h"
 #include "mx_convert.h"
+#include "mx_ops.h"
 
 #include "libmexclass/proxy/ProxyManager.h"
 #include "MatlabDataArray.hpp"
@@ -63,12 +64,15 @@ static std::vector<long> extract_ids(const matlab::data::Array& arr) {
 // ---------------------------------------------------------------------------
 
 void NetworkProxy::AddNode(libmexclass::proxy::method::Context& ctx) {
-    // inputs[0]: double row vector of input node ids (may be empty)
+    // inputs[0]: double row vector of input node ids (may be empty for source nodes)
     // inputs[1]: double scalar op code
     // inputs[2]: logical scalar appendValues
+    // inputs[3]: (optional) MATLAB function handle — required for map_op/mapn_op/
+    //            filter_op/scan_op; not needed for pure-C++ opcodes (nop, numel, …)
     if (ctx.inputs.getNumberOfElements() < 3) {
         ctx.error = libmexclass::error::Error{
-            "sq:notEnoughArgs", "AddNode requires (inputs, opId, appendValues)"};
+            "sq:notEnoughArgs",
+            "AddNode requires (inputIds, opId, appendValues[, fnHandle])"};
         return;
     }
 
@@ -80,14 +84,25 @@ void NetworkProxy::AddNode(libmexclass::proxy::method::Context& ctx) {
     matlab::data::TypedArray<bool> app_arr = ctx.inputs[2];
     bool append_values = bool(app_arr[0]);
 
-    long node_id = net_->add_node(input_ids, op, append_values);
+    // Build callable from the optional fn handle.
+    Network::NodeCallable callable;
+    if (ctx.inputs.getNumberOfElements() >= 4) {
+        matlab::data::Array fn = ctx.inputs[3];
+        callable = (op == Operation::scan_op)
+            ? sq::mex_ops::wrap_matlab_scan_fn(std::move(fn), ctx.matlab)
+            : sq::mex_ops::wrap_matlab_fn(std::move(fn), ctx.matlab);
+    }
 
-    // Create a NodeProxy for this node and register it with the ProxyManager.
-    // Return the proxy ID as uint64 so MATLAB can wrap it in a sig.Node object.
+    long node_id = net_->add_node(input_ids, op, append_values, std::move(callable));
+    if (node_id < 0) {
+        ctx.error = libmexclass::error::Error{
+            "sq:addNodeFailed", "Failed to add node to network"};
+        return;
+    }
+
     auto node_proxy = std::make_shared<sq::proxy::NodeProxy>(net_, node_id);
     libmexclass::proxy::ID proxy_id =
         libmexclass::proxy::ProxyManager::manageProxy(node_proxy);
-
     matlab::data::ArrayFactory f;
     ctx.outputs[0] = f.createScalar<uint64_t>(proxy_id);
 }

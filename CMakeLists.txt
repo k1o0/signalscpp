@@ -50,6 +50,7 @@ if(SIGNALSCPP_BUILD_MEX)
         "${MEX_DIR}/proxy/CustomProxyFactory.cpp"
         "${MEX_DIR}/proxy/NetworkProxy.cpp"
         "${MEX_DIR}/proxy/NodeProxy.cpp"
+        "${MEX_DIR}/plugins/mx_ops.cpp"
     )
 
     libmexclass_client_add_proxy_library(
@@ -58,6 +59,7 @@ if(SIGNALSCPP_BUILD_MEX)
         INCLUDE_DIRS
             "${MEX_DIR}/proxy"
             "${MEX_DIR}/include"
+            "${MEX_DIR}/plugins"
             "${CMAKE_SOURCE_DIR}/Signals"
         LINK_LIBRARIES signals_core
     )
