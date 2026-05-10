@@ -50,6 +50,26 @@ $matlabKeywords = @(
     'return','spmd','switch','try','while'
 )
 
+# MATLAB uint32 inherited method names that would clash with enumeration members.
+# These are also suffixed with '_op' to avoid "cannot be used for both a method
+# and a member of an enumeration class" errors.
+$matlabMethods = @(
+    'plus','minus','times','mtimes','rdivide','ldivide','mrdivide','mldivide',
+    'power','mpower','uminus','uplus',
+    'eq','ne','lt','le','gt','ge',
+    'and','or','not',
+    'ctranspose','transpose',
+    'colon','horzcat','vertcat',
+    'subsref','subsasgn','subsindex',
+    'abs','sign','floor','ceil','round','mod','rem',
+    'sum','prod','cumsum','cumprod',
+    'max','min','sort',
+    'any','all',
+    'numel','size','length','ndims','isempty','isnumeric','islogical',
+    'display','disp','char','string','double','single','logical',
+    'int8','int16','int32','int64','uint8','uint16','uint32','uint64'
+)
+
 # ---------------------------------------------------------------------------
 # Parse the header
 # ---------------------------------------------------------------------------
@@ -70,7 +90,7 @@ foreach ($line in ($enumBody -split "`n")) {
         $name = $Matches[1]
         $val  = [int]$Matches[2]
 
-        if ($matlabKeywords -contains $name) { $name = "${name}_op" }
+        if ($matlabKeywords -contains $name -or $matlabMethods -contains $name) { $name = "${name}_op" }
 
         $entries.Add([PSCustomObject]@{ Name = $name; Value = $val })
     }

@@ -88,9 +88,12 @@ void NetworkProxy::AddNode(libmexclass::proxy::method::Context& ctx) {
     Network::NodeCallable callable;
     if (ctx.inputs.getNumberOfElements() >= 4) {
         matlab::data::Array fn = ctx.inputs[3];
-        callable = (op == Operation::scan_op)
-            ? sq::mex_ops::wrap_matlab_scan_fn(std::move(fn), ctx.matlab)
-            : sq::mex_ops::wrap_matlab_fn(std::move(fn), ctx.matlab);
+        if (op == Operation::function)
+            callable = sq::mex_ops::wrap_transfer_fn(std::move(fn), ctx.matlab);
+        else if (op == Operation::scan_op)
+            callable = sq::mex_ops::wrap_matlab_scan_fn(std::move(fn), ctx.matlab);
+        else
+            callable = sq::mex_ops::wrap_matlab_fn(std::move(fn), ctx.matlab);
     }
 
     long node_id = net_->add_node(input_ids, op, append_values, std::move(callable));

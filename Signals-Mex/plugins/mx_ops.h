@@ -35,12 +35,17 @@ using MatlabEngine = std::shared_ptr<matlab::engine::MATLABEngine>;
 
 /// Wrap a MATLAB function handle for map_op, mapn_op, or filter_op.
 /// Invokes:  feval(fn_handle, inputs[0], inputs[1], …)
-/// The current-node-value (accumulator) is NOT forwarded to MATLAB.
+/// Returns (val, has_value(val)); the current-node-value is NOT forwarded.
 Network::NodeCallable wrap_matlab_fn(matlab::data::Array fn_handle, MatlabEngine engine);
 
 /// Wrap a MATLAB function handle for scan_op.
 /// Invokes:  feval(fn_handle, accumulator, inputs[0], extra0, …)
-/// accumulator = second arg to the callable = this node's current value.
+/// Returns (val, has_value(val)); accumulator = this node's current value.
 Network::NodeCallable wrap_matlab_scan_fn(matlab::data::Array fn_handle, MatlabEngine engine);
+
+/// Wrap a MATLAB @(node) closure for function_op (MATLAB transfer mode).
+/// Invokes:  [val, valset] = feval(fn_handle, node_id)
+/// fn_handle captures net, input_ids, and the user function internally.
+Network::NodeCallable wrap_transfer_fn(matlab::data::Array fn_handle, MatlabEngine engine);
 
 } // namespace sq::mex_ops

@@ -101,20 +101,13 @@ private:
             bool inUse{ false };
             bool queued{ false };
             bool appendValues{ false };
-            Transferer transferer = { Operation::nop };
+            Transferer transferer{ Operation::nop };
             std::vector<Node*> inputs = {};
             std::set<Node*> targets = {};
             signals::Value workingValue{};
             bool workingValueSet{ false };
             signals::Value currentValue{};
             bool currentValueSet{ false };
-            // Stored callable for Operation::function nodes (map / mapn / scan / filter).
-            // Signature: f(inputs, current_node_value) -> Value
-            // The second argument is this node's current value, used by scan as
-            // the accumulator seed.  For map/mapn/filter it can be ignored.
-            // Returning monostate signals "no output this tick".
-            std::function<signals::Value(const std::vector<signals::Value>&,
-                                        const signals::Value&)> callable;
         public:
             Node(Network* t_net, long t_id, Operation t_op);
             void destroy();
@@ -125,9 +118,8 @@ private:
             void set_working_value(const signals::Value& value);
             void set_current_value(const signals::Value& value);
             void set_transferer(Operation t_op) { transferer = Transferer(t_op); }
-            void set_callable(std::function<signals::Value(const std::vector<signals::Value>&,
-                                                           const signals::Value&)> fn) {
-                callable = std::move(fn);
+            void set_callable(Transferer::NodeCallable fn) {
+                transferer.set_callable(std::move(fn));
             }
             void set_inputs(std::vector<Node*> t_inputs);
             void add_target(Node* target) { targets.insert(target); }
@@ -151,14 +143,10 @@ public:
     // id is set to 0 and active to true immediately.
     explicit Network(long t_max_nodes) : Network(0, t_max_nodes) { active = true; }
 
-    // Callable type for user-supplied transfer functions on map_op/mapn_op/
-    // filter_op/scan_op nodes.  Passed directly to add_node(); the binding
-    // layer (mx_ops, pybind11) wraps a language-specific function handle into
-    // this type.  Returning monostate suppresses output for that tick.
-    //   inputs  — values selected by the opcode gate (working or latest)
-    //   current — this node's committed current value (scan accumulator)
-    using NodeCallable = std::function<
-        signals::Value(const std::vector<signals::Value>&, const signals::Value&)>;
+    // NodeCallable is the single callable type used by all opcode-driven nodes.
+    // Defined in Transferer (transferer.h); aliased here for callers that reach
+    // it via the Network:: scope (e.g., mx_ops, NetworkProxy).
+    using NodeCallable = Transferer::NodeCallable;
 
     long get_id() const { return id; }
     long get_max_nodes() const { return max_nodes; }
@@ -191,6 +179,8 @@ public:
     [[nodiscard]] signals::Value get_current_value(long node_id) const;
     // Read the working value of a node (set during transact, before apply).
     [[nodiscard]] signals::Value get_working_value(long node_id) const;
+    // Read the latest value: working if set during transact, else current.
+    [[nodiscard]] signals::Value get_latest_value(long node_id) const;
     // Reset the working value of a node to monostate.
     bool clear_working_value(long node_id);
     // Return the input node IDs of a node (for debug / introspection).

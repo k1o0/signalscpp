@@ -176,6 +176,42 @@ and combinations of nodes. Port after the engine is solid.
 
 ---
 
+## MATLAB Proxies
+
+The MATLAB proxy classes should follow the `+sig/+node/` package in the legacy code as closely as possible.
+
+- The MATLAB implementations of the transfer functions should be copied closely. The signature of transfer functions should be identical for all functions: (net, inputs, node, f).
+- The naming of variables in these class methods, e.g. `this` instead of `obj`, and informative
+  input names for each method, e.g. `what`, `when`, `criterion`, etc.
+
+
+---
+
+## Documentation & Code style
+
+Every MATLAB function, method, and class property should come with a complete documentation string.
+Functions and methods should have the following format:
+
+```matlab
+      %NAME One-line description of function
+      % A longer explanation of the function spanning multiple lines
+      %
+      % Inputs (Optional Name-Value Parameters):
+      %   inputArgName (logical) - Explanation of the input argument, its
+      %     default, etc.
+      %
+      % Example:
+      %   foo = Bar.baz(x, y, z);
+      %
+      % See also ETC
+```
+
+Class properties should be documentated with a comment above each property.
+MATLAB indentations should be 4 spaces.
+Variable names should be copied closely from those in the legacy code.
+
+---
+
 ## Known issues to fix during the next refactor
 
 These are present in the current code and should be addressed when the

@@ -8,12 +8,21 @@ classdef Net
 % PROPERTIES
 %   Id           (uint64, read-only) unique identifier for this network instance
 %   nActiveNodes (double, read-only) number of nodes currently in use
+%   TransferMode ('cpp' | 'matlab') how new combinator nodes are implemented:
+%      'cpp'    (default) each combinator uses its named C++ opcode
+%               (map_op=60, filter_op=62, …).  The MATLAB function handle is
+%               stored on the node as a callable but gating & dispatch are
+%               done in C++.  Use this for maximum performance.
+%      'matlab' each combinator falls back to function_op (opcode 0) and a
+%               MATLAB closure that implements the full transfer semantics.
+%               Mirrors legacy sig.transfer.* approach for debugging or
+%               custom-transfer experiments.
 %
 % CREATING SIGNALS
-%   x = net.origin()   % sig.node.OriginSignal — inject values with x.post(value)
-%   y = x.map(fn)      % sig.node.Signal derived from x
+%   x = net.origin()   % sig.OriginSignal — inject values with x.post(value)
+%   y = x.map(fn)      % sig.Signal derived from x
 %
-% INTERNAL METHODS (used by sig.node.Signal transfer implementations)
+% INTERNAL METHODS (used by sig.Signal transfer implementations)
 %   node     = net.addNode(inputNodes, opId, appendValues)
 %   node     = net.addNode(inputNodes, opId, appendValues, fn)
 %   affected = net.transact(node, value)
@@ -22,12 +31,19 @@ classdef Net
 % All methods that accept a node also accept a numeric node id.
 
     properties (Access = private)
-        Proxy
+        Proxy libmexclass.proxy.Proxy
+    end
+
+    properties
+        TransferMode (1,:) char {mustBeMember(TransferMode, {'cpp','matlab'})} = 'matlab'
     end
 
     properties (Dependent)
-        Id           % uint64 — unique per network instance, set at construction
-        nActiveNodes
+        % Unique ID per network instance, set at construction
+        Id uint64
+
+        % Number of nodes in use within network
+        nActiveNodes uint64
     end
 
     methods
@@ -43,14 +59,13 @@ classdef Net
         % -----------------------------------------------------------------
 
         function node = addNode(obj, inputNodes, opId, appendValues, fn)
-        % addNode  Create a new network node, return a sig.node.Signal.
-        %   inputNodes   — sig.Signal / sig.Node array, cell-array mix, numeric
-        %                  id vector, or [] for source nodes
+        % addNode  Create a new network node; return a sig.Node handle.
+        %   inputNodes   — sig.Node array for source nodes
         %   opId         — sig.OpCode constant or plain double
         %                  (see matlab/+sig/OpCode.m for the full list)
         %   appendValues — logical scalar
         %   fn           — (optional) MATLAB function handle (opcodes 60–63)
-            inputIds = sig.Net.toIds(inputNodes);
+            inputIds = iff(isempty(inputNodes), [], @()[inputNodes.Id]);
             if nargin < 5
                 proxyId = obj.Proxy.AddNode( ...
                     double(inputIds(:)'), double(opId), logical(appendValues));
@@ -58,15 +73,15 @@ classdef Net
                 proxyId = obj.Proxy.AddNode( ...
                     double(inputIds(:)'), double(opId), logical(appendValues), fn);
             end
-            node = sig.node.Signal(proxyId, obj);
+            node = sig.Node(proxyId, obj, inputNodes);
         end
 
         function deleteNode(obj, node)
-            obj.Proxy.DeleteNode(double(sig.Net.toId(node)));
+            obj.Proxy.DeleteNode(node.Id);
         end
 
         function affected = transact(obj, node, value)
-            affected = obj.Proxy.Transact(double(sig.Net.toId(node)), value);
+            affected = obj.Proxy.Transact(node.Id, value);
         end
 
         function apply(obj, affected)
@@ -77,15 +92,15 @@ classdef Net
         end
 
         function value = getCurrentValue(obj, node)
-            value = obj.Proxy.GetCurrentValue(double(sig.Net.toId(node)));
+            value = obj.Proxy.GetCurrentValue(node.Id);
         end
 
         function value = getWorkingValue(obj, node)
-            value = obj.Proxy.GetWorkingValue(double(sig.Net.toId(node)));
+            value = obj.Proxy.GetWorkingValue(node.Id);
         end
 
         function ids = getNodeInputs(obj, node)
-            ids = obj.Proxy.GetNodeInputs(double(sig.Net.toId(node)));
+            ids = obj.Proxy.GetNodeInputs(node.Id);
         end
 
         function n = get.nActiveNodes(obj)
@@ -100,45 +115,40 @@ classdef Net
             tf = obj.Proxy.IsValid();
         end
 
-        function node = origin(obj)
-        % origin  Create a source (nop) node.  Inject values with node.post(value).
-            proxyId = obj.Proxy.AddNode(double.empty(1, 0), double(sig.OpCode.nop), false);
-            node = sig.node.OriginSignal(proxyId, obj);
+        function s = origin(obj, name)
+            % Create an origin signal with a specified name
+            %  Returns a signal of the class 'OriginSignal', which can have its
+            %  values set via the post method.  The name is an optional string
+            %  identifier.
+            %
+            %  Example:
+            %   net = sig.Net; % Create network
+            %   inputSig = net.origin('input');
+            %   post(inputSig, pi)
+            %   inputSig.Node.Value
+            %   >> ans =
+            %          3.1416
+            %
+            % See also sig.OriginSignal, sig.Net.subscriptableOrigin
+            n = obj.addNode(sig.Node.empty(), sig.OpCode.nop, false);
+            if nargin < 2
+                n.Name = sprintf("n%i", n.Id);
+            else
+                n.Name = name;
+            end
+            s = sig.OriginSignal(n);
+        end
+
+        function n = rootNode(obj, value)
+        % rootNode  Create a constant node initialised with value; return its sig.Node.
+        %   The returned sig.Node reference keeps the C++ node alive.  The
+        %   intermediate sig.OriginSignal is discarded once this method returns.
+            s = obj.origin();
+            s.post(value);
+            n = s.Node;
+            n.Name = toStr(value);
         end
     end
 
-    % -----------------------------------------------------------------------
-    % Static helpers
-    % -----------------------------------------------------------------------
-    methods (Static)
-
-        function id = toId(node)
-        % toId  Coerce a sig.Signal, sig.Node, or numeric scalar to a double id.
-            if isa(node, 'sig.Signal') || isa(node, 'sig.Node')
-                id = node.Id;
-            else
-                id = double(node);
-            end
-        end
-
-        function ids = toIds(nodes)
-        % toIds  Coerce inputs to a double row-vector of node ids.
-        %   Accepts: [] | cell array | sig.Signal | sig.Node | numeric vector
-            if isempty(nodes)
-                ids = double.empty(1, 0);
-            elseif iscell(nodes)
-                ids = cellfun(@sig.Net.toId, nodes);
-            elseif isa(nodes, 'sig.Signal') || isa(nodes, 'sig.Node')
-                n   = builtin('numel', nodes);   % bypass overridden numel
-                ids = zeros(1, n);
-                for k = 1:n
-                    ids(k) = nodes(k).Id;
-                end
-            else
-                ids = double(nodes(:)');
-            end
-        end
-
-    end
 end
 

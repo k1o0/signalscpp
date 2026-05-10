@@ -1,13 +1,12 @@
-function addSignalsPaths(repoRoot)
+function addSignalsPaths(savePaths)
 % addSignalsPaths  Add all Signals MATLAB dependencies to the search path.
 %
 %   addSignalsPaths()
-%       Infers the repository root from this file's location
-%       (matlab/addSignalsPaths.m → repo root is the parent directory).
+%       Infers the repository root from this file's location and saves
+%       paths.
 %
-%   addSignalsPaths(repoRoot)
-%       Explicit repository root path; useful when calling from a
-%       different working directory.
+%   addSignalsPaths(false)
+%       Add paths without saving.
 %
 % After this function returns the following are on the MATLAB path:
 %   • matlab/          — +sig package and +libmexclass proxy runtime
@@ -29,28 +28,26 @@ function addSignalsPaths(repoRoot)
 % Example — when already in the matlab/ directory:
 %   addSignalsPaths;
 %
-% See also sig.Net, sig.node.OriginSignal
+% See also sig.Net, sig.OriginSignal
 
     if nargin < 1
-        % This file lives at <repo>/matlab/addSignalsPaths.m
-        thisDir  = fileparts(mfilename('fullpath'));
-        repoRoot = fileparts(thisDir);
+      savePaths = true;
     end
-
-    matlabDir = fullfile(repoRoot, 'matlab');
-
-    if ~isfolder(matlabDir)
-        error('sig:addSignalsPaths:notFound', ...
-            ['Could not find the matlab/ directory under:\n  %s\n' ...
-             'Check the repoRoot argument or that the working directory is correct.'], ...
-            repoRoot);
+    
+    root = fileparts(mfilename('fullpath'));
+    
+    addpath(...
+      root,...
+      fullfile(root, 'util')...
+      );
+    
+    if savePaths
+      assert(savepath == 0, 'Failed to save changes to MATLAB path');
     end
 
     % Release any loaded MEX so the next proxy construction picks up the
     % DLL that is currently on disk (important after a rebuild + install).
     clear mex %#ok<CLMEX>
 
-    addpath(matlabDir);
-
-    fprintf('[Signals] Path configured. matlab/ → %s\n', matlabDir);
+    fprintf('[Signals] Path configured. %s\n', fullfile(root));
 end

@@ -14,7 +14,7 @@ classdef Node < handle
 %   Net      (sig.Net, read-only) parent network
 %   Value    (Dependent) latest value: working during a transact, else the
 %             last committed value; [] if never set
-%   Inpus (Dependent) array of upstream Nodes
+%   InputIds (Dependent) row vector of upstream node ids
 %
 % METHODS
 %   nodes = n.from(arg1, arg2, ...)
@@ -28,7 +28,7 @@ classdef Node < handle
 
    properties
       % An optional format string to construct name from inputs
-      FormatSpec (1,1) string
+      FormatSpec string
 
       % The nodes (and their ordering) which are presented as inputs, e.g.
       % used in formatting the name of the node, or in a GUI
@@ -47,6 +47,11 @@ classdef Node < handle
         % The name of the node
         Name (1,1) string
 
+        % (DEPRECATED) row vector of upstream node ids
+        InputIds
+    end
+
+    properties (Dependent, Transient)
         % Latest node value or [] if never set
         Value
     end
@@ -56,9 +61,9 @@ classdef Node < handle
         Proxy libmexclass.proxy.Proxy
 
         % Name to display instead of using format spec
-        NameOverride (1,1) string
+        NameOverride char
     end
-
+    
 
     methods
 
@@ -73,13 +78,11 @@ classdef Node < handle
             obj.Id  = obj.Proxy.GetId();
             obj.Net = net;
             % Assign node inputs
-            if nargin < 3; inputs = sig.Node.empty(1, 0); end
-            assert(all(arrayfun(@(x) isequal(x.Net, net), inputs)), ...
-                'sig:Node:wrongNet', 'Not all input nodes belong to the same network.')
-            assert(all(obj.Proxy.GetInputIds() == [inputs.Id]), ...
-                'sig:Node:inputMismatch', 'Input node IDs do not match the C++ graph.')
+            if nargin < 3
+                obj.
+            assert(all(arrayfun(@(x) isequal(x.Net, net), inputs)), 'not all inputs part of same network')
+            assert(all(obj.Proxy.GetInputIds() == [inputs.Id]), 'inputs nodes do not match graph')
             obj.Inputs = inputs;
-            obj.DisplayInputs = obj.Inputs;
         end
 
         % -----------------------------------------------------------------
@@ -87,22 +90,24 @@ classdef Node < handle
         % -----------------------------------------------------------------
 
         function v = get.Name(this)
-            if this.NameOverride ~= ""
+            if ~isempty(this.NameOverride)
                 v = this.NameOverride;
-            elseif this.FormatSpec == ""
-                v = sprintf("n%i", this.Id);
             else
-                childNames = sig.Node.names(this.DisplayInputs);
-                v = sprintf(this.FormatSpec, childNames{:});
+                names = [this.DisplayInputs.Name];
+                v = sprintf(this.FormatSpec, names{:});
             end
         end
-
+    
         function set.Name(this, v)
-            this.NameOverride = string(v);
+            this.NameOverride = v;
         end
 
         function v = get.Value(obj)
             v = obj.Proxy.GetValue();
+        end
+
+        function ids = get.InputIds(obj)
+            ids = obj.Proxy.GetInputIds();
         end
 
         % -----------------------------------------------------------------
@@ -136,34 +141,6 @@ classdef Node < handle
                 end
             end
         end
-    end
-
-    methods (Static)
-
-        function n = names(nodes)
-        %names  Return the Name of each node as a cell array of strings.
-        %
-        %   n = sig.Node.names(nodes)
-        %
-        %   Used by get.Name to expand DisplayInputs names into a cell array
-        %   suitable for sprintf.  A static method is required because MATLAB
-        %   does not permit the shorthand [array.DependentProp] syntax inside a
-        %   Dependent property getter of the same class.
-        %
-        %   Inputs:
-        %     nodes (sig.Node) - array of nodes whose names to collect
-        %
-        %   Output:
-        %     n (1×N string) - string array, one entry per node
-        %
-        %   Example:
-        %     childNames = sig.Node.names(this.DisplayInputs);
-        %     label = sprintf('%s + %s', childNames{:});
-        %
-        %   See also sig.Node.get.Name
-            n = [nodes.Name];
-        end
-
     end
 end
 

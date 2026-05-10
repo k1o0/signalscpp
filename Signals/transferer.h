@@ -9,6 +9,10 @@
 #define SIGNALS_API __declspec(dllimport)
 #endif
 
+#include "value.h"
+#include <functional>
+#include <utility>
+#include <vector>
 
 enum class SIGNALS_API Operation {
     // ── User-supplied callable — generic escape hatch ─────────────────────────
@@ -144,14 +148,36 @@ enum class SIGNALS_API Operation {
 
 
 class SIGNALS_API Transferer {
-private:
-    enum Operation opCode { Operation::nop };
-    bool workingInputChanges{ false };
 public:
-    Transferer(Operation t_op) { opCode = t_op; };
-    Transferer(int t_op) { opCode = static_cast<Operation>(t_op); };
-    Transferer() { opCode = Operation::nop; };
+    // Callable type stored on every node that uses a user-supplied function.
+    // Matches the legacy transferInMATLAB contract: the callable is responsible
+    // for all gating logic and returns a (value, was_set) pair.
+    //   inputs   - latest values of the node's inputs (working if set, else current)
+    //   current  - this node's committed current value (used as scan accumulator)
+    //   node_id  - this node's id; forwarded to MATLAB transfer functions so they
+    //              can call back into the network to query other nodes' values
+    // Returns std::pair<signals::Value, bool>:
+    //   .first   - the new working value (ignored when .second is false)
+    //   .second  - true iff .first should be stored as the new working value
+    using NodeCallable = std::function<
+        std::pair<signals::Value, bool>(
+            const std::vector<signals::Value>&,
+            const signals::Value&,
+            long)>;
+
+    Transferer() : opCode(Operation::nop) {}
+    explicit Transferer(Operation t_op) : opCode(t_op) {}
+    explicit Transferer(int t_op) : opCode(static_cast<Operation>(t_op)) {}
+
     Operation get_op() const noexcept { return opCode; }
+    void set_callable(NodeCallable fn) { callable_ = std::move(fn); }
+    const NodeCallable& get_callable() const noexcept { return callable_; }
+    bool has_callable() const noexcept { return static_cast<bool>(callable_); }
+
+private:
+    Operation opCode{ Operation::nop };
+    bool workingInputChanges{ false };
+    NodeCallable callable_;
 };
 
 #endif

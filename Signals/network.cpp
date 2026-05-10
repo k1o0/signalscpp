@@ -292,6 +292,14 @@ signals::Value Network::get_working_value(long node_id) const {
     return nodes[static_cast<size_t>(node_id)].workingValue;
 }
 
+/// Return the latest value: working if set during transact, else current (monostate if neither).
+signals::Value Network::get_latest_value(long node_id) const {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size())
+        return signals::Value{};
+    const Node& n = nodes[static_cast<size_t>(node_id)];
+    return signals::has_value(n.workingValue) ? n.workingValue : n.currentValue;
+}
+
 /// Reset the working value of a node to monostate.
 bool Network::clear_working_value(long node_id) {
     if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) return false;
@@ -334,7 +342,7 @@ void Network::Node::destroy() {
 	currentValue = signals::Value{};
 	inputs.clear();
 	targets.clear();
-	callable = nullptr;  // release any stored function
+	transferer.set_callable({});  // release any stored callable
 }
 
 long Network::Node::get_id() const {
@@ -394,7 +402,9 @@ bool Network::Node::transfer() {
     };
 
     bool produced_output = false;
-
+    // Retrieve the node's callable from the Transferer once.
+    // All opcode blocks that invoke user-supplied functions reference this alias.
+    const Transferer::NodeCallable& callable = transferer.get_callable();
     // ── Binary arithmetic and comparison ops (opcodes 1-14) ──────────────────
     if (op_int >= 1 && op_int <= 14) {
         if (inputs.size() >= 2 &&
@@ -561,32 +571,33 @@ bool Network::Node::transfer() {
     // Used by map / mapn / scan / filter.  The callable receives the latest
     // value of every input and this node's current value (scan accumulator).
     // It returns the new working value, or monostate to suppress output.
+    // ── function (0): MATLAB transfer callable ─────────────────────────────────────
+    // Mirrors legacy transferInMATLAB(): always invoked when the node is
+    // triggered (any input fired).  The callable handles all gating internally
+    // and returns (value, valset) — valset=false suppresses output this tick.
+    // node_id is forwarded so MATLAB transfer fns can query working/current
+    // values of other nodes via the network.
     else if (op == Operation::function) {
         if (callable) {
-            // Only invoke when at least one input has a new working value.
-            bool any_new = false;
-            for (Node* inp : inputs) {
-                if (signals::has_value(inp->workingValue)) { any_new = true; break; }
-            }
-            if (any_new) {
-                std::vector<signals::Value> inp_vals;
-                inp_vals.reserve(inputs.size());
-                for (Node* inp : inputs)
-                    inp_vals.push_back(latest(inp));
-                try {
-                    signals::Value result = callable(inp_vals, currentValue);
-                    if (signals::has_value(result)) {
-                        workingValue = std::move(result);
-                        workingValueSet = true;
-                        produced_output = true;
-                    }
-                } catch (const signals::Error&) {
-                    // propagate signals errors upward
-                    throw;
-                } catch (...) {
-                    // swallow unexpected exceptions to keep the graph alive
+            std::vector<signals::Value> inp_latest;
+            inp_latest.reserve(inputs.size());
+            for (Node* inp : inputs)
+                inp_latest.push_back(latest(inp));
+            try {
+                auto [result, valset] = callable(inp_latest, currentValue, id);
+                if (valset) {
+                    workingValue = std::move(result);
+                    workingValueSet = true;
+                    produced_output = true;
+                } else if (workingValueSet) {
+                    // Transfer fn suppressed output this tick but a working
+                    // value was previously set: clear it and propagate the unset.
+                    workingValue = signals::Value{};
+                    workingValueSet = false;
+                    produced_output = true;
                 }
-            }
+            } catch (const signals::Error&) { throw; }
+              catch (...) {}
         }
     }
     // nop (51): source node — value set externally via transact(); transfer()
@@ -615,13 +626,13 @@ bool Network::Node::transfer() {
 
     // ── map_op (60) ───────────────────────────────────────────────────────────
     // Gate: input[0] must have a new working value.
-    // Callable receives: {latest(input[0])}, currentValue
+    // Callable receives: {latest(input[0])}, currentValue, node_id
     else if (op == Operation::map_op) {
         if (!inputs.empty() && callable &&
             signals::has_value(inputs[0]->workingValue)) {
             try {
-                signals::Value result = callable({latest(inputs[0])}, currentValue);
-                if (signals::has_value(result)) {
+                auto [result, valset] = callable({latest(inputs[0])}, currentValue, id);
+                if (valset) {
                     workingValue = std::move(result);
                     workingValueSet = true;
                     produced_output = true;
@@ -651,8 +662,8 @@ bool Network::Node::transfer() {
                 }
                 if (all_available) {
                     try {
-                        signals::Value result = callable(vals, currentValue);
-                        if (signals::has_value(result)) {
+                        auto [result, valset] = callable(vals, currentValue, id);
+                        if (valset) {
                             workingValue = std::move(result);
                             workingValueSet = true;
                             produced_output = true;
@@ -666,15 +677,15 @@ bool Network::Node::transfer() {
 
     // ── filter_op (62) ────────────────────────────────────────────────────────
     // Gate: input[0] must have a new working value.
-    // Callable receives: {working_input[0]}, currentValue  → indicator
+    // Callable receives: {working_input[0]}, currentValue, node_id -> (indicator, valset)
     // If indicator is truthy, passes input[0]'s working value as output.
     else if (op == Operation::filter_op) {
         if (!inputs.empty() && callable &&
             signals::has_value(inputs[0]->workingValue)) {
             try {
-                signals::Value indicator =
-                    callable({inputs[0]->workingValue}, currentValue);
-                if (signals::has_value(indicator) && signals::is_truthy(indicator)) {
+                auto [indicator, valset] =
+                    callable({inputs[0]->workingValue}, currentValue, id);
+                if (valset && signals::is_truthy(indicator)) {
                     workingValue = inputs[0]->workingValue;
                     workingValueSet = true;
                     produced_output = true;
@@ -717,8 +728,8 @@ bool Network::Node::transfer() {
                     for (size_t i = 2; i < inputs.size(); ++i)
                         call_inputs.push_back(latest(inputs[i]));
                     try {
-                        signals::Value result = callable(call_inputs, acc);
-                        if (signals::has_value(result)) {
+                        auto [result, valset] = callable(call_inputs, acc, id);
+                        if (valset) {
                             workingValue = std::move(result);
                             workingValueSet = true;
                             produced_output = true;

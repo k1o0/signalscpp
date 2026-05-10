@@ -30,11 +30,8 @@ class NodeProxy : public libmexclass::proxy::Proxy {
     /// GetId() -> double scalar  — the node's id within its Network
     void GetId(libmexclass::proxy::method::Context& ctx);
 
-    /// GetCurrentValue() -> MATLAB array (or [] if never set)
-    void GetCurrentValue(libmexclass::proxy::method::Context& ctx);
-
-    /// GetWorkingValue() -> MATLAB array (or [] if not mid-transaction)
-    void GetWorkingValue(libmexclass::proxy::method::Context& ctx);
+    /// GetValue() -> latest value (working during transact, else current; [] if never set)
+    void GetValue(libmexclass::proxy::method::Context& ctx);
 
     /// GetInputIds() -> double row vector of upstream node ids
     void GetInputIds(libmexclass::proxy::method::Context& ctx);

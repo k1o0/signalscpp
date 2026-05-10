@@ -124,36 +124,74 @@ They are built by the **CMake project** in `build_mex/` (pre-configured;
 do not confuse with the root `CppSignals.sln` which only builds the C++
 unit-test binaries).
 
-### Rebuild and install (after editing C++ source files)
+### Prerequisites
+
+| Requirement | Version used | Notes |
+|---|---|---|
+| Visual Studio | 2022 (v143) | Desktop development with C++ workload (includes MSVC, CMake, Windows SDK) |
+| MATLAB | R2022b or later | MEX compiler headers; R2025a was used to configure `build_mex/` |
+| CMake | 3.21+ | Ships with VS 2022; no separate install needed |
+
+### Quick rebuild (recommended)
 
 **Close MATLAB first** — Windows locks the loaded DLL and the install step
-will fail if MATLAB is open.
+will fail while MATLAB is running.
 
-From a *Developer Command Prompt for VS 2022* (or any shell that can find
-`MSBuild.exe`):
+From any PowerShell prompt at the repo root:
 
-```bat
-rem 1. Rebuild signalsproxy.dll (picks up changes in Signals/*.cpp / *.h)
-msbuild build_mex\signalsproxy.vcxproj /p:Configuration=Release
-
-rem 2. Install into matlab\+libmexclass\+proxy\  (copies DLL + libs)
-cmake -DBUILD_TYPE=Release -P build_mex\cmake_install.cmake
+```powershell
+.\scripts\build_mex.ps1
 ```
 
-Step 2 can also be run as:
+This runs cmake configure (if needed), builds `signalsproxy` in Release, and
+installs the DLLs into `matlab/+libmexclass/+proxy/`.  Then in MATLAB:
 
-```bat
-msbuild build_mex\INSTALL.vcxproj /p:Configuration=Release
+```matlab
+addSignalsPaths   % reloads the freshly installed DLL
 ```
 
-After re-opening MATLAB, call `addSignalsPaths` again — it runs
-`clear mex` internally so the freshly installed DLL is loaded on next use.
+Common flags:
+
+```powershell
+# Debug build, skip install (if MATLAB is still open)
+.\scripts\build_mex.ps1 -Config Debug -SkipInstall
+
+# Force reconfigure (after editing CMakeLists.txt or adding source files)
+.\scripts\build_mex.ps1 -Reconfigure
+
+# Rebuild everything, including the gateway (rare)
+.\scripts\build_mex.ps1 -Target ALL_BUILD
+```
+
+Run `Get-Help .\scripts\build_mex.ps1 -Full` for all options.
+
+### Manual cmake commands (any machine)
+
+The script uses the cmake bundled with VS 2022.  On a machine where cmake is
+on `PATH`, the equivalent commands are:
+
+```bat
+rem Configure (once, or after editing CMakeLists.txt)
+cmake -S . -B build_mex -G "Visual Studio 17 2022" -A x64 ^
+      -DSIGNALSCPP_BUILD_MEX=ON ^
+      -DMatlab_ROOT_DIR="C:\Program Files\MATLAB\R2025a" ^
+      -DCMAKE_INSTALL_PREFIX="%cd%\matlab"
+
+rem Build signalsproxy
+cmake --build build_mex --config Release --target signalsproxy
+
+rem Install into matlab/
+cmake --install build_mex --config Release
+```
+
+Adjust `-DMatlab_ROOT_DIR` and `-G` to match your toolchain.
 
 ### Rebuild gateway.mexw64 (rare)
 
 `gateway.mexw64` only needs rebuilding if the libmexclass ABI changes
-(practically never).  Build `build_mex\gateway.vcxproj` with
-`/p:Configuration=Release`, then run the install step above.
+(practically never).  Pass `-Target ALL_BUILD` to the script, or build
+`build_mex\gateway.vcxproj` directly with `/p:Configuration=Release`,
+then run the install step.
 
 ### Running the C++ unit tests
 

@@ -14,30 +14,30 @@ net = sig.Net(500);
 
 % ── Test 1: addNode returns a sig.Signal ─────────────────────────────────────
 node = net.addNode([], sig.OpCode.nop, false);
-assert(isa(node, 'sig.Signal'), 'addNode must return a sig.Signal');
+assert(isa(node, 'sig.Node'), 'addNode must return a sig.Signal');
 fprintf('[PASS] addNode returns sig.Signal\n');
 
-% ── Test 2: sig.Signal.Id is a non-negative numeric scalar ───────────────────
+% ── Test 2: sig.Signal.Id is a non-negative numeric scalar ──────────────
 assert(isnumeric(node.Id) && isscalar(node.Id) && node.Id >= 0, ...
-    'sig.Signal.Id must be a non-negative numeric scalar');
-fprintf('[PASS] sig.Signal.Id = %d\n', node.Id);
+    'sig.Id must be a non-negative numeric scalar');
+fprintf('[PASS] sig.Id = %d\n', node.Id);
 
-% ── Test 3: CurrentValue is [] before any transact ───────────────────────────
-v = node.CurrentValue;
-assert(isempty(v), 'CurrentValue should be [] before any transact');
-fprintf('[PASS] CurrentValue is [] before transact\n');
+% ── Test 3: Value is [] before any transact ──────────────────────────────────
+v = node.Value;
+assert(isempty(v), 'Value should be [] before any transact');
+fprintf('[PASS] Value is [] before transact\n');
 
-% ── Test 4: WorkingValue is [] outside a transaction ─────────────────────────
-wv = node.WorkingValue;
-assert(isempty(wv), 'WorkingValue should be [] outside a transact');
-fprintf('[PASS] WorkingValue is [] outside transaction\n');
+% ── Test 4: Value is [] before any commit ────────────────────────────────────
+v = node.Value;
+assert(isempty(v), 'Value should be [] when no value has been committed');
+fprintf('[PASS] Value is [] with no committed value\n');
 
-% ── Test 5: CurrentValue reflects committed value after transact+apply ────────
+% ── Test 5: Value reflects committed value after transact+apply ──────────────
 affected = net.transact(node, 3.14);
 net.apply(affected);
-v = node.CurrentValue;
+v = node.Value;
 assert(isequal(v, 3.14), sprintf('Expected 3.14, got %s', mat2str(v)));
-fprintf('[PASS] CurrentValue = %.4g after transact+apply\n', v);
+fprintf('[PASS] Value = %.4g after transact+apply\n', v);
 
 % ── Test 6: InputIds is empty for a source node ───────────────────────────────
 ids = node.InputIds;
@@ -51,27 +51,27 @@ assert(any(inputIds == node.Id), ...
     'downstream.InputIds should contain the upstream node Id');
 fprintf('[PASS] InputIds of identity node contains upstream id (%d)\n', node.Id);
 
-% ── Test 8: propagation visible via downstream CurrentValue ───────────────────
+% ── Test 8: propagation visible via downstream Value ─────────────────────────
 affected = net.transact(node, 42.0);
 net.apply(affected);
-assert(isequal(node.CurrentValue, 42.0), 'upstream CurrentValue should be 42');
-assert(isequal(downstream.CurrentValue, 42.0), ...
-    'downstream CurrentValue should propagate to 42');
-fprintf('[PASS] Identity propagation via CurrentValue property\n');
+assert(isequal(node.Value, 42.0), 'upstream Value should be 42');
+assert(isequal(downstream.Value, 42.0), ...
+    'downstream Value should propagate to 42');
+fprintf('[PASS] Identity propagation via Value property\n');
 
-% ── Test 9: string value round-trip via CurrentValue ─────────────────────────
+% ── Test 9: string value round-trip via Value ─────────────────────────────────
 strNode = net.addNode([], sig.OpCode.nop, false);
 net.apply(net.transact(strNode, "world"));
-sv = strNode.CurrentValue;
-assert(isstring(sv) && sv == "world", 'String round-trip via CurrentValue');
-fprintf('[PASS] String round-trip via CurrentValue\n');
+sv = strNode.Value;
+assert(isstring(sv) && sv == "world", 'String round-trip via Value');
+fprintf('[PASS] String round-trip via Value\n');
 
-% ── Test 10: logical value round-trip via CurrentValue ───────────────────────
+% ── Test 10: logical value round-trip via Value ───────────────────────────────
 boolNode = net.addNode([], sig.OpCode.nop, false);
 net.apply(net.transact(boolNode, false));
-bv = boolNode.CurrentValue;
-assert(islogical(bv) && bv == false, 'Logical round-trip via CurrentValue');
-fprintf('[PASS] Logical round-trip via CurrentValue\n');
+bv = boolNode.Value;
+assert(islogical(bv) && bv == false, 'Logical round-trip via Value');
+fprintf('[PASS] Logical round-trip via Value\n');
 
 % ── Test 11: multiple sig.Signal objects from addNode are independent ─────────
 nodeA = net.addNode([], sig.OpCode.nop, false);
@@ -79,10 +79,10 @@ nodeB = net.addNode([], sig.OpCode.nop, false);
 assert(nodeA.Id ~= nodeB.Id, 'Each addNode call must produce a unique id');
 net.apply(net.transact(nodeA, 1.0));
 net.apply(net.transact(nodeB, 2.0));
-assert(isequal(nodeA.CurrentValue, 1.0), 'nodeA should hold 1.0');
-assert(isequal(nodeB.CurrentValue, 2.0), 'nodeB should hold 2.0');
+assert(isequal(nodeA.Value, 1.0), 'nodeA should hold 1.0');
+assert(isequal(nodeB.Value, 2.0), 'nodeB should hold 2.0');
 fprintf('[PASS] Independent nodes have independent values (A=%.4g, B=%.4g)\n', ...
-    nodeA.CurrentValue, nodeB.CurrentValue);
+    nodeA.Value, nodeB.Value);
 
 % ── Test 12: nActiveNodes decreases after deleteNode ─────────────────────────
 nBefore = net.nActiveNodes();

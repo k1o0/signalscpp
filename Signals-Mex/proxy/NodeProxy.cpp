@@ -13,8 +13,7 @@ NodeProxy::NodeProxy(std::shared_ptr<Network> net, long node_id)
     : net_{std::move(net)}, id_{node_id}
 {
     REGISTER_METHOD(NodeProxy, GetId);
-    REGISTER_METHOD(NodeProxy, GetCurrentValue);
-    REGISTER_METHOD(NodeProxy, GetWorkingValue);
+    REGISTER_METHOD(NodeProxy, GetValue);
     REGISTER_METHOD(NodeProxy, GetInputIds);
 }
 
@@ -35,14 +34,8 @@ void NodeProxy::GetId(libmexclass::proxy::method::Context& ctx) {
     ctx.outputs[0] = f.createScalar<double>(static_cast<double>(id_));
 }
 
-void NodeProxy::GetCurrentValue(libmexclass::proxy::method::Context& ctx) {
-    signals::Value v = net_->get_current_value(id_);
-    matlab::data::ArrayFactory f;
-    ctx.outputs[0] = sq::mex::toMda(v, f);
-}
-
-void NodeProxy::GetWorkingValue(libmexclass::proxy::method::Context& ctx) {
-    signals::Value v = net_->get_working_value(id_);
+void NodeProxy::GetValue(libmexclass::proxy::method::Context& ctx) {
+    signals::Value v = net_->get_latest_value(id_);
     matlab::data::ArrayFactory f;
     ctx.outputs[0] = sq::mex::toMda(v, f);
 }
