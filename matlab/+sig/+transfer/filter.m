@@ -1,62 +1,27 @@
-function [val, valset] = filter(net, inputs, node, f)
-% SIG.TRANSFER.FILTER Filter signal using function
-%   Assigns the working value of input if the output of f(input) matches
-%   the criterion. Always assumes input nodes = [what, criterion].
+function [val, valset] = filter(values, states, f)
+% sig.transfer.filter  MATLAB-side transfer function for filter nodes.
 %
-%   Inputs:
-%     net (int) - id of Signals network to whom input nodes belong
-%     inputs (int) - array of input node ids, the first of which is mapped
-%       through function f
-%     node (int) - id of node whose value is to be assigned the output
-%     f (function_handle) - a function to test whether to keep input value
+% [val, valset] = filter(values, states, f)
+%   Passes through the 'what' input when f(what) equals the criterion.
+%   Always assumes two inputs in order: [what, criterion].
 %
-%   Outputs:
-%     val (*) - the input value if it passes the function criterion.
-%       Value is assigned to node.
-%     valset (logical) - true if the first input node has a working value.
+%   values — 1×3 cell: {this_curr, what_latest, criterion_latest}
+%   states — 1×3 int8: state flags (-1=unset, 0=current, 1=new-working)
+%   f      — function handle applied to what; output compared to criterion
 %
-%   Example:
-%     % Logic for filtering values of node 2 given the output of f matches
-%     % node 3 in network 0.  The filtered value is assigned to node 4: 
-%     val = sig.transfer.filter(0, [2 3], 4, f)
-%
-% See also sig.node.Signal/applyTransferFun sig.node.Signal/keepWhen
+% See also sig.transfer.map, sig.transfer.mapn, sig.Signal/filter
 
-% always assumes two inputs: [what, criterion]
+    val = []; valset = false;
+    if states(3) < 0;  return; end  % criterion never set
+    if states(2) ~= 1; return; end  % no new 'what' value this tick
 
-% obtain latest criterion value, if any
-[criterion, wvset] = workingNodeValue(net, inputs(2));
-if ~wvset % value follows working value first
-  [criterion, wvset] = currNodeValue(net, inputs(2));
-  if ~wvset % filter cannot proceed if a criterion is missing
-    return
-  end
-end
-
-% get working 'what' value
-[what, whatset] = workingNodeValue(net, inputs(1));
-% we gate on the working value existing and passing function output
-if whatset
-  try
-    indicator = f(what);
-    if indicator == criterion
-      val = what;
-      valset = true;
-      return % only code path that sets a working output value
+    try
+        indicator = f(values{2});
+        if isequal(indicator, values{3})
+            val    = values{2};
+            valset = true;
+        end
+    catch ex
+        rethrow(ex)
     end
-  catch ex
-    msg = sprintf(['Error in Net %i mapping Nodes [%s] to %i:\n'...
-      'Calling %s on %s produced an error:\n %s'],...
-      net, num2str(inputs), node, toStr(f), toStr(what,1), ex.message);
-    sigEx = sig.Exception('transfer:filter:error', ...
-      msg, net, node, inputs, {what, criterion}, f);
-    ex = ex.addCause(sigEx);
-    rethrow(ex)
-  end
-
 end
-
-%all codepaths end here, but one
-% no output
-val = [];
-valset = false;

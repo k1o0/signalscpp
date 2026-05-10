@@ -43,9 +43,14 @@ Network::NodeCallable wrap_matlab_fn(matlab::data::Array fn_handle, MatlabEngine
 /// Returns (val, has_value(val)); accumulator = this node's current value.
 Network::NodeCallable wrap_matlab_scan_fn(matlab::data::Array fn_handle, MatlabEngine engine);
 
-/// Wrap a MATLAB @(node) closure for function_op (MATLAB transfer mode).
-/// Invokes:  [val, valset] = feval(fn_handle, node_id)
-/// fn_handle captures net, input_ids, and the user function internally.
-Network::NodeCallable wrap_transfer_fn(matlab::data::Array fn_handle, MatlabEngine engine);
+/// Wrap a MATLAB @(values, states) closure for function_op (MATLAB transfer mode).
+/// Invokes:  [val, valset] = feval(fn_handle, values, states)
+/// values — 1×(N+1) cell: {curr, input0, ..., inputN-1} as MATLAB arrays
+/// states — 1×(N+1) int8:  -1=unset, 0=current, 1=new-working
+/// net and input_ids are used to compute state flags at call time.
+Network::NodeCallable wrap_transfer_fn(matlab::data::Array fn_handle,
+                                       MatlabEngine engine,
+                                       std::shared_ptr<Network> net,
+                                       std::vector<long> input_ids);
 
 } // namespace sq::mex_ops

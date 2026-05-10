@@ -58,8 +58,7 @@ classdef Signal < handle
         % map  New signal = f(this_value) on every update.
             net = this.Node.Net;
             if strcmp(net.TransferMode, 'matlab')
-                inputIds = double(this.Node.Id);
-                transFcn = @(node) sig.transfer.map(net, inputIds, node, f);
+                transFcn = @(values, states) sig.transfer.map(values, states, f);
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
             else
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.map_op, false, f));
@@ -81,8 +80,7 @@ classdef Signal < handle
             nodes = refNode.from(sig1, sig2);
             net   = refNode.Net;
             if strcmp(net.TransferMode, 'matlab')
-                inputIds = cellfun(@(n) double(n.Id), nodes);
-                transFcn = @(node) sig.transfer.mapn(net, inputIds, node, f);
+                transFcn = @(values, states) sig.transfer.mapn(values, states, f);
                 s = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
             else
                 s = sig.Signal(net.addNode(nodes, sig.OpCode.mapn_op, false, f));
@@ -108,8 +106,7 @@ classdef Signal < handle
             nodes = refNode.from(rawInputs{:});
             net   = refNode.Net;
             if strcmp(net.TransferMode, 'matlab')
-                inputIds = cellfun(@(n) double(n.Id), nodes);
-                transFcn = @(node) sig.transfer.mapn(net, inputIds, node, f);
+                transFcn = @(values, states) sig.transfer.mapn(values, states, f);
                 varargout{1} = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
             else
                 varargout{1} = sig.Signal(net.addNode(nodes, sig.OpCode.mapn_op, false, f));
@@ -154,8 +151,7 @@ classdef Signal < handle
             net = this.Node.Net;
             if strcmp(net.TransferMode, 'matlab')
                 nodes    = this.Node.from(this, criterion);
-                inputIds = [nodes.Id];
-                transFcn = @(node) sig.transfer.filter(net, inputIds, node, f);
+                transFcn = @(values, states) sig.transfer.filter(values, states, f);
                 s = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
             else
                 if isa(criterion, 'sig.Signal') || isa(criterion, 'sig.Node')

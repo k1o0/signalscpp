@@ -1,4 +1,4 @@
-classdef Net
+classdef Net < handle
 % sig.Net  Reactive signal network (C++ backend via libmexclass proxy).
 %
 % USAGE

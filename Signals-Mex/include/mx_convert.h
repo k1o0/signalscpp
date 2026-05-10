@@ -24,7 +24,7 @@ inline matlab::data::Array toMda(const signals::Value& v,
         matlab::data::Array operator()(std::monostate)        const { return f.createArray<double>({0,0}); }
         matlab::data::Array operator()(double d)              const { return f.createScalar<double>(d); }
         matlab::data::Array operator()(bool b)                const { return f.createScalar<bool>(b); }
-        matlab::data::Array operator()(const std::string& s)  const { return f.createScalar(s); }
+        matlab::data::Array operator()(const std::string& s)  const { return f.createCharArray(s); }
         matlab::data::Array operator()(const std::vector<double>& vec) const {
             auto arr = f.createArray<double>({1, vec.size()});
             std::copy(vec.begin(), vec.end(), arr.begin());
@@ -72,10 +72,13 @@ inline signals::Value fromMda(const matlab::data::Array& arr)
         case AT::UINT16: { matlab::data::TypedArray<uint16_t> ta=arr; return double(uint16_t(ta[0])); }
         case AT::UINT32: { matlab::data::TypedArray<uint32_t> ta=arr; return double(uint32_t(ta[0])); }
         case AT::UINT64: { matlab::data::TypedArray<uint64_t> ta=arr; return double(uint64_t(ta[0])); }
-        case AT::MATLAB_STRING:
-        case AT::CHAR: {
+        case AT::MATLAB_STRING: {
             matlab::data::StringArray sa = arr;
             return std::string(sa[0]);
+        }
+        case AT::CHAR: {
+            matlab::data::CharArray ca = arr;
+            return ca.toAscii();
         }
         default:
             throw std::invalid_argument("sq:unsupportedType: unsupported MATLAB array type for signals::Value conversion");
