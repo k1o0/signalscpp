@@ -12,59 +12,32 @@ EXPORTS
 	?$TSS0@?1???$createScalar@_K@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@_K@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???$createScalar@_N@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@_N@23@_N@Z@4HA 	 DATA
 	?$TSS0@?1???$createTempRef@N$0A@@?$TypedIterator@N@data@matlab@@AEAAPEANV?$shared_ptr@VIteratorImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@C@detail@data@matlab@@YAAEACV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@E@detail@data@matlab@@YAAEAEV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@F@detail@data@matlab@@YAAEAFV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@G@detail@data@matlab@@YAAEAGV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???$getElement@H@detail@data@matlab@@YAAEAHV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@I@detail@data@matlab@@YAAEAIV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@M@detail@data@matlab@@YAAEAMV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???$getElement@N@detail@data@matlab@@YAAEANV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???$getElement@VArray@data@matlab@@@detail@data@matlab@@YA?AVArray@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@_J@detail@data@matlab@@YAAEA_JV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getElement@_K@detail@data@matlab@@YAAEA_KV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???$getElement@_N@detail@data@matlab@@YAAEA_NV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
-	?$TSS0@?1???$getString@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@detail@data@matlab@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAVReferenceImpl@123@@Z@4HA 	 DATA
 	?$TSS0@?1???$setElement@C@detail@data@matlab@@YAXPEAVReferenceImpl@123@CH@Z@4HA 	 DATA
 	?$TSS0@?1???$setElement@N@detail@data@matlab@@YAXPEAVReferenceImpl@123@NH@Z@4HA 	 DATA
 	?$TSS0@?1???$setElement@VArray@data@matlab@@@detail@data@matlab@@YAXPEAVReferenceImpl@123@VArray@23@H@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@C@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@E@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@F@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@G@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@H@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@I@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@M@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
 	?$TSS0@?1???0?$TypedArray@N@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
 	?$TSS0@?1???0?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
 	?$TSS0@?1???0?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@_J@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
-	?$TSS0@?1???0?$TypedArray@_K@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
 	?$TSS0@?1???0?$TypedArray@_N@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
 	?$TSS0@?1???0?$TypedArray@_S@data@matlab@@QEAA@AEBVArray@23@@Z@4HA 	 DATA
+	?$TSS0@?1???0Array@data@matlab@@QEAA@XZ@4HA 	 DATA
 	?$TSS0@?1???0ArrayFactory@data@matlab@@QEAA@XZ@4HA 	 DATA
 	?$TSS0@?1???A?$ArrayElementTypedRef@VStruct@data@matlab@@$00@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$00@23@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???A?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@C@data@matlab@@QEAA?AV?$ArrayElementTypedRef@C$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@E@data@matlab@@QEAA?AV?$ArrayElementTypedRef@E$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@F@data@matlab@@QEAA?AV?$ArrayElementTypedRef@F$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@G@data@matlab@@QEAA?AV?$ArrayElementTypedRef@G$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@H@data@matlab@@QEAA?AV?$ArrayElementTypedRef@H$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@I@data@matlab@@QEAA?AV?$ArrayElementTypedRef@I$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@M@data@matlab@@QEAA?AV?$ArrayElementTypedRef@M$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@N$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEBA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$00@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEBA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$00@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@_J@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_J$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???A?$TypedArray@_K@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_K$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???A?$TypedArray@_N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_N$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???AArray@data@matlab@@QEAA?AV?$ArrayElementRef@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS0@?1???AArray@data@matlab@@QEBA?AV?$ArrayElementRef@$00@23@_K@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_0f9d19a88f58823f38ec262baa8352c6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_18bde30140702ba20a566c9dc393b8c0>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_2338e59a205dcd23a85a74566c35c54c>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_2615407b98e1f3a14023b76f0dedc381>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z@4HA 	 DATA
@@ -72,24 +45,16 @@ EXPORTS
 	?$TSS0@?1???R<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_49bc69670bef5877f460780ec06c4b58>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_7221354e2161a523b28f93cf96116df6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_7b2e123050acc360989b02063f1710cc>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_9507ba629d49b0192687e7d9aa57067f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_967db8ced547e9091a2620d05ad97606>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_a4c5f97d4391fb4c09103a727c16defd>@@QEBA@PEAVArrayFactoryImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_d1015d615fb406337ea3cb3787d3fc33>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_d399ffdf0f03d8f06291ec53506052ab>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_d92be61f47eca0e969a2c6214dd6d563>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_eea32f14924103eefb3c8a425d54b536>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_f46d2928e58111d7f012c97497042079>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
-	?$TSS0@?1???R<lambda_fc6ba359cb9b5102049b749e98269e61>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
+	?$TSS0@?1???R<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1???R<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4HA 	 DATA
 	?$TSS0@?1??begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
-	?$TSS0@?1??createCharArray@ArrayFactory@data@matlab@@QEAA?AVCharArray@34@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4HA 	 DATA
 	?$TSS0@?1??end@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
 	?$TSS0@?1??getNumberOfElements@Array@data@matlab@@QEBA_KXZ@4HA 	 DATA
 	?$TSS0@?1??getType@Array@data@matlab@@QEBA?AW4ArrayType@34@XZ@4HA 	 DATA
@@ -100,7 +65,6 @@ EXPORTS
 	?$TSS0@?4???$resolveFunction@P6AHPEAPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AHPEAPEAVArrayFactoryImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEA_K_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@HPEA_K_KPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEBXPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@HPEBXPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4HA 	 DATA
-	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@PEBD_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@PEBD_KPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@PEAH@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@PEAPEB_SPEA_K@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@_KPEAPEAVReferenceImpl@detail@34@@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@_KPEAPEAVReferenceImpl@123@@ZW4FunctionType@123@@Z@4HA 	 DATA
@@ -108,10 +72,9 @@ EXPORTS
 	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@H_N@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@H_N@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAH@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEAX@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAPEAX@ZW4FunctionType@123@@Z@4HA 	 DATA
-	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAPEB_SPEA_K@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEBD_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEBD_K@ZW4FunctionType@123@@Z@4HA 	 DATA
-	?$TSS0@?4???$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAV1234@@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@123@PEAV4123@@ZW4FunctionType@123@@Z@4HA 	 DATA
+	?$TSS0@?4???$resolveFunction@P6APEAVArrayImpl@impl@data@matlab@@XZ@detail@data@matlab@@YAP6APEAVArrayImpl@impl@23@XZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@_N@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@123@PEAVArrayImpl@impl@23@_N@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AXPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayFactoryImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6AXPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
@@ -123,7 +86,6 @@ EXPORTS
 	?$TSS0@?4???$resolveFunction@P6A_KPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6A_KPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4HA 	 DATA
 	?$TSS0@?4???$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@_NPEAPEAV1234@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@23@_NPEAPEAV4523@@ZW4FunctionType@123@@Z@4HA 	 DATA
-	?$TSS0@?4???0?$TypedIterator@N@data@matlab@@QEAA@AEBV123@@Z@4HA 	 DATA
 	?$TSS1@?1???$castTo@N$0A@@detail@data@matlab@@YANV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS1@?1???$castTo@V?$TypedArray@H@data@matlab@@$0A@@detail@data@matlab@@YA?AV?$TypedArray@H@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS1@?1???$castTo@V?$TypedArray@N@data@matlab@@$00@detail@data@matlab@@YA?AV?$TypedArray@N@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
@@ -131,25 +93,16 @@ EXPORTS
 	?$TSS1@?1???$castTo@V?$TypedArray@_N@data@matlab@@$00@detail@data@matlab@@YA?AV?$TypedArray@_N@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS1@?1???$castTo@VArray@data@matlab@@$00@detail@data@matlab@@YA?AVArray@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@C@data@matlab@@QEAA?AV?$ArrayElementTypedRef@C$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@E@data@matlab@@QEAA?AV?$ArrayElementTypedRef@E$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@F@data@matlab@@QEAA?AV?$ArrayElementTypedRef@F$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@G@data@matlab@@QEAA?AV?$ArrayElementTypedRef@G$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@H@data@matlab@@QEAA?AV?$ArrayElementTypedRef@H$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@I@data@matlab@@QEAA?AV?$ArrayElementTypedRef@I$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@M@data@matlab@@QEAA?AV?$ArrayElementTypedRef@M$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@N$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@_J@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_J$0A@@23@_K@Z@4HA 	 DATA
-	?$TSS1@?1???A?$TypedArray@_K@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_K$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???A?$TypedArray@_N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_N$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1???AArray@data@matlab@@QEAA?AV?$ArrayElementRef@$0A@@23@_K@Z@4HA 	 DATA
 	?$TSS1@?1??begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
 	?$TSS1@?1??end@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
 	?$TSS2@?7??begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
 	?$TSS2@?7??end@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4HA 	 DATA
-	??_R0?AV<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@8 	 DATA
 	??_R0?AV<lambda_18bde30140702ba20a566c9dc393b8c0>@@@8 	 DATA
 	??_R0?AV<lambda_2338e59a205dcd23a85a74566c35c54c>@@@8 	 DATA
 	??_R0?AV<lambda_2615407b98e1f3a14023b76f0dedc381>@@@8 	 DATA
@@ -157,21 +110,14 @@ EXPORTS
 	??_R0?AV<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@8 	 DATA
 	??_R0?AV<lambda_49bc69670bef5877f460780ec06c4b58>@@@8 	 DATA
 	??_R0?AV<lambda_7221354e2161a523b28f93cf96116df6>@@@8 	 DATA
-	??_R0?AV<lambda_7b2e123050acc360989b02063f1710cc>@@@8 	 DATA
 	??_R0?AV<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@8 	 DATA
 	??_R0?AV<lambda_9507ba629d49b0192687e7d9aa57067f>@@@8 	 DATA
-	??_R0?AV<lambda_967db8ced547e9091a2620d05ad97606>@@@8 	 DATA
-	??_R0?AV<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@8 	 DATA
 	??_R0?AV<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@8 	 DATA
 	??_R0?AV<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@8 	 DATA
-	??_R0?AV<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@8 	 DATA
-	??_R0?AV<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@8 	 DATA
-	??_R0?AV<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@8 	 DATA
 	??_R0?AV<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@8 	 DATA
 	??_R0?AV<lambda_eea32f14924103eefb3c8a425d54b536>@@@8 	 DATA
 	??_R0?AV<lambda_f46d2928e58111d7f012c97497042079>@@@8 	 DATA
-	??_R0?AV<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@8 	 DATA
-	??_R0?AV<lambda_fc6ba359cb9b5102049b749e98269e61>@@@8 	 DATA
+	??_R0?AV<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@8 	 DATA
 	??_R0?AV<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@8 	 DATA
 	??_R0?AV?$ArrayException@VException@matlab@@$00@detail@data@matlab@@@8 	 DATA
 	??_R0?AV?$ArrayException@VException@matlab@@$01@detail@data@matlab@@@8 	 DATA
@@ -223,50 +169,35 @@ EXPORTS
 	??_R0?AV?$ArrayException@VException@matlab@@$0O@@detail@data@matlab@@@8 	 DATA
 	??_R0?AV?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@C@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@E@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@F@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@G@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@H@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@I@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@M@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@N@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@VArray@data@matlab@@@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@VStruct@data@matlab@@@data@matlab@@@8 	 DATA
-	??_R0?AV?$TypedArray@_J@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@_K@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@_N@data@matlab@@@8 	 DATA
 	??_R0?AV?$TypedArray@_S@data@matlab@@@8 	 DATA
 	??_R0?AV?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@@8 	 DATA
 	??_R0?AV?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@@8 	 DATA
-	??_R0?AV?$_Func_base@U?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@std@@@8 	 DATA
+	??_R0?AV?$_Func_base@U?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@std@@@8 	 DATA
 	??_R0?AV?$_Func_base@XAEAUContext@method@proxy@libmexclass@@@std@@@8 	 DATA
 	??_R0?AV?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@@8 	 DATA
 	??_R0?AV?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_obj2@VNetwork@@@std@@@8 	 DATA
+	??_R0?AV?$_Ref_count_obj2@V?$NetworkT@VArray@data@matlab@@@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_obj2@VNetworkProxy@proxy@sq@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_obj2@VNodeProxy@proxy@sq@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@@8 	 DATA
+	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@@8 	 DATA
-	??_R0?AV?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@@8 	 DATA
 	??_R0?AV?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@@8 	 DATA
@@ -285,13 +216,13 @@ EXPORTS
 	??_R0?AVProxy@proxy@libmexclass@@@8 	 DATA
 	??_R0?AVStructArray@data@matlab@@@8 	 DATA
 	??_R0?AVTypeConversionException@engine@matlab@@@8 	 DATA
+	??_R0?AVTypeError@signals@@@8 	 DATA
 	??_R0?AV_Ref_count_base@std@@@8 	 DATA
 	??_R0?AVbad_alloc@std@@@8 	 DATA
 	??_R0?AVbad_array_new_length@std@@@8 	 DATA
-	??_R0?AVbad_variant_access@std@@@8 	 DATA
 	??_R0?AVexception@std@@@8 	 DATA
-	??_R0?AVinvalid_argument@std@@@8 	 DATA
 	??_R0?AVlogic_error@std@@@8 	 DATA
+	??_R0?AVout_of_range@std@@@8 	 DATA
 	??_R0?AVruntime_error@std@@@8 	 DATA
 	?destroyFcn@?1???R<lambda_a4c5f97d4391fb4c09103a727c16defd>@@QEBA@PEAVArrayFactoryImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???$castTo@N$0A@@detail@data@matlab@@YANV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAH@ZEA 	 DATA
@@ -300,7 +231,6 @@ EXPORTS
 	?fcn2@?1???$castTo@V?$TypedArray@N@data@matlab@@$0A@@detail@data@matlab@@YA?AV?$TypedArray@N@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@H_N@ZEA 	 DATA
 	?fcn2@?1???$castTo@V?$TypedArray@_N@data@matlab@@$00@detail@data@matlab@@YA?AV?$TypedArray@_N@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@H_N@ZEA 	 DATA
 	?fcn2@?1???$castTo@VArray@data@matlab@@$00@detail@data@matlab@@YA?AVArray@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@H_N@ZEA 	 DATA
-	?fcn2@?1???R<lambda_0f9d19a88f58823f38ec262baa8352c6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_18bde30140702ba20a566c9dc393b8c0>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_2338e59a205dcd23a85a74566c35c54c>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_2615407b98e1f3a14023b76f0dedc381>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
@@ -308,34 +238,19 @@ EXPORTS
 	?fcn2@?1???R<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_49bc69670bef5877f460780ec06c4b58>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_7221354e2161a523b28f93cf96116df6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_7b2e123050acc360989b02063f1710cc>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_9507ba629d49b0192687e7d9aa57067f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_967db8ced547e9091a2620d05ad97606>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_d1015d615fb406337ea3cb3787d3fc33>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_d399ffdf0f03d8f06291ec53506052ab>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_d92be61f47eca0e969a2c6214dd6d563>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_eea32f14924103eefb3c8a425d54b536>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_f46d2928e58111d7f012c97497042079>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
-	?fcn2@?1???R<lambda_fc6ba359cb9b5102049b749e98269e61>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
+	?fcn2@?1???R<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn2@?1???R<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z@4Q6AX0@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@C@data@matlab@@QEAA?AV?$ArrayElementTypedRef@C$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@E@data@matlab@@QEAA?AV?$ArrayElementTypedRef@E$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@F@data@matlab@@QEAA?AV?$ArrayElementTypedRef@F$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@G@data@matlab@@QEAA?AV?$ArrayElementTypedRef@G$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@H@data@matlab@@QEAA?AV?$ArrayElementTypedRef@H$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@I@data@matlab@@QEAA?AV?$ArrayElementTypedRef@I$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@M@data@matlab@@QEAA?AV?$ArrayElementTypedRef@M$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@N$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@_J@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_J$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn3@?1???A?$TypedArray@_K@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_K$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???A?$TypedArray@_N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_N$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1???AArray@data@matlab@@QEAA?AV?$ArrayElementRef@$0A@@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn3@?1??begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4Q6APEAVIteratorImpl@detail@34@PEAVArrayImpl@impl@34@_N@ZEA 	 DATA
@@ -355,72 +270,43 @@ EXPORTS
 	?fcn@?1???$createScalar@_K@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@_K@23@_K@Z@4Q6AHPEAVArrayFactoryImpl@impl@23@HPEBXPEAPEAVArrayImpl@623@@ZEA 	 DATA
 	?fcn@?1???$createScalar@_N@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@_N@23@_N@Z@4Q6AHPEAVArrayFactoryImpl@impl@23@HPEBXPEAPEAVArrayImpl@623@@ZEA 	 DATA
 	?fcn@?1???$createTempRef@N$0A@@?$TypedIterator@N@data@matlab@@AEAAPEANV?$shared_ptr@VIteratorImpl@detail@data@matlab@@@std@@@Z@4Q6AXPEAVIteratorImpl@detail@23@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@C@detail@data@matlab@@YAAEACV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@E@detail@data@matlab@@YAAEAEV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@F@detail@data@matlab@@YAAEAFV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@G@detail@data@matlab@@YAAEAGV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
 	?fcn@?1???$getElement@H@detail@data@matlab@@YAAEAHV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@I@detail@data@matlab@@YAAEAIV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@M@detail@data@matlab@@YAAEAMV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
 	?fcn@?1???$getElement@N@detail@data@matlab@@YAAEANV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
 	?fcn@?1???$getElement@VArray@data@matlab@@@detail@data@matlab@@YA?AVArray@23@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AXPEAVReferenceImpl@123@PEAPEAVArrayImpl@impl@23@@ZEA 	 DATA
-	?fcn@?1???$getElement@_J@detail@data@matlab@@YAAEA_JV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getElement@_K@detail@data@matlab@@YAAEA_KV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
 	?fcn@?1???$getElement@_N@detail@data@matlab@@YAAEA_NV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z@4Q6AHPEAVReferenceImpl@123@PEAPEAX@ZEA 	 DATA
-	?fcn@?1???$getString@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@detail@data@matlab@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAVReferenceImpl@123@@Z@4Q6AH0PEAPEB_SPEA_K@ZEA 	 DATA
 	?fcn@?1???$setElement@C@detail@data@matlab@@YAXPEAVReferenceImpl@123@CH@Z@4Q6AH0HPEAX@ZEA 	 DATA
 	?fcn@?1???$setElement@N@detail@data@matlab@@YAXPEAVReferenceImpl@123@NH@Z@4Q6AH0HPEAX@ZEA 	 DATA
 	?fcn@?1???$setElement@VArray@data@matlab@@@detail@data@matlab@@YAXPEAVReferenceImpl@123@VArray@23@H@Z@4Q6AH0PEAVArrayImpl@impl@23@@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@C@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@E@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@F@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@G@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@H@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@I@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@M@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
 	?fcn@?1???0?$TypedArray@N@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
 	?fcn@?1???0?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
 	?fcn@?1???0?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@_J@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
-	?fcn@?1???0?$TypedArray@_K@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
 	?fcn@?1???0?$TypedArray@_N@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
 	?fcn@?1???0?$TypedArray@_S@data@matlab@@QEAA@AEBVArray@23@@Z@4Q6AHHHPEA_N@ZEA 	 DATA
+	?fcn@?1???0Array@data@matlab@@QEAA@XZ@4Q6APEAVArrayImpl@impl@23@XZEA 	 DATA
 	?fcn@?1???0ArrayFactory@data@matlab@@QEAA@XZ@4Q6AHPEAPEAVArrayFactoryImpl@impl@23@@ZEA 	 DATA
 	?fcn@?1???A?$ArrayElementTypedRef@VStruct@data@matlab@@$00@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$00@23@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4Q6AHPEAVReferenceImpl@detail@23@PEBD_K@ZEA 	 DATA
 	?fcn@?1???A?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4Q6AHPEAVReferenceImpl@detail@23@PEBD_K@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@C@data@matlab@@QEAA?AV?$ArrayElementTypedRef@C$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@E@data@matlab@@QEAA?AV?$ArrayElementTypedRef@E$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@F@data@matlab@@QEAA?AV?$ArrayElementTypedRef@F$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@G@data@matlab@@QEAA?AV?$ArrayElementTypedRef@G$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@H@data@matlab@@QEAA?AV?$ArrayElementTypedRef@H$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@I@data@matlab@@QEAA?AV?$ArrayElementTypedRef@I$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@M@data@matlab@@QEAA?AV?$ArrayElementTypedRef@M$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@N$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEBA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$00@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEBA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$00@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@_J@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_J$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
-	?fcn@?1???A?$TypedArray@_K@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_K$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???A?$TypedArray@_N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_N$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???AArray@data@matlab@@QEAA?AV?$ArrayElementRef@$0A@@23@_K@Z@4Q6A_NPEAVArrayImpl@impl@23@_NPEAPEAV5623@@ZEA 	 DATA
 	?fcn@?1???AArray@data@matlab@@QEBA?AV?$ArrayElementRef@$00@23@_K@Z@4Q6AHPEAVArrayImpl@impl@23@0PEAPEAVReferenceImpl@detail@23@@ZEA 	 DATA
 	?fcn@?1??begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4Q6A_NPEAVArrayImpl@impl@34@_NPEAPEAV6734@@ZEA 	 DATA
-	?fcn@?1??createCharArray@ArrayFactory@data@matlab@@QEAA?AVCharArray@34@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@4Q6AHPEAVArrayFactoryImpl@impl@34@PEBD_KPEAPEAVArrayImpl@934@@ZEA 	 DATA
 	?fcn@?1??end@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@34@XZ@4Q6A_NPEAVArrayImpl@impl@34@_NPEAPEAV6734@@ZEA 	 DATA
 	?fcn@?1??getNumberOfElements@Array@data@matlab@@QEBA_KXZ@4Q6A_KPEAVArrayImpl@impl@34@@ZEA 	 DATA
 	?fcn@?1??getType@Array@data@matlab@@QEBA?AW4ArrayType@34@XZ@4Q6AHPEAVArrayImpl@impl@34@PEAH@ZEA 	 DATA
 	?fcn@?1??isEmpty@Array@data@matlab@@QEBA_NXZ@4Q6A_NPEAVArrayImpl@impl@34@@ZEA 	 DATA
 	?fcn@?1??toAscii@CharArray@data@matlab@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ@4Q6AHPEAVArrayImpl@impl@34@PEAPEB_SPEA_K@ZEA 	 DATA
 	?fcn@?1??toUTF16@CharArray@data@matlab@@QEBA?AV?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@XZ@4Q6AXPEAVArrayImpl@impl@34@PEAPEB_SPEA_K@ZEA 	 DATA
-	?fcn@?4???0?$TypedIterator@N@data@matlab@@QEAA@AEBV123@@Z@4Q6APEAVIteratorImpl@detail@23@PEAV4523@@ZEA 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHHHPEA_N@Z@detail@data@matlab@@YAP6AHHHPEA_N@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AHPEAPEAVArrayFactoryImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEA_K_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@HPEA_K_KPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEBXPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@HPEBXPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
-	?minRelease@?4???$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@PEBD_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@23@PEBD_KPEAPEAVArrayImpl@523@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@PEAH@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@PEAPEB_SPEA_K@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@_KPEAPEAVReferenceImpl@detail@34@@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@23@_KPEAPEAVReferenceImpl@123@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
@@ -428,10 +314,9 @@ EXPORTS
 	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@H_N@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@H_N@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAH@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEAX@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAPEAX@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
-	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAPEB_SPEA_K@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEBD_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@123@PEBD_K@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
-	?minRelease@?4???$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAV1234@@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@123@PEAV4123@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
+	?minRelease@?4???$resolveFunction@P6APEAVArrayImpl@impl@data@matlab@@XZ@detail@data@matlab@@YAP6APEAVArrayImpl@impl@23@XZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@_N@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@123@PEAVArrayImpl@impl@23@_N@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AXPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayFactoryImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6AXPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
@@ -443,48 +328,65 @@ EXPORTS
 	?minRelease@?4???$resolveFunction@P6A_KPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6A_KPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@23@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
 	?minRelease@?4???$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@_NPEAPEAV1234@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@23@_NPEAPEAV4523@@ZW4FunctionType@123@@Z@4V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@B 	 DATA
+	?networks@?$NetFactory@V?$NetworkT@VArray@data@matlab@@@@@@0V?$vector@V?$unique_ptr@V?$NetworkT@VArray@data@matlab@@@@U?$default_delete@V?$NetworkT@VArray@data@matlab@@@@@std@@@std@@V?$allocator@V?$unique_ptr@V?$NetworkT@VArray@data@matlab@@@@U?$default_delete@V?$NetworkT@VArray@data@matlab@@@@@std@@@std@@@2@@std@@A 	 DATA
 	_Avx2WmemEnabledWeakValue 	 DATA
 	??$?0W4FunctionType@detail@data@matlab@@AEAY06$$CBD$0A@@?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@QEAA@$$QEAW4FunctionType@detail@data@matlab@@AEAY06$$CBD@Z
+	??$?4AEAVArray@data@matlab@@$0A@@?$optional@VArray@data@matlab@@@std@@QEAAAEAV01@AEAVArray@data@matlab@@@Z
+	??$?4AEBVArray@data@matlab@@$0A@@?$optional@VArray@data@matlab@@@std@@QEAAAEAV01@AEBVArray@data@matlab@@@Z
 	??$?4V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@$0A@@?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@std@@QEAAAEAV01@$$QEAV?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@1@@Z
 	??$?4V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@$0A@@?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@std@@QEAAAEAV01@$$QEAV?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@1@@Z
+	??$?4VArray@data@matlab@@$0A@@?$optional@VArray@data@matlab@@@std@@QEAAAEAV01@$$QEAVArray@data@matlab@@@Z
 	??$?4VError@error@libmexclass@@$0A@@?$optional@VError@error@libmexclass@@@std@@QEAAAEAV01@$$QEAVError@error@libmexclass@@@Z
+	??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@PEBD@Z
 	??$?HDU?$char_traits@D@std@@V?$allocator@D@1@@std@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@0@$$QEAV10@0@Z
 	??$?HDU?$char_traits@D@std@@V?$allocator@D@1@@std@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@0@$$QEAV10@QEBD@Z
 	??$_Allocate@$0BA@U_Default_allocate_traits@std@@@std@@YAPEAX_K@Z
 	??$_Allocate_manually_vector_aligned@U_Default_allocate_traits@std@@@std@@YAPEAX_K@Z
 	??$_Construct@$00PEBD@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAAXQEBD_K@Z
 	??$_Construct@$00PEB_S@?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@AEAAXQEB_S_K@Z
+	??$_Construct_in_place_by_deref@PEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@@std@@YAXAEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@AEAPEAPEAPEAV12@@Z
 	??$_Copy_memmove@PEAJPEAJ@std@@YAPEAJPEAJ00@Z
 	??$_Copy_memmove@PEANPEAN@std@@YAPEANPEAN00@Z
+	??$_Copy_memmove@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@00@Z
+	??$_Copy_memmove@PEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAV12@@std@@YAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAV12@00@Z
 	??$_Copy_memmove@PEB_KPEA_K@std@@YAPEA_KPEB_K0PEA_K@Z
 	??$_Copy_memmove_tail@PEAJ@std@@YAPEAJQEBDQEAJ_K2@Z
 	??$_Copy_memmove_tail@PEAN@std@@YAPEANQEBDQEAN_K2@Z
+	??$_Copy_memmove_tail@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEBDQEAPEAPEAV12@_K2@Z
+	??$_Copy_memmove_tail@PEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@YAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEBDQEAPEAV12@_K2@Z
 	??$_Copy_memmove_tail@PEA_K@std@@YAPEA_KQEBDQEA_K_K2@Z
-	??$_Dispatch2@VArray@data@matlab@@UVisitor@?1??toMda@mex@sq@@YA?AV123@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@AEAVArrayFactory@23@@Z@AEBV89@$00@?$_Variant_dispatcher@U?$integer_sequence@_K$0A@@std@@@std@@SA?AVArray@data@matlab@@$$QEAUVisitor@?1??toMda@mex@sq@@YA?AV234@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@1@AEAVArrayFactory@34@@Z@0@Z
+	??$_Copy_nodes@$0A@@?$_Tree@V?$_Tset_traits@PEAVNode@?$NetworkT@VArray@data@matlab@@@@U?$less@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@4@$0A@@std@@@std@@IEAAPEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@1@PEAU21@0@Z
+	??$_Destroy_range@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@YAXPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAV12@AEAV?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@0@@Z
 	??$_Emplace_reallocate@AEBVArray@data@matlab@@@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@AEAAPEAVArray@data@matlab@@QEAV234@AEBV234@@Z
+	??$_Emplace_reallocate@PEAV?$NetworkT@VArray@data@matlab@@@@JW4Operation@@@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@AEAAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAV23@$$QEAPEAV3@$$QEAJ$$QEAW4Operation@@@Z
 	??$_Emplace_reallocate@VArray@data@matlab@@@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@AEAAPEAVArray@data@matlab@@QEAV234@$$QEAV234@@Z
-	??$_Erase_tree@V?$allocator@U?$_Tree_node@PEAVNode@Network@@PEAX@std@@@std@@@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@Network@@@std@@@std@@QEAAXAEAV?$allocator@U?$_Tree_node@PEAVNode@Network@@PEAX@std@@@1@PEAU?$_Tree_node@PEAVNode@Network@@PEAX@1@@Z
+	??$_Erase_head@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAXAEAV?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@1@@Z
+	??$_Erase_tree@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAXAEAV?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@1@PEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@1@@Z
+	??$_Erase_tree_and_orphan@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAXAEAV?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@1@PEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@1@@Z
 	??$_Find_last@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@?$_Hash@V?$_Umap_traits@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@V?$_Uhash_compare@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@U?$hash@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@U?$equal_to@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@2@$0A@@std@@@std@@IEBA?AU?$_Hash_find_last_result@PEAU?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@1@_K@Z
+	??$_Find_vectorized@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAV12@@std@@YAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAPEAV12@0QEAV12@@Z
 	??$_Free_non_head@V?$allocator@U?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@@std@@@?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@SAXAEAV?$allocator@U?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@@1@PEAU01@@Z
 	??$_Getvals@_W@?$time_get@DV?$istreambuf_iterator@DU?$char_traits@D@std@@@std@@@std@@IEAAX_WAEBV_Locinfo@1@@Z
 	??$_Getvals@_W@?$time_get@_WV?$istreambuf_iterator@_WU?$char_traits@_W@std@@@std@@@std@@IEAAX_WAEBV_Locinfo@1@@Z
 	??$_Hash_array_representation@D@std@@YA_KQEBD_K@Z
+	??$_Remove_vectorized@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAV12@@std@@YAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAPEAV12@0QEAV12@@Z
 	??$_Test_callable@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@@std@@YA_NAEBV?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@0@@Z
 	??$_Test_callable@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@@std@@YA_NAEBV?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@0@@Z
 	??$_Try_emplace@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@$$V@?$_Hash@V?$_Umap_traits@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@V?$_Uhash_compare@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@U?$hash@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@U?$equal_to@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@2@$0A@@std@@@std@@IEAA?AU?$pair@PEAU?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@_N@1@$$QEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@1@@Z
-	??$_Visit@U?$_Variant_assign_visitor@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$_Variant_storage_@$0A@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@@?$_Variant_raw_visit1@$01@std@@SAX_K$$QEAU?$_Variant_assign_visitor@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@1@$$QEAV?$_Variant_storage_@$0A@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@1@@Z
-	??$_Visit_impl@$05VArray@data@matlab@@U?$_Meta_list@U?$integer_sequence@_K$0A@@std@@U?$integer_sequence@_K$00@2@U?$integer_sequence@_K$01@2@U?$integer_sequence@_K$02@2@U?$integer_sequence@_K$03@2@U?$integer_sequence@_K$04@2@@std@@UVisitor@?1??toMda@mex@sq@@YA?AV123@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@5@AEAVArrayFactory@23@@Z@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@5@@std@@YA?AVArray@data@matlab@@$$QEAUVisitor@?1??toMda@mex@sq@@YA?AV123@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@0@AEAVArrayFactory@23@@Z@0@Z
-	??$_Zero_range@PEAN@std@@YAPEANQEAN0@Z
+	??$_Uninitialized_copy@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAV12@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@YAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAV12@00AEAV?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@0@@Z
+	??$_Uninitialized_copy_unchecked@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@QEAPEAPEAV12@0@Z
+	??$_Uninitialized_move@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@YAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAV12@0PEAV12@AEAV?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@0@@Z
+	??$_Uninitialized_value_construct_n_unchecked1@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@_K@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@_K@Z
+	??$_Zero_range@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAPEAPEAV12@0@Z
 	??$castTo@N$0A@@detail@data@matlab@@YANV?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??$castTo@V?$TypedArray@H@data@matlab@@$0A@@detail@data@matlab@@YA?AV?$TypedArray@H@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??$castTo@V?$TypedArray@N@data@matlab@@$00@detail@data@matlab@@YA?AV?$TypedArray@N@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??$castTo@V?$TypedArray@N@data@matlab@@$0A@@detail@data@matlab@@YA?AV?$TypedArray@N@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??$castTo@V?$TypedArray@_N@data@matlab@@$00@detail@data@matlab@@YA?AV?$TypedArray@_N@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??$castTo@VArray@data@matlab@@$00@detail@data@matlab@@YA?AVArray@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
-	??$copy@V?$TypedIterator@N@data@matlab@@V?$_Vector_iterator@V?$_Vector_val@U?$_Simple_types@N@std@@@std@@@std@@@std@@YA?AV?$_Vector_iterator@V?$_Vector_val@U?$_Simple_types@N@std@@@std@@@0@V?$TypedIterator@N@data@matlab@@0V10@@Z
+	??$construct@VNode@?$NetworkT@VArray@data@matlab@@@@PEAV2@JW4Operation@@@?$_Default_allocator_traits@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@SAXAEAV?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@1@QEAVNode@?$NetworkT@VArray@data@matlab@@@@$$QEAPEAV4@$$QEAJ$$QEAW4Operation@@@Z
 	??$createArray@N@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@N@12@V?$vector@_KV?$allocator@_K@std@@@std@@@Z
 	??$createObj@V?$TypedIterator@N@data@matlab@@VIteratorImpl@detail@23@@Access@detail@data@matlab@@SA?AV?$TypedIterator@N@23@PEAVIteratorImpl@123@@Z
-	??$createScalar@N@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@N@12@N@Z
 	??$createScalar@_N@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@_N@12@_N@Z
 	??$fill@PEAV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@std@@V12@@std@@YAXQEAV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@0@0AEBV10@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_13bdfcd965164f51f36a5527aab1fee0>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_13bdfcd965164f51f36a5527aab1fee0>@@@Z
@@ -502,25 +404,21 @@ EXPORTS
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_7e7f3d1f1aa53fa1ba6516b644b93b01>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_7e7f3d1f1aa53fa1ba6516b644b93b01>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_872195ab3004ebf900f386161018bc9d>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_872195ab3004ebf900f386161018bc9d>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_8be2d382656ec6a4e3c6eaae250bfee4>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_8be2d382656ec6a4e3c6eaae250bfee4>@@@Z
+	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_8eda84d17353360ca3e96574f031d4b0>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_8eda84d17353360ca3e96574f031d4b0>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_9408e93e4ea90ff1a8e06c43178137d7>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_9408e93e4ea90ff1a8e06c43178137d7>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_a25eb0597b8814dd213240eb9e7defd3>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_a25eb0597b8814dd213240eb9e7defd3>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_a47ff836cf5d7a0ca3a0353711eb4bf1>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_a47ff836cf5d7a0ca3a0353711eb4bf1>@@@Z
-	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_b0c85504611ba05bc24f396e1d28962d>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_b0c85504611ba05bc24f396e1d28962d>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_c3eaf5935795b6d6b5cd70e4d7dd4c0e>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_c3eaf5935795b6d6b5cd70e4d7dd4c0e>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_c81a067a95cf8738113188358ec7a8a2>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_c81a067a95cf8738113188358ec7a8a2>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_d2bb6da424f28e796fa3e447cfb6c15a>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_d2bb6da424f28e796fa3e447cfb6c15a>@@@Z
-	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_e244800c8aaaf210527f0ed3a3ddca71>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_e244800c8aaaf210527f0ed3a3ddca71>@@@Z
-	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_ec5c17b8d62791c6584de35bf1319d21>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_ec5c17b8d62791c6584de35bf1319d21>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_eea4cbbc629bac234384ed27dbe99b43>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_eea4cbbc629bac234384ed27dbe99b43>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_f1677acafd17cb4cd243f3d5a9f98c96>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_f1677acafd17cb4cd243f3d5a9f98c96>@@@Z
 	??$find_if@V?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@V<lambda_f5b4ff6f1bc0c2d3120d50ec6b8496ac>@@@std@@YA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@0@V10@V10@V<lambda_f5b4ff6f1bc0c2d3120d50ec6b8496ac>@@@Z
 	??$getElement@VArray@data@matlab@@@detail@data@matlab@@YA?AVArray@12@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
-	??$getString@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@detail@data@matlab@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAVReferenceImpl@012@@Z
 	??$resolveFunction@P6AHHHPEA_N@Z@detail@data@matlab@@YAP6AHHHPEA_N@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AHPEAPEAVArrayFactoryImpl@impl@12@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEA_K_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@12@HPEA_K_KPEAPEAVArrayImpl@412@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@HPEBXPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@12@HPEBXPEAPEAVArrayImpl@412@@ZW4FunctionType@012@@Z
-	??$resolveFunction@P6AHPEAVArrayFactoryImpl@impl@data@matlab@@PEBD_KPEAPEAVArrayImpl@234@@Z@detail@data@matlab@@YAP6AHPEAVArrayFactoryImpl@impl@12@PEBD_KPEAPEAVArrayImpl@412@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@12@PEAH@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@12@PEAPEB_SPEA_K@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVArrayImpl@impl@data@matlab@@_KPEAPEAVReferenceImpl@detail@34@@Z@detail@data@matlab@@YAP6AHPEAVArrayImpl@impl@12@_KPEAPEAVReferenceImpl@012@@ZW4FunctionType@012@@Z
@@ -528,10 +426,9 @@ EXPORTS
 	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@H_N@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@H_N@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAH@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@PEAH@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEAX@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@PEAPEAX@ZW4FunctionType@012@@Z
-	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAPEB_SPEA_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@PEAPEB_SPEA_K@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@PEAVArrayImpl@impl@12@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AHPEAVReferenceImpl@detail@data@matlab@@PEBD_K@Z@detail@data@matlab@@YAP6AHPEAVReferenceImpl@012@PEBD_K@ZW4FunctionType@012@@Z
-	??$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAV1234@@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@012@PEAV3012@@ZW4FunctionType@012@@Z
+	??$resolveFunction@P6APEAVArrayImpl@impl@data@matlab@@XZ@detail@data@matlab@@YAP6APEAVArrayImpl@impl@12@XZW4FunctionType@012@@Z
 	??$resolveFunction@P6APEAVIteratorImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@_N@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@012@PEAVArrayImpl@impl@12@_N@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AXPEAVArrayFactoryImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayFactoryImpl@impl@12@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6AXPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6AXPEAVArrayImpl@impl@12@@ZW4FunctionType@012@@Z
@@ -544,7 +441,9 @@ EXPORTS
 	??$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@12@@ZW4FunctionType@012@@Z
 	??$resolveFunction@P6A_NPEAVArrayImpl@impl@data@matlab@@_NPEAPEAV1234@@Z@detail@data@matlab@@YAP6A_NPEAVArrayImpl@impl@12@_NPEAPEAV3412@@ZW4FunctionType@012@@Z
 	??$resolveFunctionNoExcept@P6APEAVIteratorImpl@detail@data@matlab@@PEAVArrayImpl@impl@34@_N@Z@detail@data@matlab@@YAP6APEAVIteratorImpl@012@PEAVArrayImpl@impl@12@_N@ZW4FunctionType@012@@Z
+	??$uninitialized_copy@PEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAPEAPEAV12@@std@@YAPEAPEAPEAVNode@?$NetworkT@VArray@data@matlab@@@@QEAPEAPEAV12@0PEAPEAPEAV12@@Z
 	??$uninitialized_fill@PEAV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@std@@V12@@std@@YAXQEAV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@0@0AEBV10@@Z
+	??$value_or@VArray@data@matlab@@@?$optional@VArray@data@matlab@@@std@@QEGBA?AVArray@data@matlab@@$$QEAV234@@Z
 	??0<lambda_13bdfcd965164f51f36a5527aab1fee0>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_176c21c6905cf270b75ba66e243bfeb4>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_201592730bdf769fe2bfffaef13f66e8>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
@@ -560,15 +459,13 @@ EXPORTS
 	??0<lambda_7e7f3d1f1aa53fa1ba6516b644b93b01>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_872195ab3004ebf900f386161018bc9d>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_8be2d382656ec6a4e3c6eaae250bfee4>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
+	??0<lambda_8eda84d17353360ca3e96574f031d4b0>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_9408e93e4ea90ff1a8e06c43178137d7>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_a25eb0597b8814dd213240eb9e7defd3>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_a47ff836cf5d7a0ca3a0353711eb4bf1>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
-	??0<lambda_b0c85504611ba05bc24f396e1d28962d>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_c3eaf5935795b6d6b5cd70e4d7dd4c0e>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_c81a067a95cf8738113188358ec7a8a2>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_d2bb6da424f28e796fa3e447cfb6c15a>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
-	??0<lambda_e244800c8aaaf210527f0ed3a3ddca71>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
-	??0<lambda_ec5c17b8d62791c6584de35bf1319d21>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_eea4cbbc629bac234384ed27dbe99b43>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_f1677acafd17cb4cd243f3d5a9f98c96>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
 	??0<lambda_f5b4ff6f1bc0c2d3120d50ec6b8496ac>@@QEAA@AEBW4FunctionType@detail@data@matlab@@@Z
@@ -670,36 +567,29 @@ EXPORTS
 	??0?$ArrayException@VException@matlab@@$0O@@detail@data@matlab@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@QEAA@AEBV0123@@Z
 	??0?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0?$TypedArray@C@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@E@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@F@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@G@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@H@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@I@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@M@data@matlab@@QEAA@AEBVArray@12@@Z
+	??0?$NetworkT@VArray@data@matlab@@@@AEAA@JJ@Z
+	??0?$NetworkT@VArray@data@matlab@@@@QEAA@J@Z
 	??0?$TypedArray@N@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA@AEBVArray@12@@Z
 	??0?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA@AEBVArray@12@@Z
 	??0?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@_J@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedArray@_K@data@matlab@@QEAA@AEBVArray@12@@Z
 	??0?$TypedArray@_N@data@matlab@@QEAA@AEBVArray@12@@Z
 	??0?$TypedArray@_S@data@matlab@@QEAA@AEBVArray@12@@Z
-	??0?$TypedIterator@N@data@matlab@@QEAA@AEBV012@@Z
 	??0?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@QEAA@XZ
 	??0?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAA@AEBV01@@Z
 	??0?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAA@QEBD@Z
 	??0?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAA@U_String_constructor_concat_tag@1@AEAV01@1@Z
 	??0?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@QEAA@AEBV01@@Z
 	??0?$initializer_list@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@QEAA@PEBU?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@1@0@Z
+	??0?$shared_ptr@V?$NetworkT@VArray@data@matlab@@@@@std@@QEAA@AEBV01@@Z
+	??0?$shared_ptr@VArrayImpl@impl@data@matlab@@@std@@QEAA@AEBV01@@Z
 	??0?$shared_ptr@VMATLABEngine@engine@matlab@@@std@@QEAA@AEBV01@@Z
-	??0?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@QEAA@AEBV01@@Z
 	??0?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@QEAA@V?$initializer_list@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@1@AEBV?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@1@@Z
 	??0?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@QEAA@V?$initializer_list@VArray@data@matlab@@@1@AEBV?$allocator@VArray@data@matlab@@@1@@Z
 	??0?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@QEAA@AEBV01@@Z
 	??0?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@QEAA@AEBV01@@Z
 	??0?$vector@_KV?$allocator@_K@std@@@std@@QEAA@V?$initializer_list@_K@1@AEBV?$allocator@_K@1@@Z
 	??0Array@data@matlab@@IEAA@PEAVArrayImpl@impl@12@@Z
+	??0Array@data@matlab@@QEAA@XZ
 	??0ArrayFactory@data@matlab@@QEAA@XZ
 	??0ArrayReferenceExt@data@matlab@@IEAA@V?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@@Z
 	??0CancelledException@engine@matlab@@QEAA@AEBV012@@Z
@@ -717,37 +607,32 @@ EXPORTS
 	??0MATLABSyntaxException@engine@matlab@@QEAA@$$QEAV012@@Z
 	??0MATLABSyntaxException@engine@matlab@@QEAA@AEBV012@@Z
 	??0NetworkProxy@proxy@sq@@QEAA@J@Z
-	??0NodeProxy@proxy@sq@@QEAA@V?$shared_ptr@VNetwork@@@std@@J@Z
+	??0Node@?$NetworkT@VArray@data@matlab@@@@QEAA@$$QEAV01@@Z
+	??0Node@?$NetworkT@VArray@data@matlab@@@@QEAA@AEBV01@@Z
+	??0Node@?$NetworkT@VArray@data@matlab@@@@QEAA@PEAV1@JW4Operation@@@Z
+	??0NodeProxy@proxy@sq@@QEAA@V?$shared_ptr@V?$NetworkT@VArray@data@matlab@@@@@std@@J@Z
 	??0TypeConversionException@engine@matlab@@QEAA@AEBV012@@Z
 	??0TypeConversionException@engine@matlab@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0TypeError@signals@@QEAA@AEBV01@@Z
+	??0TypeError@signals@@QEAA@PEBD@Z
 	??0bad_alloc@std@@QEAA@AEBV01@@Z
 	??0bad_array_new_length@std@@QEAA@AEBV01@@Z
 	??0bad_array_new_length@std@@QEAA@XZ
-	??0bad_variant_access@std@@QEAA@AEBV01@@Z
-	??0bad_variant_access@std@@QEAA@XZ
 	??0exception@std@@QEAA@AEBV01@@Z
-	??0invalid_argument@std@@QEAA@AEBV01@@Z
-	??0invalid_argument@std@@QEAA@PEBD@Z
 	??0logic_error@std@@QEAA@AEBV01@@Z
+	??0out_of_range@std@@QEAA@AEBV01@@Z
+	??0out_of_range@std@@QEAA@PEBD@Z
 	??0runtime_error@std@@QEAA@AEBV01@@Z
 	??0runtime_error@std@@QEAA@PEBD@Z
 	??1?$ArrayElementRef@$00@data@matlab@@QEAA@XZ
 	??1?$ArrayElementRef@$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@C$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@E$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@F$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@G$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@H$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@I$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@M$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@N$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@VArray@data@matlab@@$00@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@VStruct@data@matlab@@$00@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@_J$0A@@data@matlab@@QEAA@XZ
-	??1?$ArrayElementTypedRef@_K$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayElementTypedRef@_N$0A@@data@matlab@@QEAA@XZ
 	??1?$ArrayException@VException@matlab@@$00@detail@data@matlab@@UEAA@XZ
 	??1?$ArrayException@VException@matlab@@$01@detail@data@matlab@@UEAA@XZ
@@ -798,96 +683,85 @@ EXPORTS
 	??1?$ArrayException@VException@matlab@@$0N@@detail@data@matlab@@UEAA@XZ
 	??1?$ArrayException@VException@matlab@@$0O@@detail@data@matlab@@UEAA@XZ
 	??1?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@UEAA@XZ
+	??1?$NetworkT@VArray@data@matlab@@@@QEAA@XZ
+	??1?$TransfererT@VArray@data@matlab@@@@QEAA@XZ
 	??1?$TypedArray@C@data@matlab@@UEAA@XZ
-	??1?$TypedArray@E@data@matlab@@UEAA@XZ
-	??1?$TypedArray@F@data@matlab@@UEAA@XZ
-	??1?$TypedArray@G@data@matlab@@UEAA@XZ
 	??1?$TypedArray@H@data@matlab@@UEAA@XZ
-	??1?$TypedArray@I@data@matlab@@UEAA@XZ
-	??1?$TypedArray@M@data@matlab@@UEAA@XZ
 	??1?$TypedArray@N@data@matlab@@UEAA@XZ
-	??1?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@UEAA@XZ
 	??1?$TypedArray@VArray@data@matlab@@@data@matlab@@UEAA@XZ
 	??1?$TypedArray@VStruct@data@matlab@@@data@matlab@@UEAA@XZ
-	??1?$TypedArray@_J@data@matlab@@UEAA@XZ
 	??1?$TypedArray@_K@data@matlab@@UEAA@XZ
 	??1?$TypedArray@_N@data@matlab@@UEAA@XZ
 	??1?$TypedArray@_S@data@matlab@@UEAA@XZ
 	??1?$TypedIterator@N@data@matlab@@QEAA@XZ
 	??1?$_Alloc_construct_ptr@V?$allocator@U?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@@std@@@std@@QEAA@XZ
-	??1?$_Func_class@U?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@std@@QEAA@XZ
+	??1?$_Alloc_construct_ptr@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@@std@@QEAA@XZ
+	??1?$_Erase_tree_and_orphan_guard@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
+	??1?$_Func_class@U?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@std@@QEAA@XZ
 	??1?$_Hash_vec@V?$allocator@V?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@std@@@std@@@std@@QEAA@XZ
 	??1?$_List_node_emplace_op2@V?$allocator@U?$_List_node@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@PEAX@std@@@std@@@std@@QEAA@XZ
-	??1?$_Ref_count_obj2@VNetwork@@@std@@UEAA@XZ
+	??1?$_Ref_count_obj2@V?$NetworkT@VArray@data@matlab@@@@@std@@UEAA@XZ
 	??1?$_Ref_count_obj2@VNetworkProxy@proxy@sq@@@std@@UEAA@XZ
 	??1?$_Ref_count_obj2@VNodeProxy@proxy@sq@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@UEAA@XZ
+	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@UEAA@XZ
-	??1?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@UEAA@XZ
 	??1?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@UEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@QEAA@XZ
-	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@QEAA@XZ
 	??1?$_Temporary_owner_del@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@QEAA@XZ
 	??1?$_Tidy_guard@V?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@@std@@QEAA@XZ
 	??1?$_Tidy_guard@V?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@@std@@QEAA@XZ
 	??1?$_Tidy_guard@V?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@@std@@QEAA@XZ
+	??1?$_Tree_head_scoped_ptr@V?$allocator@U?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@std@@V?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@2@@std@@QEAA@XZ
 	??1?$_Uninitialized_backout_al@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@QEAA@XZ
 	??1?$_Uninitialized_backout_al@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@QEAA@XZ
+	??1?$_Uninitialized_backout_al@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
 	??1?$_Uninitialized_backout_al@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@QEAA@XZ
-	??1?$_Variant_destroy_layer_@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@QEAA@XZ
 	??1?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAA@XZ
 	??1?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@QEAA@XZ
-	??1?$function@$$A6A?AU?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@Z@std@@QEAA@XZ
+	??1?$deque@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
+	??1?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@QEAA@XZ
 	??1?$list@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@2@@std@@QEAA@XZ
+	??1?$optional@VArray@data@matlab@@@std@@QEAA@XZ
+	??1?$pair@VArray@data@matlab@@_N@std@@QEAA@XZ
 	??1?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@QEAA@XZ
+	??1?$queue@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$deque@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@@std@@QEAA@XZ
+	??1?$set@PEAVNode@?$NetworkT@VArray@data@matlab@@@@U?$less@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@4@@std@@QEAA@XZ
+	??1?$shared_ptr@V?$NetworkT@VArray@data@matlab@@@@@std@@QEAA@XZ
 	??1?$shared_ptr@V?$basic_streambuf@_SU?$char_traits@_S@std@@@std@@@std@@QEAA@XZ
 	??1?$shared_ptr@VArrayFactoryImpl@impl@data@matlab@@@std@@QEAA@XZ
 	??1?$shared_ptr@VArrayImpl@impl@data@matlab@@@std@@QEAA@XZ
 	??1?$shared_ptr@VMATLABEngine@engine@matlab@@@std@@QEAA@XZ
-	??1?$shared_ptr@VNetwork@@@std@@QEAA@XZ
 	??1?$shared_ptr@VNodeProxy@proxy@sq@@@std@@QEAA@XZ
 	??1?$shared_ptr@VProxy@proxy@libmexclass@@@std@@QEAA@XZ
 	??1?$shared_ptr@VReferenceImpl@detail@data@matlab@@@std@@QEAA@XZ
 	??1?$unique_ptr@DP6AXPEAD@Z@std@@QEAA@XZ
 	??1?$unique_ptr@PEAVArrayImpl@impl@data@matlab@@P6AXPEAPEAV1234@@Z@std@@QEAA@XZ
 	??1?$unique_ptr@_SP6AXPEA_S@Z@std@@QEAA@XZ
-	??1?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@QEAA@XZ
 	??1?$vector@JV?$allocator@J@std@@@std@@QEAA@XZ
+	??1?$vector@NV?$allocator@N@std@@@std@@QEAA@XZ
+	??1?$vector@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
 	??1?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@QEAA@XZ
 	??1?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@QEAA@XZ
+	??1?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
 	??1?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@QEAA@XZ
 	??1?$vector@_KV?$allocator@_K@std@@@std@@QEAA@XZ
 	??1Array@data@matlab@@UEAA@XZ
@@ -901,84 +775,67 @@ EXPORTS
 	??1MATLABException@engine@matlab@@UEAA@XZ
 	??1MATLABExecutionException@engine@matlab@@UEAA@XZ
 	??1MATLABSyntaxException@engine@matlab@@UEAA@XZ
-	??1Network@@QEAA@XZ
-	??1Node@Network@@QEAA@XZ
+	??1Node@?$NetworkT@VArray@data@matlab@@@@QEAA@XZ
 	??1Proxy@proxy@libmexclass@@UEAA@XZ
 	??1StructArray@data@matlab@@UEAA@XZ
 	??1TypeConversionException@engine@matlab@@UEAA@XZ
+	??1TypeError@signals@@UEAA@XZ
 	??1_Reallocation_guard@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@QEAA@XZ
+	??1_Reallocation_guard@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
 	??1_Ref_count_base@std@@UEAA@XZ
+	??1_Sentry_base@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ
+	??1_Simple_reallocation_guard@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAA@XZ
 	??1bad_array_new_length@std@@UEAA@XZ
-	??1bad_variant_access@std@@UEAA@XZ
 	??1exception@std@@UEAA@XZ
-	??1invalid_argument@std@@UEAA@XZ
+	??1out_of_range@std@@UEAA@XZ
 	??1runtime_error@std@@UEAA@XZ
+	??1sentry@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ
 	??4?$ArrayElementTypedRef@C$0A@@data@matlab@@QEAAAEAV012@C@Z
 	??4?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@data@matlab@@QEAAAEAV012@VArray@12@@Z
 	??4?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAAAEAV01@$$QEAV01@@Z
 	??4?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAAAEAV01@AEBV01@@Z
 	??4?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@QEAAAEAV01@$$QEAV01@@Z
 	??4?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@QEAAAEAV01@AEBV01@@Z
+	??4?$optional@VArray@data@matlab@@@std@@QEAAAEAV01@$$QEAV01@@Z
+	??4?$optional@VArray@data@matlab@@@std@@QEAAAEAV01@AEBV01@@Z
 	??4Array@data@matlab@@QEAAAEAV012@$$QEAV012@@Z
+	??4Array@data@matlab@@QEAAAEAV012@AEBV012@@Z
 	??4MATLABException@engine@matlab@@QEAAAEAV012@AEBV012@@Z
+	??8Node@?$NetworkT@VArray@data@matlab@@@@QEBA_NAEBV01@@Z
 	??A?$ArrayElementTypedRef@VStruct@data@matlab@@$00@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$00@12@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??A?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@12@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??A?$TypedArray@C@data@matlab@@QEAA?AV?$ArrayElementTypedRef@C$0A@@12@_K@Z
-	??A?$TypedArray@E@data@matlab@@QEAA?AV?$ArrayElementTypedRef@E$0A@@12@_K@Z
-	??A?$TypedArray@F@data@matlab@@QEAA?AV?$ArrayElementTypedRef@F$0A@@12@_K@Z
-	??A?$TypedArray@G@data@matlab@@QEAA?AV?$ArrayElementTypedRef@G$0A@@12@_K@Z
 	??A?$TypedArray@H@data@matlab@@QEAA?AV?$ArrayElementTypedRef@H$0A@@12@_K@Z
-	??A?$TypedArray@I@data@matlab@@QEAA?AV?$ArrayElementTypedRef@I$0A@@12@_K@Z
-	??A?$TypedArray@M@data@matlab@@QEAA?AV?$ArrayElementTypedRef@M$0A@@12@_K@Z
 	??A?$TypedArray@N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@N$0A@@12@_K@Z
-	??A?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@$0A@@12@_K@Z
 	??A?$TypedArray@VArray@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VArray@data@matlab@@$0A@@12@_K@Z
 	??A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEAA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$0A@@12@_K@Z
 	??A?$TypedArray@VStruct@data@matlab@@@data@matlab@@QEBA?AV?$ArrayElementTypedRef@VStruct@data@matlab@@$00@12@_K@Z
-	??A?$TypedArray@_J@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_J$0A@@12@_K@Z
-	??A?$TypedArray@_K@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_K$0A@@12@_K@Z
 	??A?$TypedArray@_N@data@matlab@@QEAA?AV?$ArrayElementTypedRef@_N$0A@@12@_K@Z
 	??AArray@data@matlab@@QEAA?AV?$ArrayElementRef@$0A@@12@_K@Z
 	??AArray@data@matlab@@QEBA?AV?$ArrayElementRef@$00@12@_K@Z
-	??B?$ArrayElementTypedRef@C$0A@@data@matlab@@QEBAAEACXZ
-	??B?$ArrayElementTypedRef@E$0A@@data@matlab@@QEBAAEAEXZ
-	??B?$ArrayElementTypedRef@F$0A@@data@matlab@@QEBAAEAFXZ
-	??B?$ArrayElementTypedRef@G$0A@@data@matlab@@QEBAAEAGXZ
 	??B?$ArrayElementTypedRef@H$0A@@data@matlab@@QEBAAEAHXZ
-	??B?$ArrayElementTypedRef@I$0A@@data@matlab@@QEBAAEAIXZ
-	??B?$ArrayElementTypedRef@M$0A@@data@matlab@@QEBAAEAMXZ
 	??B?$ArrayElementTypedRef@N$0A@@data@matlab@@QEBAAEANXZ
-	??B?$ArrayElementTypedRef@_J$0A@@data@matlab@@QEBAAEA_JXZ
-	??B?$ArrayElementTypedRef@_K$0A@@data@matlab@@QEBAAEA_KXZ
 	??B?$ArrayElementTypedRef@_N$0A@@data@matlab@@QEBAAEA_NXZ
 	??C?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@std@@QEBAPEBU?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@1@XZ
-	??R<lambda_0f9d19a88f58823f38ec262baa8352c6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
+	??D?$_Optional_construct_base@VArray@data@matlab@@@std@@QEGAAAEAVArray@data@matlab@@XZ
 	??R<lambda_18bde30140702ba20a566c9dc393b8c0>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_2338e59a205dcd23a85a74566c35c54c>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z
 	??R<lambda_2615407b98e1f3a14023b76f0dedc381>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z
+	??R<lambda_2cbb5afb0f2f9651706a7a6a9c3f0340>@@QEBA?AV?$optional@VArray@data@matlab@@@std@@PEBVNode@?$NetworkT@VArray@data@matlab@@@@@Z
 	??R<lambda_2dd2a45b97d1eae091489baa325e25e5>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z
 	??R<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_49bc69670bef5877f460780ec06c4b58>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_7221354e2161a523b28f93cf96116df6>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_7b2e123050acc360989b02063f1710cc>@@QEBA@PEAVIteratorImpl@detail@data@matlab@@@Z
 	??R<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_9507ba629d49b0192687e7d9aa57067f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_967db8ced547e9091a2620d05ad97606>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_a4c5f97d4391fb4c09103a727c16defd>@@QEBA@PEAVArrayFactoryImpl@impl@data@matlab@@@Z
+	??R<lambda_ae87371b3065e866fa99158bd624c270>@@QEBA@AEBVArray@data@matlab@@@Z
 	??R<lambda_d1015d615fb406337ea3cb3787d3fc33>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_d399ffdf0f03d8f06291ec53506052ab>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_d92be61f47eca0e969a2c6214dd6d563>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_eea32f14924103eefb3c8a425d54b536>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_f46d2928e58111d7f012c97497042079>@@QEBA@PEAVReferenceImpl@detail@data@matlab@@@Z
-	??R<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??R<lambda_fc6ba359cb9b5102049b749e98269e61>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
+	??R<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
 	??R<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@QEBA@PEAVArrayImpl@impl@data@matlab@@@Z
-	??RVisitor@?1??toMda@mex@sq@@YA?AVArray@data@matlab@@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@AEAVArrayFactory@56@@Z@QEBA?AV456@AEBV?$vector@NV?$allocator@N@std@@@8@@Z
-	??RVisitor@?1??toMda@mex@sq@@YA?AVArray@data@matlab@@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@AEAVArrayFactory@56@@Z@QEBA?AV456@N@Z
-	??RVisitor@?1??toMda@mex@sq@@YA?AVArray@data@matlab@@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@AEAVArrayFactory@56@@Z@QEBA?AV456@_N@Z
 	??_7?$ArrayException@VException@matlab@@$00@detail@data@matlab@@6BException@3@@
 	??_7?$ArrayException@VException@matlab@@$00@detail@data@matlab@@6Bexception@std@@@
 	??_7?$ArrayException@VException@matlab@@$01@detail@data@matlab@@6BException@3@@
@@ -1078,46 +935,31 @@ EXPORTS
 	??_7?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@6BException@3@@
 	??_7?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@6Bexception@std@@@
 	??_7?$TypedArray@C@data@matlab@@6B@
-	??_7?$TypedArray@E@data@matlab@@6B@
-	??_7?$TypedArray@F@data@matlab@@6B@
-	??_7?$TypedArray@G@data@matlab@@6B@
 	??_7?$TypedArray@H@data@matlab@@6B@
-	??_7?$TypedArray@I@data@matlab@@6B@
-	??_7?$TypedArray@M@data@matlab@@6B@
 	??_7?$TypedArray@N@data@matlab@@6B@
-	??_7?$TypedArray@V?$optional@V?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@@data@matlab@@@data@matlab@@6B@
 	??_7?$TypedArray@VArray@data@matlab@@@data@matlab@@6B@
 	??_7?$TypedArray@VStruct@data@matlab@@@data@matlab@@6B@
-	??_7?$TypedArray@_J@data@matlab@@6B@
 	??_7?$TypedArray@_K@data@matlab@@6B@
 	??_7?$TypedArray@_N@data@matlab@@6B@
 	??_7?$TypedArray@_S@data@matlab@@6B@
 	??_7?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@6B@
 	??_7?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@6B@
-	??_7?$_Ref_count_obj2@VNetwork@@@std@@6B@
+	??_7?$_Ref_count_obj2@V?$NetworkT@VArray@data@matlab@@@@@std@@6B@
 	??_7?$_Ref_count_obj2@VNetworkProxy@proxy@sq@@@std@@6B@
 	??_7?$_Ref_count_obj2@VNodeProxy@proxy@sq@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@6B@
+	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@6B@
-	??_7?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@6B@
 	??_7?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@6B@
@@ -1136,12 +978,12 @@ EXPORTS
 	??_7Proxy@proxy@libmexclass@@6B@
 	??_7StructArray@data@matlab@@6B@
 	??_7TypeConversionException@engine@matlab@@6B@
+	??_7TypeError@signals@@6B@
 	??_7bad_alloc@std@@6B@
 	??_7bad_array_new_length@std@@6B@
-	??_7bad_variant_access@std@@6B@
 	??_7exception@std@@6B@
-	??_7invalid_argument@std@@6B@
 	??_7logic_error@std@@6B@
+	??_7out_of_range@std@@6B@
 	??_7runtime_error@std@@6B@
 	?AddNode@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
 	?Apply@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
@@ -1154,160 +996,195 @@ EXPORTS
 	?GetWorkingValue@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
 	?IsValid@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
 	?NActiveNodes@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
+	?Post@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
 	?Transact@NetworkProxy@proxy@sq@@QEAAXAEAUContext@method@2libmexclass@@@Z
 	?_Assign_grow@?$_Hash_vec@V?$allocator@V?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@std@@@std@@@std@@QEAAX_KV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@2@@Z
 	?_Buy_nonzero@?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@AEAAX_K@Z
 	?_Change_array@?$vector@JV?$allocator@J@std@@@std@@AEAAXQEAJ_K1@Z
+	?_Change_array@?$vector@NV?$allocator@N@std@@@std@@AEAAXQEAN_K1@Z
 	?_Change_array@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@AEAAXQEAVArray@data@matlab@@_K1@Z
+	?_Change_array@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@AEAAXQEAVNode@?$NetworkT@VArray@data@matlab@@@@_K1@Z
 	?_Copy@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAPEAV?$_Func_base@XAEAUContext@method@proxy@libmexclass@@@2@PEAX@Z
 	?_Copy@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAPEAV?$_Func_base@XAEAUContext@method@proxy@libmexclass@@@2@PEAX@Z
-	?_Deallocate_for_capacity@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@CAXAEAV?$allocator@D@2@QEAD_K@Z
 	?_Deallocate_for_capacity@?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@CAXAEAV?$allocator@_S@2@QEA_S_K@Z
 	?_Decref@_Ref_count_base@std@@QEAAXXZ
 	?_Delete_this@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAX_N@Z
 	?_Delete_this@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAX_N@Z
-	?_Delete_this@?$_Ref_count_obj2@VNetwork@@@std@@EEAAXXZ
+	?_Delete_this@?$_Ref_count_obj2@V?$NetworkT@VArray@data@matlab@@@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_obj2@VNetworkProxy@proxy@sq@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_obj2@VNodeProxy@proxy@sq@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@EEAAXXZ
+	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@EEAAXXZ
-	?_Delete_this@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@EEAAXXZ
 	?_Delete_this@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_obj2@VNetwork@@@std@@EEAAXXZ
+	?_Destroy@?$_Ref_count_obj2@V?$NetworkT@VArray@data@matlab@@@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_obj2@VNetworkProxy@proxy@sq@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_obj2@VNodeProxy@proxy@sq@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@EEAAXXZ
+	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@EEAAXXZ
-	?_Destroy@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@EEAAXXZ
 	?_Destroy@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@EEAAXXZ
 	?_Do_call@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAXAEAUContext@method@proxy@libmexclass@@@Z
 	?_Do_call@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAXAEAUContext@method@proxy@libmexclass@@@Z
+	?_Erase@?$_Tree@V?$_Tset_traits@PEAVNode@?$NetworkT@VArray@data@matlab@@@@U?$less@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@4@$0A@@std@@@std@@AEAA_KU?$pair@PEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@PEAU12@@2@@Z
+	?_Extract@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAPEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@2@V?$_Tree_unchecked_const_iterator@V?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@U_Iterator_base0@2@@2@@Z
 	?_Forced_rehash@?$_Hash@V?$_Umap_traits@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@V?$_Uhash_compare@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@U?$hash@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@U?$equal_to@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@2@$0A@@std@@@std@@IEAAX_K@Z
 	?_Get@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAPEBXXZ
 	?_Get@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAPEBXXZ
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayFactoryImpl@impl@data@matlab@@V<lambda_a4c5f97d4391fb4c09103a727c16defd>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_0f9d19a88f58823f38ec262baa8352c6>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_18bde30140702ba20a566c9dc393b8c0>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_35cce5ff43e53a9c2a07ed7b71a4ef18>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_49bc69670bef5877f460780ec06c4b58>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_7221354e2161a523b28f93cf96116df6>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_8717c4bee2934487c85bc1f9f4a10ac1>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_9507ba629d49b0192687e7d9aa57067f>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_967db8ced547e9091a2620d05ad97606>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_977f0463a5e6eb83b02f667aaa6e012d>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d1015d615fb406337ea3cb3787d3fc33>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d399ffdf0f03d8f06291ec53506052ab>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d8af35b3cfd5e4a4638dc2f29fa9224f>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_d92be61f47eca0e969a2c6214dd6d563>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_e914d30eff449a87d58ddc0a6ee00afb>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_eea32f14924103eefb3c8a425d54b536>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc4c643f79b68aa2576c1731a9f361e3>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fc6ba359cb9b5102049b749e98269e61>@@@std@@UEBAPEAXAEBVtype_info@@@Z
+	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fa56cbe7daf803da2191dc834c8dfa71>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVArrayImpl@impl@data@matlab@@V<lambda_fcedf4de9ef08b74a882b8091f50c65a>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_2338e59a205dcd23a85a74566c35c54c>@@@std@@UEBAPEAXAEBVtype_info@@@Z
-	?_Get_deleter@?$_Ref_count_resource@PEAVIteratorImpl@detail@data@matlab@@V<lambda_7b2e123050acc360989b02063f1710cc>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2615407b98e1f3a14023b76f0dedc381>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_2dd2a45b97d1eae091489baa325e25e5>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@?$_Ref_count_resource@PEAVReferenceImpl@detail@data@matlab@@V<lambda_f46d2928e58111d7f012c97497042079>@@@std@@UEBAPEAXAEBVtype_info@@@Z
 	?_Get_deleter@_Ref_count_base@std@@UEBAPEAXAEBVtype_info@@@Z
+	?_Growmap@?$deque@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@AEAAX_K@Z
+	?_Insert_node@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAPEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@2@U?$_Tree_id@PEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@std@@@2@QEAU32@@Z
+	?_Lrotate@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAXPEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@2@@Z
 	?_Move@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAPEAV?$_Func_base@XAEAUContext@method@proxy@libmexclass@@@2@PEAX@Z
 	?_Move@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEAAPEAV?$_Func_base@XAEAUContext@method@proxy@libmexclass@@@2@PEAX@Z
-	?_Reset@?$_Variant_base@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@QEAAXXZ
-	?_Reset_move@?$_Func_class@U?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@std@@IEAAX$$QEAV12@@Z
+	?_Reset_move@?$_Func_class@U?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@std@@IEAAX$$QEAV12@@Z
+	?_Rrotate@?$_Tree_val@U?$_Tree_simple_types@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@QEAAXPEAU?$_Tree_node@PEAVNode@?$NetworkT@VArray@data@matlab@@@@PEAX@2@@Z
 	?_Swap@?$_Func_class@XAEAUContext@method@proxy@libmexclass@@@std@@IEAAXAEAV12@@Z
 	?_Target_type@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NetworkProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAAEBVtype_info@@XZ
 	?_Target_type@?$_Func_impl_no_alloc@V?$_Binder@U_Unforced@std@@P8NodeProxy@proxy@sq@@EAAXAEAUContext@method@4libmexclass@@@ZPEAV345@AEBU?$_Ph@$00@2@@std@@XAEAUContext@method@proxy@libmexclass@@@std@@EEBAAEBVtype_info@@XZ
 	?_Throw_bad_array_new_length@std@@YAXXZ
-	?_Throw_bad_variant_access@std@@YAXXZ
+	?_Throw_tree_length_error@std@@YAXXZ
 	?_Tidy@?$vector@JV?$allocator@J@std@@@std@@AEAAXXZ
-	?_Tidy@?$vector@NV?$allocator@N@std@@@std@@AEAAXXZ
+	?_Tidy@?$vector@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@AEAAXXZ
 	?_Tidy@?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@AEAAXXZ
 	?_Tidy@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@AEAAXXZ
 	?_Tidy@?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@AEAAXXZ
+	?_Tidy@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@AEAAXXZ
 	?_Tidy@?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@AEAAXXZ
 	?_Tidy@?$vector@_KV?$allocator@_K@std@@@std@@AEAAXXZ
 	?_Tidy_deallocate@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAAXXZ
 	?_Tidy_deallocate@?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@AEAAXXZ
+	?_Xlen@?$deque@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@CAXXZ
 	?_Xlen_string@std@@YAXXZ
 	?_Xlength@?$vector@JV?$allocator@J@std@@@std@@CAXXZ
 	?_Xlength@?$vector@NV?$allocator@N@std@@@std@@CAXXZ
+	?_Xlength@?$vector@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@CAXXZ
 	?_Xlength@?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@CAXXZ
 	?_Xlength@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@CAXXZ
 	?_Xlength@?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@CAXXZ
+	?_Xlength@?$vector@VNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@VNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@CAXXZ
 	?_Xlength@?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@CAXXZ
 	?_Xlength@?$vector@_KV?$allocator@_K@std@@@std@@CAXXZ
+	?add@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
+	?add_node@?$NetworkT@VArray@data@matlab@@@@QEAAJAEBV?$vector@JV?$allocator@J@std@@@std@@W4Operation@@_NV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@3@@Z
+	?add_target@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXPEAV12@@Z
+	?append@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?append@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAAAEAV12@QEBD_K@Z
+	?apply@?$NetworkT@VArray@data@matlab@@@@QEAAXAEBV?$vector@JV?$allocator@J@std@@@std@@@Z
 	?begin@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@23@XZ
 	?c_str@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEBAPEBDXZ
+	?clear@?$_Tree@V?$_Tset_traits@PEAVNode@?$NetworkT@VArray@data@matlab@@@@U?$less@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@4@$0A@@std@@@std@@QEAAXXZ
+	?clear_working_value@?$NetworkT@VArray@data@matlab@@@@QEAA_NJ@Z
 	?convertUTF16StringToUTF8String@engine@matlab@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@4@@Z
 	?convertUTF8StringToUTF16String@engine@matlab@@YA?AV?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?createCause@detail@engine@matlab@@YA?AV?$vector@VMATLABExecutionException@engine@matlab@@V?$allocator@VMATLABExecutionException@engine@matlab@@@std@@@std@@AEBV?$TypedArray@VArray@data@matlab@@@data@3@@Z
 	?createCellArray@ArrayFactory@data@matlab@@QEAA?AV?$TypedArray@VArray@data@matlab@@@23@V?$vector@_KV?$allocator@_K@std@@@std@@@Z
-	?createCharArray@ArrayFactory@data@matlab@@QEAA?AVCharArray@23@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?createMATLABException@detail@engine@matlab@@YA?AVMATLABException@23@AEBVStructArray@data@3@@Z
 	?createMATLABExecutionException@detail@engine@matlab@@YA?AVMATLABExecutionException@23@AEBVStructArray@data@3@@Z
 	?createMATLABSyntaxException@detail@engine@matlab@@YA?AVMATLABSyntaxException@23@AEBVStructArray@data@3@@Z
 	?createStackTrace@detail@engine@matlab@@YA?AV?$vector@VStackFrame@engine@matlab@@V?$allocator@VStackFrame@engine@matlab@@@std@@@std@@AEBVStructArray@data@3@@Z
 	?deallocate@?$allocator@V?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@std@@@std@@QEAAXQEAV?$_List_unchecked_iterator@V?$_List_val@U?$_List_simple_types@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXAEAUContext@method@proxy@libmexclass@@@Z@2@@std@@@std@@@std@@@2@_K@Z
 	?deleteStreamBufferImpl@@YAXPEAX@Z
+	?delete_node@?$NetworkT@VArray@data@matlab@@@@QEAA_NJ@Z
+	?destroy@?$NetworkT@VArray@data@matlab@@@@QEAAXXZ
+	?destroy@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXXZ
 	?end@?$TypedArray@N@data@matlab@@QEAA?AV?$TypedIterator@N@23@XZ
+	?eq@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?feval@MATLABEngine@engine@matlab@@QEAA?AV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@AEBV?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@5@HAEBV45@AEBV?$shared_ptr@V?$basic_streambuf@_SU?$char_traits@_S@std@@@std@@@5@2@Z
-	?fromMda@mex@sq@@YA?AV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@AEBVArray@data@matlab@@@Z
+	?from_bool@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@_N@Z
+	?from_double@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@N@Z
+	?ge@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?getNumberOfElements@Array@data@matlab@@QEBA_KXZ
 	?getType@Array@data@matlab@@QEBA?AW4ArrayType@23@XZ
+	?get_current_value@?$NetworkT@VArray@data@matlab@@@@QEBA?AVArray@data@matlab@@J@Z
+	?get_id@?$NetworkT@VArray@data@matlab@@@@QEBAJXZ
+	?get_id@Node@?$NetworkT@VArray@data@matlab@@@@QEBAJXZ
+	?get_latest_value@?$NetworkT@VArray@data@matlab@@@@QEBA?AVArray@data@matlab@@J@Z
+	?get_max_nodes@?$NetworkT@VArray@data@matlab@@@@QEBAJXZ
+	?get_node@?$NetworkT@VArray@data@matlab@@@@AEAAPEAVNode@1@_K@Z
+	?get_node_inputs@?$NetworkT@VArray@data@matlab@@@@QEBA?AV?$vector@JV?$allocator@J@std@@@std@@J@Z
+	?get_working_value@?$NetworkT@VArray@data@matlab@@@@QEBA?AVArray@data@matlab@@J@Z
+	?gt@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?implDeleter@@YAXPEAPEAVArrayImpl@impl@data@matlab@@@Z
 	?implToArray@@YAXHQEAPEAXAEAV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@@Z
 	?isEmpty@Array@data@matlab@@QEBA_NXZ
+	?is_available@Node@?$NetworkT@VArray@data@matlab@@@@QEBA_NXZ
+	?is_truthy@?$ValueTraits@VArray@data@matlab@@@@SA_NAEBVArray@data@matlab@@@Z
+	?is_valid@?$NetworkT@VArray@data@matlab@@@@QEAA_NXZ
+	?is_valid@Node@?$NetworkT@VArray@data@matlab@@@@QEBA_NXZ
+	?ldivide@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
+	?le@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
+	?lt@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?make@NetworkProxy@proxy@sq@@SA?AV?$variant@V?$shared_ptr@VProxy@proxy@libmexclass@@@std@@VError@error@libmexclass@@@std@@AEBVArray@data@matlab@@@Z
 	?make@NodeProxy@proxy@sq@@SA?AV?$variant@V?$shared_ptr@VProxy@proxy@libmexclass@@@std@@VError@error@libmexclass@@@std@@AEBVArray@data@matlab@@@Z
 	?make_proxy@CustomProxyFactory@proxy@sq@@UEAA?AV?$variant@V?$shared_ptr@VProxy@proxy@libmexclass@@@std@@VError@error@libmexclass@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBVArray@data@matlab@@@Z
+	?multiply@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
+	?n_active_nodes@?$NetworkT@VArray@data@matlab@@@@QEAA_KXZ
+	?n_nodes@?$NetworkT@VArray@data@matlab@@@@QEAA_KXZ
+	?next_free_node@?$NetworkT@VArray@data@matlab@@@@AEAAPEAVNode@1@XZ
+	?no_value@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@XZ
 	?push_back@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAAXD@Z
+	?push_back@?$vector@JV?$allocator@J@std@@@std@@QEAAXAEBJ@Z
+	?push_back@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@QEAAXAEBVArray@data@matlab@@@Z
 	?rbegin@?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@QEBA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@2@XZ
+	?rdivide@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?rend@?$vector@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@V?$allocator@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@2@@std@@QEBA?AV?$reverse_iterator@V?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@U?$pair@W4FunctionType@detail@data@matlab@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@std@@@std@@@std@@@2@XZ
 	?reserve@?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@std@@QEAAX_K@Z
+	?set_callable@?$TransfererT@VArray@data@matlab@@@@QEAAXV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@@Z
+	?set_callable@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@@Z
+	?set_current_value@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXAEBVArray@data@matlab@@@Z
+	?set_inputs@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXV?$vector@PEAVNode@?$NetworkT@VArray@data@matlab@@@@V?$allocator@PEAVNode@?$NetworkT@VArray@data@matlab@@@@@std@@@std@@@Z
+	?set_node_current_value@?$NetworkT@VArray@data@matlab@@@@QEAA_NJAEBVArray@data@matlab@@@Z
+	?set_transferer@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXW4Operation@@@Z
+	?set_working_value@Node@?$NetworkT@VArray@data@matlab@@@@QEAAXAEBVArray@data@matlab@@@Z
+	?subtract@?$ValueTraits@VArray@data@matlab@@@@SA?AVArray@data@matlab@@AEBV234@0@Z
 	?throwIfError@detail@data@matlab@@YAXHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?toAscii@CharArray@data@matlab@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?toUTF16@CharArray@data@matlab@@QEBA?AV?$basic_string@_SU?$char_traits@_S@std@@V?$allocator@_S@2@@std@@XZ
+	?to_index@?$ValueTraits@VArray@data@matlab@@@@SA?AV?$optional@_K@std@@AEBVArray@data@matlab@@@Z
+	?transact@?$NetworkT@VArray@data@matlab@@@@QEAA?AV?$vector@JV?$allocator@J@std@@@std@@JAEBVArray@data@matlab@@@Z
+	?transfer@Node@?$NetworkT@VArray@data@matlab@@@@QEAA_NXZ
+	?values_equal@?$ValueTraits@VArray@data@matlab@@@@SA_NAEBVArray@data@matlab@@0@Z
 	?what@?$ArrayException@VException@matlab@@$00@detail@data@matlab@@UEBAPEBDXZ
 	?what@?$ArrayException@VException@matlab@@$00@detail@data@matlab@@W7EBAPEBDXZ
 	?what@?$ArrayException@VException@matlab@@$01@detail@data@matlab@@UEBAPEBDXZ
@@ -1407,9 +1284,9 @@ EXPORTS
 	?what@?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@UEBAPEBDXZ
 	?what@?$ArrayException@VException@matlab@@$0P@@detail@data@matlab@@W7EBAPEBDXZ
 	?what@Exception@engine@matlab@@UEBAPEBDXZ
-	?what@bad_variant_access@std@@UEBAPEBDXZ
 	?what@exception@std@@UEBAPEBDXZ
-	?wrap_matlab_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@@Z
-	?wrap_matlab_scan_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@@Z
-	?wrap_transfer_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@_N@std@@AEBV?$vector@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@V?$allocator@V?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@std@@@2@@2@AEBV?$variant@Umonostate@std@@N_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@V?$vector@NV?$allocator@N@std@@@2@@2@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@V?$shared_ptr@VNetwork@@@4@V?$vector@JV?$allocator@J@std@@@4@@Z
+	?wrap_isequal@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@@Z
+	?wrap_matlab_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@@Z
+	?wrap_matlab_scan_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@@Z
+	?wrap_transfer_fn@mex_ops@sq@@YA?AV?$function@$$A6A?AU?$pair@VArray@data@matlab@@_N@std@@AEBV?$vector@VArray@data@matlab@@V?$allocator@VArray@data@matlab@@@std@@@2@AEBVArray@data@matlab@@J@Z@std@@VArray@data@matlab@@V?$shared_ptr@VMATLABEngine@engine@matlab@@@4@V?$shared_ptr@V?$NetworkT@VArray@data@matlab@@@@@4@V?$vector@JV?$allocator@J@std@@@4@@Z
 	?writeToStreamBuffer@@YAXPEAXPEB_S_K@Z

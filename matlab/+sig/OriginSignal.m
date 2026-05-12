@@ -17,8 +17,7 @@ classdef OriginSignal < sig.Signal
 
         function post(obj, value)
         % post  Inject value into the network and propagate to all dependents.
-            affected = obj.Node.Net.transact(obj.Node, value);
-            obj.Node.Net.apply(affected);
+            obj.Node.Net.post(obj.Node, value);
         end
 
     end

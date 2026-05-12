@@ -207,33 +207,7 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.verifyEqual(s.Node.Value, 10.0, 'mapn single output incorrect')
     end
 
-    function test_keepWhen(testCase)
-      % Tests for keepWhen method
-      [a, b] = deal(testCase.A, testCase.B);
-      s = a.keepWhen(b);
-      testCase.verifyMatches(s.Name, '\w+\.keepWhen\(\w+\)', 'Unexpected Name')
-
-      % Gate not yet set — a fires but s stays empty
-      a.post(rand)
-      testCase.verifyEmpty(s.Node.Value, 'Expected s empty when gate unset')
-
-      % Gate truthy — a fires, s passes through
-      b.post(true)
-      v = rand;
-      a.post(v)
-      testCase.verifyEqual(s.Node.Value, v, 'Expected s to pass through when gate truthy')
-
-      % Gate fires alone — s must not appear in the affected set at all
-      affected = testCase.net.transact(b, false);
-      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
-        'Expected s not affected when only gate fires')
-      testCase.net.apply(affected);
-
-      % Gate falsy — a fires, s blocked
-      a.post(rand)
-      testCase.verifyEqual(s.Node.Value, v, 'Expected s blocked when gate falsy')
-    end
-
+ 
     % function test_merge(testCase)
     %   % Tests for map method
     %   [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
@@ -689,47 +663,47 @@ classdef Signals_test < matlab.unittest.TestCase
     %   testCase.verifyEqual(b.Node.Value, e)
     % end
     %
-    % function test_keepWhen(testCase)
-    %   % Test for the keepWhen method
-    %   [a, b] = deal(testCase.A, testCase.B);
-    %   s = a.keepWhen(b);
-    %   testCase.verifyMatches(s.Name, '\w.keepWhen(\w+\)', 'Unexpected Name')
-    %
-    %   % Post a truthy value to b
-    %   affectedIdxs = submit(testCase.net.Id, b.Node.Id, true);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only b's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
-    %     'Unexpected nodes affected when predicate signal true')
-    %
-    %   % Post a value to signal a
-    %   v = rand;
-    %   affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check a and s nodes changed
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, [a.Node.Id;s.Node.Id]), ...
-    %     'Unexpected network behaviour upon posting value to signal a')
-    %   testCase.verifyTrue(isequal(v, a.Node.Value, s.Node.Value), ...
-    %     'Unexpected values of signals a and s')
-    %
-    %   % Post a non-truthy value to b
-    %   affectedIdxs = submit(testCase.net.Id, b.Node.Id, false);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only b's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
-    %     'Unexpected nodes affected when predicate signal false')
-    %
-    %   % Post a value to signal a
-    %   v = rand;
-    %   affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only a's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, a.Node.Id), ...
-    %     'Unexpected network behaviour upon posting value to signal a')
-    %   testCase.verifyTrue(v == a.Node.Value && s.Node.Value ~= v, ...
-    %     'Unexpected values of signals a and s')
-    % end
-    %
+    function test_keepWhen(testCase)
+      % Test for the keepWhen method
+      [a, b] = deal(testCase.A, testCase.B);
+      s = a.keepWhen(b);
+      testCase.verifyMatches(s.Name, '\w.keepWhen(\w+\)', 'Unexpected Name')
+
+      % Post a truthy value to b
+      affectedIdxs = testCase.net.transact(b.Node, true);
+      changed = applyNodes(testCase.net.Id, affectedIdxs);
+      % Check only b's node affected
+      testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
+        'Unexpected nodes affected when predicate signal true')
+
+      % Post a value to signal a
+      v = rand;
+      affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
+      changed = applyNodes(testCase.net.Id, affectedIdxs);
+      % Check a and s nodes changed
+      testCase.verifyTrue(isequal(affectedIdxs, changed, [a.Node.Id;s.Node.Id]), ...
+        'Unexpected network behaviour upon posting value to signal a')
+      testCase.verifyTrue(isequal(v, a.Node.Value, s.Node.Value), ...
+        'Unexpected values of signals a and s')
+
+      % Post a non-truthy value to b
+      affectedIdxs = submit(testCase.net.Id, b.Node.Id, false);
+      changed = applyNodes(testCase.net.Id, affectedIdxs);
+      % Check only b's node affected
+      testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
+        'Unexpected nodes affected when predicate signal false')
+
+      % Post a value to signal a
+      v = rand;
+      affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
+      changed = applyNodes(testCase.net.Id, affectedIdxs);
+      % Check only a's node affected
+      testCase.verifyTrue(isequal(affectedIdxs, changed, a.Node.Id), ...
+        'Unexpected network behaviour upon posting value to signal a')
+      testCase.verifyTrue(v == a.Node.Value && s.Node.Value ~= v, ...
+        'Unexpected values of signals a and s')
+    end
+
     % function test_at(testCase)
     %   % Test for the at method
     %   [a, b] = deal(testCase.A, testCase.B);

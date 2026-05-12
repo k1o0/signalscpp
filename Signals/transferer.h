@@ -75,7 +75,7 @@ enum class SIGNALS_API Operation {
     // ── Pure-C++ unary op (no callable) ──────────────────────────────────────
     // numel: output = number of elements of the input value.
     //   monostate→0, double/bool/string→1, vector<double>→size.
-    //   Implemented directly in Network::Node::transfer(); no callable needed.
+    //   Implemented directly in NetworkT<V>::Node::transfer(); no callable needed.
     // Legacy analogue: sig.node.Signal/numel
     numel         = 30,
 
@@ -85,7 +85,7 @@ enum class SIGNALS_API Operation {
     flattenstruct = 40,
 
     // ── Callable-argument ops (Group 6) ──────────────────────────────────────
-    // For these opcodes, Network::Node::transfer() encodes the transfer
+    // For these opcodes, NetworkT<V>::Node::transfer() encodes the transfer
     // SEMANTICS (which inputs to gather, how to gate, what to do with the
     // result).  set_node_callable() receives ONLY the user's function — the
     // transfer argument — wrapped for the Value boundary.
@@ -147,37 +147,34 @@ enum class SIGNALS_API Operation {
 };
 
 
-class SIGNALS_API Transferer {
+// ---------------------------------------------------------------------------
+// TransfererT<V> — per-node transfer state (opcode + callable).
+//
+// V is the value type used by the owning NetworkT<V>.  The callable takes
+// a vector of V inputs, the node's current (committed) V, and the node id,
+// and returns (new_value, was_set).
+// ---------------------------------------------------------------------------
+template <typename V>
+class TransfererT {
 public:
-    // Callable type stored on every node that uses a user-supplied function.
-    // Matches the legacy transferInMATLAB contract: the callable is responsible
-    // for all gating logic and returns a (value, was_set) pair.
-    //   inputs   - latest values of the node's inputs (working if set, else current)
-    //   current  - this node's committed current value (used as scan accumulator)
-    //   node_id  - this node's id; forwarded to MATLAB transfer functions so they
-    //              can call back into the network to query other nodes' values
-    // Returns std::pair<signals::Value, bool>:
-    //   .first   - the new working value (ignored when .second is false)
-    //   .second  - true iff .first should be stored as the new working value
     using NodeCallable = std::function<
-        std::pair<signals::Value, bool>(
-            const std::vector<signals::Value>&,
-            const signals::Value&,
-            long)>;
+        std::pair<V, bool>(const std::vector<V>&, const V&, long)>;
 
-    Transferer() : opCode(Operation::nop) {}
-    explicit Transferer(Operation t_op) : opCode(t_op) {}
-    explicit Transferer(int t_op) : opCode(static_cast<Operation>(t_op)) {}
+    TransfererT() : opCode_(Operation::nop) {}
+    explicit TransfererT(Operation op) : opCode_(op) {}
+    explicit TransfererT(int op) : opCode_(static_cast<Operation>(op)) {}
 
-    Operation get_op() const noexcept { return opCode; }
+    Operation get_op() const noexcept { return opCode_; }
     void set_callable(NodeCallable fn) { callable_ = std::move(fn); }
     const NodeCallable& get_callable() const noexcept { return callable_; }
     bool has_callable() const noexcept { return static_cast<bool>(callable_); }
 
 private:
-    Operation opCode{ Operation::nop };
-    bool workingInputChanges{ false };
+    Operation opCode_{ Operation::nop };
     NodeCallable callable_;
 };
+
+// Backward-compat alias used by standalone (non-MEX) code.
+using Transferer = TransfererT<signals::Value>;
 
 #endif

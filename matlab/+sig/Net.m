@@ -80,7 +80,15 @@ classdef Net < handle
             obj.Proxy.DeleteNode(node.Id);
         end
 
+        function post(obj, node, value)
+        % post  Inject value into a node and propagate — single MEX call.
+        %   Equivalent to transact + apply but crosses the MEX boundary once.
+            if isa(node, 'sig.Signal'); node = node.Node; end
+            obj.Proxy.Post(node.Id, value);
+        end
+
         function affected = transact(obj, node, value)
+            if isa(node, 'sig.Signal'); node = node.Node; end
             affected = obj.Proxy.Transact(node.Id, value);
         end
 

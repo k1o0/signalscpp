@@ -16,7 +16,7 @@ assert(net.isValid(), 'isValid() should return true after construction');
 fprintf('[PASS] Construction and isValid\n');
 
 % ── Test 2: addNode (source / nop) ───────────────────────────────────────────
-srcNode = net.addNode([], sig.OpCode.nop, false);
+srcNode = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 assert(isa(srcNode, 'sig.Node'),  'addNode should return a sig.Node');
 assert(srcNode.Id >= 0, 'node id should be >= 0');
 fprintf('[PASS] addNode (nop source, id=%d)\n', srcNode.Id);
@@ -59,7 +59,7 @@ assert(n2 < n + 1, 'nActiveNodes should decrease after deleteNode');
 fprintf('[PASS] deleteNode\n');
 
 % ── Test 8: string value round-trip ──────────────────────────────────────────
-strNode = net.addNode([], sig.OpCode.nop, false);
+strNode = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 affected = net.transact(strNode, "hello");
 net.apply(affected);
 sv = net.getCurrentValue(strNode);
@@ -67,7 +67,7 @@ assert(isstring(sv) && sv == "hello", 'String value should round-trip');
 fprintf('[PASS] String value round-trip\n');
 
 % ── Test 9: logical value round-trip ─────────────────────────────────────────
-boolNode = net.addNode([], sig.OpCode.nop, false);
+boolNode = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 affected = net.transact(boolNode, true);
 net.apply(affected);
 bv = net.getCurrentValue(boolNode);

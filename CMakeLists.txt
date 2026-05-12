@@ -48,6 +48,7 @@ if(SIGNALSCPP_BUILD_MEX)
     set(MEX_DIR "${CMAKE_SOURCE_DIR}/Signals-Mex")
     set(PROXY_SOURCES
         "${MEX_DIR}/proxy/CustomProxyFactory.cpp"
+        "${MEX_DIR}/proxy/mex_network.cpp"
         "${MEX_DIR}/proxy/NetworkProxy.cpp"
         "${MEX_DIR}/proxy/NodeProxy.cpp"
         "${MEX_DIR}/plugins/mx_ops.cpp"

@@ -13,8 +13,21 @@ catch e
 end
 try
   results = runtests('c:\Users\Work\source\repos\signalscpp\matlab\tests\transfer_test');
-  t = struct2table([struct(results)]); disp(t(:,{'Name','Passed','Failed'}));
+  for i = 1:numel(results)
+    fprintf('%s: Passed=%d Failed=%d\n', results(i).Name, results(i).Passed, results(i).Failed);
+  end
+  if all([results.Passed]); fprintf('TRANSFER TESTS OK\n'); end
 catch e
   fprintf('TRANSFER TESTS FAILED: %s\n', e.message);
+  disp(e.getReport('extended'));
+end
+try
+  results = runtests('c:\Users\Work\source\repos\signalscpp\matlab\tests\Signals_test');
+  for i = 1:numel(results)
+    fprintf('%s: Passed=%d Failed=%d\n', results(i).Name, results(i).Passed, results(i).Failed);
+  end
+  if all([results.Passed]); fprintf('SIGNALS TESTS OK\n'); end
+catch e
+  fprintf('SIGNALS TESTS FAILED: %s\n', e.message);
   disp(e.getReport('extended'));
 end

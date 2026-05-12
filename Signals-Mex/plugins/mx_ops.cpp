@@ -1,9 +1,10 @@
-// mx_ops.cpp — MATLAB boundary wrappers that produce NodeCallable values.
+// mx_ops.cpp — MATLAB boundary wrappers that produce MexNetwork::NodeCallable values.
 //
-// See mx_ops.h for usage.
+// After the NetworkT<V> refactor, all callables receive and return
+// matlab::data::Array directly — no signals::Value conversion in the hot path.
 
 #include "mx_ops.h"
-#include "mx_convert.h"   // sq::mex::toMda / fromMda
+#include "mex_value_traits.h"   // ValueTraits<matlab::data::Array>::has_value
 
 #include "MatlabDataArray.hpp"
 
@@ -12,117 +13,151 @@
 namespace sq::mex_ops {
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+static matlab::data::Array make_empty() {
+    matlab::data::ArrayFactory f;
+    return f.createArray<double>({0, 0});
+}
+
+// ---------------------------------------------------------------------------
 // Boundary wrappers
 // ---------------------------------------------------------------------------
 
-Network::NodeCallable wrap_matlab_fn(matlab::data::Array fn_handle, MatlabEngine engine)
+MexNetwork::NodeCallable wrap_isequal(MatlabEngine engine)
 {
-    // Capture fn_handle + engine by value (shared ownership).
-    // Called by the core during transact as:
-    //   callable({latest(input[0]), ...}, currentValue)
-    // We forward all inputs to MATLAB but ignore currentValue.
-    return [fn = std::move(fn_handle), eng = std::move(engine)]
-           (const std::vector<signals::Value>& inputs,
-            const signals::Value& /*curr*/,
-            long /*node_id*/) -> std::pair<signals::Value, bool>
+    return [eng = std::move(engine)]
+           (const std::vector<matlab::data::Array>& inputs,
+            const matlab::data::Array& /*curr*/,
+            long /*node_id*/) -> std::pair<matlab::data::Array, bool>
     {
-        if (inputs.empty()) return {{}, false};
+        // inputs = {working_value, current_value}; return (is_equal, true).
+        if (inputs.size() < 2) {
+            matlab::data::ArrayFactory f;
+            return {f.createScalar<bool>(false), true};
+        }
+        try {
+            std::vector<matlab::data::Array> args = {inputs[0], inputs[1]};
+            auto results = eng->feval(u"isequal", 1, args);
+            if (results.empty()) {
+                matlab::data::ArrayFactory f;
+                return {f.createScalar<bool>(false), true};
+            }
+            return {results[0], true};
+        } catch (const std::exception& e) {
+            throw signals::Error(std::string("sq:fevalError: ") + e.what());
+        }
+    };
+}
 
-        matlab::data::ArrayFactory f;
-        // feval(fn_handle, arg0, arg1, …)
+MexNetwork::NodeCallable wrap_matlab_fn(matlab::data::Array fn_handle,
+                                        MatlabEngine engine)
+{
+    return [fn = std::move(fn_handle), eng = std::move(engine)]
+           (const std::vector<matlab::data::Array>& inputs,
+            const matlab::data::Array& /*curr*/,
+            long /*node_id*/) -> std::pair<matlab::data::Array, bool>
+    {
+        if (inputs.empty()) return {make_empty(), false};
+
+        // feval(fn_handle, input0, input1, …) — arrays passed through directly.
         std::vector<matlab::data::Array> args;
         args.reserve(inputs.size() + 1);
         args.push_back(fn);
-        for (const auto& v : inputs)
-            args.push_back(sq::mex::toMda(v, f));
+        for (const auto& v : inputs) args.push_back(v);
 
         try {
             auto results = eng->feval(u"feval", 1, args);
-            if (results.empty()) return {{}, false};
-            auto val = sq::mex::fromMda(results[0]);
-            return {val, signals::has_value(val)};
+            if (results.empty()) return {make_empty(), false};
+            bool has_val = !results[0].isEmpty();
+            return {results[0], has_val};
         } catch (const std::exception& e) {
             throw signals::Error(std::string("sq:fevalError: ") + e.what());
         }
     };
 }
 
-Network::NodeCallable wrap_matlab_scan_fn(matlab::data::Array fn_handle, MatlabEngine engine)
+MexNetwork::NodeCallable wrap_matlab_scan_fn(matlab::data::Array fn_handle,
+                                             MatlabEngine engine)
 {
-    // Capture fn_handle + engine by value.
-    // Called by the core during transact as:
-    //   callable({item, extra0, …}, accumulator)
     // Scan convention: feval(fn_handle, accumulator, item, extra0, …)
+    // callable receives: inputs = {item, extra0, …}, curr = accumulator
     return [fn = std::move(fn_handle), eng = std::move(engine)]
-           (const std::vector<signals::Value>& inputs,
-            const signals::Value& curr,
-            long /*node_id*/) -> std::pair<signals::Value, bool>
+           (const std::vector<matlab::data::Array>& inputs,
+            const matlab::data::Array& curr,
+            long /*node_id*/) -> std::pair<matlab::data::Array, bool>
     {
-        if (inputs.empty()) return {{}, false};
+        if (inputs.empty()) return {make_empty(), false};
 
-        matlab::data::ArrayFactory f;
         std::vector<matlab::data::Array> args;
-        args.reserve(inputs.size() + 2);   // fn + acc + all inputs
+        args.reserve(inputs.size() + 2);
         args.push_back(fn);
-        args.push_back(sq::mex::toMda(curr, f));       // accumulator (first arg)
-        for (const auto& v : inputs)
-            args.push_back(sq::mex::toMda(v, f));      // item, then extras
+        args.push_back(curr);       // accumulator as first argument
+        for (const auto& v : inputs) args.push_back(v);
 
         try {
             auto results = eng->feval(u"feval", 1, args);
-            if (results.empty()) return {{}, false};
-            auto val = sq::mex::fromMda(results[0]);
-            return {val, signals::has_value(val)};
+            if (results.empty()) return {make_empty(), false};
+            bool has_val = !results[0].isEmpty();
+            return {results[0], has_val};
         } catch (const std::exception& e) {
             throw signals::Error(std::string("sq:fevalError: ") + e.what());
         }
     };
 }
 
-Network::NodeCallable wrap_transfer_fn(matlab::data::Array fn_handle,
-                                       MatlabEngine engine,
-                                       std::shared_ptr<Network> net,
-                                       std::vector<long> input_ids)
+MexNetwork::NodeCallable wrap_transfer_fn(matlab::data::Array fn_handle,
+                                          MatlabEngine engine,
+                                          std::shared_ptr<MexNetwork> net,
+                                          std::vector<long> input_ids)
 {
-    // fn_handle is a closure @(values, states) sig.transfer.xxx(values, states, customArg)
+    // fn_handle is a closure @(values, states) sig.transfer.xxx(values, states, f)
     // Builds values cell {curr, input0, ..., inputN-1} and states int8 vector,
     // then invokes: [val, valset] = feval(fn_handle, values, states)
+    //
+    // states encoding:
+    //   -1 = no value at all (never fired and not fired this tick)
+    //    0 = current/committed value only (not fired this tick)
+    //    1 = new working value this tick
     return [fn  = std::move(fn_handle),
             eng = std::move(engine),
             net = std::move(net),
             ids = std::move(input_ids)]
-           (const std::vector<signals::Value>& inputs,
-            const signals::Value& curr,
-            long /*node_id*/) -> std::pair<signals::Value, bool>
+           (const std::vector<matlab::data::Array>& inputs,
+            const matlab::data::Array& curr,
+            long /*node_id*/) -> std::pair<matlab::data::Array, bool>
     {
         const size_t n = inputs.size();
         matlab::data::ArrayFactory f;
 
         // values cell: {curr, input0, ..., inputN-1}
         auto values = f.createCellArray({1, n + 1});
-        values[0] = sq::mex::toMda(curr, f);
+        values[0] = curr;
         for (size_t i = 0; i < n; ++i)
-            values[i + 1] = sq::mex::toMda(inputs[i], f);
+            values[i + 1] = inputs[i];
 
-        // states int8: -1=unset, 0=current/committed, 1=new-working-this-tick
+        // states int8
+        using Traits = ValueTraits<matlab::data::Array>;
         auto states = f.createArray<int8_t>({1, n + 1});
-        states[0] = signals::has_value(curr) ? int8_t(0) : int8_t(-1);
+        states[0] = Traits::has_value(curr) ? int8_t(0) : int8_t(-1);
         for (size_t i = 0; i < n; ++i) {
-            if (!signals::has_value(inputs[i]))
+            if (!Traits::has_value(inputs[i])) {
                 states[i + 1] = int8_t(-1);
-            else if (signals::has_value(net->get_working_value(ids[i])))
+            } else if (Traits::has_value(net->get_working_value(ids[i]))) {
                 states[i + 1] = int8_t(1);
-            else
+            } else {
                 states[i + 1] = int8_t(0);
+            }
         }
 
         try {
             std::vector<matlab::data::Array> args = {fn, values, states};
             auto results = eng->feval(u"feval", 2, args);
-            if (results.size() < 2) return {{}, false};
+            if (results.size() < 2) return {make_empty(), false};
             matlab::data::TypedArray<bool> valset_arr = results[1];
-            if (!bool(valset_arr[0])) return {{}, false};
-            return {sq::mex::fromMda(results[0]), true};
+            if (!bool(valset_arr[0])) return {make_empty(), false};
+            return {results[0], true};
         } catch (const std::exception& e) {
             throw signals::Error(std::string("sq:fevalError: ") + e.what());
         }

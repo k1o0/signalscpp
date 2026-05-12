@@ -279,7 +279,7 @@ classdef Signal < handle
             %
             % Note: 's' fires only when 'this' fires; 'when' is sampled 
             % lazily at that moment.to sample the value of 'this' whenever 
-            % 'when' updates, use the 'at' method. 
+            % 'when' updates,  use the 'at' method. 
             %
             % Inputs:
             %   this (sig.Signal) - a signal whose values to take
@@ -295,19 +295,18 @@ classdef Signal < handle
             %
             % See also SIG.NODE.SIGNAL/FILTER
 
+        
+        %   when — sig.Signal (or sig.Node) 
+        %   
             net = this.Node.Net;
-            if isa(when, 'sig.Signal')
-                gate_node = when.Node;
-            else
-                gate_node = net.rootNode(when);
-            end
+            gate_node = when.Node;
             if strcmp(net.TransferMode, 'matlab')
                 transFcn = @(values, states) sig.transfer.keepWhen(values, states, gate_node);
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
             else
                 s = sig.Signal(net.addNode([this.Node, gate_node], sig.OpCode.keep_when, false));
             end
-            s.Node.FormatSpec = '%s.keepWhen(%s)';
+            s.Node.FormatSpec    = '%s.keepWhen(%s)';
             s.Node.DisplayInputs = [this.Node, gate_node];
         end
 

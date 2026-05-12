@@ -13,11 +13,11 @@ addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
 net = sig.Net(500);
 
 % ── Test 1: addNode returns a sig.Signal ─────────────────────────────────────
-node = net.addNode([], sig.OpCode.nop, false);
-assert(isa(node, 'sig.Node'), 'addNode must return a sig.Signal');
-fprintf('[PASS] addNode returns sig.Signal\n');
+node = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
+assert(isa(node, 'sig.Node'), 'addNode must return a sig.Node');
+fprintf('[PASS] addNode returns sig.Node\n');
 
-% ── Test 2: sig.Signal.Id is a non-negative numeric scalar ──────────────
+% ── Test 2: sig.Node.Id is a non-negative numeric scalar ──────────────
 assert(isnumeric(node.Id) && isscalar(node.Id) && node.Id >= 0, ...
     'sig.Id must be a non-negative numeric scalar');
 fprintf('[PASS] sig.Id = %d\n', node.Id);
@@ -39,17 +39,17 @@ v = node.Value;
 assert(isequal(v, 3.14), sprintf('Expected 3.14, got %s', mat2str(v)));
 fprintf('[PASS] Value = %.4g after transact+apply\n', v);
 
-% ── Test 6: InputIds is empty for a source node ───────────────────────────────
-ids = node.InputIds;
+% ── Test 6: Inputs is empty for a source node ───────────────────────────────
+ids = [node.Inputs.Id];
 assert(isempty(ids), 'Source node should have no input ids');
-fprintf('[PASS] InputIds is empty for source node\n');
+fprintf('[PASS] Inputs is empty for source node\n');
 
-% ── Test 7: downstream node InputIds contains upstream Id ─────────────────────
+% ── Test 7: downstream node Inputs contains upstream Id ─────────────────────
 downstream = net.addNode(node, sig.OpCode.identity, false);
-inputIds = downstream.InputIds;
+inputIds = [downstream.Inputs.Id];
 assert(any(inputIds == node.Id), ...
-    'downstream.InputIds should contain the upstream node Id');
-fprintf('[PASS] InputIds of identity node contains upstream id (%d)\n', node.Id);
+    'downstream.Inputs should contain the upstream node Id');
+fprintf('[PASS] Inputs of identity node contains upstream id (%d)\n', node.Id);
 
 % ── Test 8: propagation visible via downstream Value ─────────────────────────
 affected = net.transact(node, 42.0);
@@ -60,22 +60,22 @@ assert(isequal(downstream.Value, 42.0), ...
 fprintf('[PASS] Identity propagation via Value property\n');
 
 % ── Test 9: string value round-trip via Value ─────────────────────────────────
-strNode = net.addNode([], sig.OpCode.nop, false);
+strNode = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 net.apply(net.transact(strNode, "world"));
 sv = strNode.Value;
 assert(isstring(sv) && sv == "world", 'String round-trip via Value');
 fprintf('[PASS] String round-trip via Value\n');
 
 % ── Test 10: logical value round-trip via Value ───────────────────────────────
-boolNode = net.addNode([], sig.OpCode.nop, false);
+boolNode = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 net.apply(net.transact(boolNode, false));
 bv = boolNode.Value;
 assert(islogical(bv) && bv == false, 'Logical round-trip via Value');
 fprintf('[PASS] Logical round-trip via Value\n');
 
 % ── Test 11: multiple sig.Signal objects from addNode are independent ─────────
-nodeA = net.addNode([], sig.OpCode.nop, false);
-nodeB = net.addNode([], sig.OpCode.nop, false);
+nodeA = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
+nodeB = net.addNode(sig.Node.empty(1, 0), sig.OpCode.nop, false);
 assert(nodeA.Id ~= nodeB.Id, 'Each addNode call must produce a unique id');
 net.apply(net.transact(nodeA, 1.0));
 net.apply(net.transact(nodeB, 2.0));
