@@ -50,6 +50,18 @@ public:
     using Error::Error;
 };
 
+// Wraps a MATLAB exception that carries an error identifier (e.g. 'window:error').
+// Propagates through network_impl.h's catch(const signals::Error&){throw;} filter,
+// allowing NetworkProxy to reconstruct ctx.error with the original identifier.
+class MatlabError : public Error {
+public:
+    MatlabError(const std::string& id, const std::string& msg)
+        : Error(msg), id_(id) {}
+    const std::string& id() const noexcept { return id_; }
+private:
+    std::string id_;
+};
+
 // ── Value type ────────────────────────────────────────────────────────────────
 // legacy: mxArray* (MATLAB's dynamically-typed value container)
 //

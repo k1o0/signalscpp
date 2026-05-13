@@ -161,6 +161,7 @@ public:
 
     bool clear_working_value(long node_id);
     [[nodiscard]] std::vector<long> get_node_inputs(long node_id) const;
+    bool set_node_inputs(long node_id, const std::vector<long>& new_input_ids);
 };
 
 // Backward-compat alias for standalone / unit-test code.

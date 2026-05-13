@@ -26,6 +26,7 @@ class NetworkProxy : public libmexclass::proxy::Proxy {
     void GetCurrentValue(libmexclass::proxy::method::Context& ctx);
     void GetWorkingValue(libmexclass::proxy::method::Context& ctx);
     void GetNodeInputs(libmexclass::proxy::method::Context& ctx);
+    void SetNodeInputs(libmexclass::proxy::method::Context& ctx);
     void NActiveNodes(libmexclass::proxy::method::Context& ctx);
     void IsValid(libmexclass::proxy::method::Context& ctx);
 

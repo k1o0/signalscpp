@@ -4,6 +4,7 @@
 
 #include "libmexclass/proxy/ProxyManager.h"
 #include "MatlabDataArray.hpp"
+#include "value.h"
 
 #include <vector>
 
@@ -24,6 +25,7 @@ NetworkProxy::NetworkProxy(long max_nodes)
     REGISTER_METHOD(NetworkProxy, GetCurrentValue);
     REGISTER_METHOD(NetworkProxy, GetWorkingValue);
     REGISTER_METHOD(NetworkProxy, GetNodeInputs);
+    REGISTER_METHOD(NetworkProxy, SetNodeInputs);
     REGISTER_METHOD(NetworkProxy, NActiveNodes);
     REGISTER_METHOD(NetworkProxy, IsValid);
 }
@@ -83,11 +85,16 @@ void NetworkProxy::AddNode(libmexclass::proxy::method::Context& ctx) {
         // this callable is only invoked when values_equal throws TypeError
         // (non-double types) — mirroring the legacy transferInMATLAB pattern.
         callable = sq::mex_ops::wrap_isequal(ctx.matlab);
+    } else if (op == Operation::flatten_struct_op) {
+        if (!input_ids.empty())
+            callable = sq::mex_ops::wrap_flatten_struct_fn(ctx.matlab, net_, input_ids[0]);
+    } else if (op == Operation::flatten_op) {
+        if (!input_ids.empty())
+            callable = sq::mex_ops::wrap_flatten_fn(ctx.matlab, net_, input_ids[0]);
     } else if (ctx.inputs.getNumberOfElements() >= 4) {
         matlab::data::Array fn = ctx.inputs[3];
         if (op == Operation::function)
-            callable = sq::mex_ops::wrap_transfer_fn(
-                std::move(fn), ctx.matlab, net_, input_ids);
+            callable = sq::mex_ops::wrap_transfer_fn(std::move(fn), ctx.matlab, net_);
         else if (op == Operation::scan_op)
             callable = sq::mex_ops::wrap_matlab_scan_fn(std::move(fn), ctx.matlab);
         else
@@ -130,8 +137,14 @@ void NetworkProxy::Post(libmexclass::proxy::method::Context& ctx) {
     }
     matlab::data::TypedArray<double> id_arr = ctx.inputs[0];
     long node_id = static_cast<long>(double(id_arr[0]));
-    std::vector<long> affected = net_->transact(node_id, ctx.inputs[1]);
-    net_->apply(affected);
+    try {
+        std::vector<long> affected = net_->transact(node_id, ctx.inputs[1]);
+        net_->apply(affected);
+    } catch (const signals::MatlabError& ex) {
+        ctx.error = libmexclass::error::Error{ex.id(), ex.what()};
+    } catch (const signals::Error& ex) {
+        ctx.error = libmexclass::error::Error{"signals:runtimeError", ex.what()};
+    }
 }
 
 void NetworkProxy::Transact(libmexclass::proxy::method::Context& ctx) {
@@ -159,7 +172,13 @@ void NetworkProxy::Apply(libmexclass::proxy::method::Context& ctx) {
             "sq:notEnoughArgs", "Apply requires (affectedIds)"};
         return;
     }
-    net_->apply(extract_ids(ctx.inputs[0]));
+    try {
+        net_->apply(extract_ids(ctx.inputs[0]));
+    } catch (const signals::MatlabError& ex) {
+        ctx.error = libmexclass::error::Error{ex.id(), ex.what()};
+    } catch (const signals::Error& ex) {
+        ctx.error = libmexclass::error::Error{"signals:runtimeError", ex.what()};
+    }
 }
 
 void NetworkProxy::GetCurrentValue(libmexclass::proxy::method::Context& ctx) {
@@ -199,6 +218,21 @@ void NetworkProxy::GetNodeInputs(libmexclass::proxy::method::Context& ctx) {
     for (size_t i = 0; i < ids.size(); ++i)
         out[i] = static_cast<double>(ids[i]);
     ctx.outputs[0] = out;
+}
+
+void NetworkProxy::SetNodeInputs(libmexclass::proxy::method::Context& ctx) {
+    if (ctx.inputs.getNumberOfElements() < 2) {
+        ctx.error = libmexclass::error::Error{
+            "sq:notEnoughArgs", "SetNodeInputs requires (nodeId, newInputIds)"};
+        return;
+    }
+    matlab::data::TypedArray<double> id_arr = ctx.inputs[0];
+    long node_id = static_cast<long>(double(id_arr[0]));
+    std::vector<long> new_ids = extract_ids(ctx.inputs[1]);
+    if (!net_->set_node_inputs(node_id, new_ids)) {
+        ctx.error = libmexclass::error::Error{
+            "sq:invalidId", "SetNodeInputs: invalid node id or input ids"};
+    }
 }
 
 void NetworkProxy::NActiveNodes(libmexclass::proxy::method::Context& ctx) {

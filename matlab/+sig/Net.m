@@ -32,6 +32,7 @@ classdef Net < handle
 
     properties (Access = private)
         Proxy libmexclass.proxy.Proxy
+        Subscriptions  % containers.Map(double nodeId → sig.Signal)
     end
 
     properties
@@ -54,6 +55,7 @@ classdef Net < handle
             obj.Proxy = libmexclass.proxy.Proxy( ...
                 "Name", "sig.NetworkProxy", ...
                 "ConstructorArguments", {double(maxNodes)});
+            obj.Subscriptions = containers.Map('KeyType', 'double', 'ValueType', 'any');
         end
 
         % -----------------------------------------------------------------
@@ -81,10 +83,11 @@ classdef Net < handle
         end
 
         function post(obj, node, value)
-        % post  Inject value into a node and propagate — single MEX call.
-        %   Equivalent to transact + apply but crosses the MEX boundary once.
+        % post  Inject value into a node, propagate, and notify subscribers.
             if isa(node, 'sig.Signal'); node = node.Node; end
-            obj.Proxy.Post(node.Id, value);
+            affected = obj.transact(node, value);
+            obj.apply(affected);
+            obj.notifySubscribers(affected);
         end
 
         function affected = transact(obj, node, value)
@@ -111,6 +114,15 @@ classdef Net < handle
             ids = obj.Proxy.GetNodeInputs(node.Id);
         end
 
+        function setNodeInputs(obj, node, newInputIds)
+        % setNodeInputs  Dynamically rewire a node's inputs at runtime.
+        %   Used internally by flatten_op and flatten_struct_op callables.
+        %   node         — sig.Node or sig.Signal
+        %   newInputIds  — numeric array of node IDs (doubles)
+            if isa(node, 'sig.Signal'); node = node.Node; end
+            obj.Proxy.SetNodeInputs(node.Id, double(newInputIds(:)'));
+        end
+
         function n = get.nActiveNodes(obj)
             n = obj.Proxy.NActiveNodes();
         end
@@ -121,6 +133,60 @@ classdef Net < handle
 
         function tf = isValid(obj)
             tf = obj.Proxy.IsValid();
+        end
+
+        function registerSubscription(obj, nodeId, signal)
+        % registerSubscription  Register signal to receive valueChanged calls.
+        %   Called automatically by sig.Signal.onValue when the first callback
+        %   is added to a signal.
+            obj.Subscriptions(nodeId) = signal;
+        end
+
+        function unregisterSubscription(obj, nodeId)
+        % unregisterSubscription  Remove subscription for the given node.
+        %   Called automatically by the TidyHandle cleanup in sig.Signal.onValue
+        %   when the last callback is removed.
+            if obj.Subscriptions.isKey(nodeId)
+                obj.Subscriptions.remove(nodeId);
+            end
+        end
+
+        function notifySubscribers(obj, affected)
+        % notifySubscribers  Deliver valueChanged to any signals registered via onValue.
+        %   Called by post() after each apply cycle.
+            if isempty(affected) || obj.Subscriptions.Count == 0
+                return
+            end
+            for ii = 1:numel(affected)
+                nodeId = affected(ii);
+                if obj.Subscriptions.isKey(nodeId)
+                    s = obj.Subscriptions(nodeId);
+                    if isvalid(s)
+                        s.valueChanged(obj.getCurrentValue(s.Node));
+                    end
+                end
+            end
+        end
+
+        function s = subscriptableOrigin(obj, name)
+        % subscriptableOrigin  Create a subscriptable origin signal.
+        %
+        %   s = net.subscriptableOrigin()       anonymous subscriptable origin
+        %   s = net.subscriptableOrigin(name)   named subscriptable origin
+        %
+        %   The returned sig.SubscriptableOriginSignal supports:
+        %     s.fieldName = value   post a struct update (subsasgn)
+        %     x = s.fieldName       derive a new signal from a field (subsref)
+        %     flat = s.flattenStruct()  expand signal-valued fields
+        %
+        %   See also sig.Net/origin, sig.SubscriptableOriginSignal
+            n = obj.addNode(sig.Node.empty(), sig.OpCode.nop, false);
+            if nargin < 2
+                n.Name = sprintf("n%i", n.Id);
+            else
+                n.Name = name;
+            end
+            s = sig.SubscriptableOriginSignal(n);
         end
 
         function s = origin(obj, name)

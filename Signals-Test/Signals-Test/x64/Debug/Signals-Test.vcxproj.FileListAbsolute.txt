@@ -1,0 +1,3 @@
+c:\Users\Work\source\repos\signalscpp\Signals-Test\x64\Debug\gtest.pdb
+c:\Users\Work\source\repos\signalscpp\Signals-Test\x64\Debug\gtest_main.pdb
+c:\Users\Work\source\repos\signalscpp\Signals-Test\Signals-Test\x64\Debug\Signals-.21A3D788.Up2Date

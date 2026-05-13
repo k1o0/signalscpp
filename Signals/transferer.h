@@ -79,10 +79,22 @@ enum class SIGNALS_API Operation {
     // Legacy analogue: sig.node.Signal/numel
     numel         = 30,
 
-    // flattenstruct: Signal-of-Signal dynamic graph rewiring.
-    // NOT YET IMPLEMENTED in transfer().  Reserved for future binding-layer use.
-    // Legacy analogue: sig.transfer.flatten / sig.transfer.flattenStruct
-    flattenstruct = 40,
+    // flatten_struct_op: Dynamic struct-signal flattening with graph rewiring.
+    // When blueprint fires, the callable inspects the struct value for signal-valued
+    // fields, rewires this node's inputs to include those field nodes, and outputs a
+    // plain struct with all fields filled from the latest field-signal values.
+    // Fires on blueprint update or any field-signal update (once all fields have values).
+    // The old C bug (outputting when some fields have no value yet) is NOT reproduced.
+    // Legacy analogue: sig.transfer.flattenStruct / flattenSignalStruct
+    flatten_struct_op = 40,
+
+    // flatten_op: Signal-of-Signals unwrapper with dynamic graph rewiring.
+    // When the director (inputs[0]) fires with a sig.Signal value, the callable
+    // rewires inputs[1] to that signal's node; future fires of inputs[1] pass
+    // through directly in C++ (no MEX call).  When director fires with a plain
+    // value it is output immediately and inputs[1] is removed (no subscription).
+    // Legacy analogue: sig.transfer.flatten
+    flatten_op = 41,
 
     // ── Callable-argument ops (Group 6) ──────────────────────────────────────
     // For these opcodes, NetworkT<V>::Node::transfer() encodes the transfer

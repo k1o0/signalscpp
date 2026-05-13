@@ -263,35 +263,33 @@ classdef Signals_test < matlab.unittest.TestCase
     %   testCase.verifyEqual(val, b.Node.WorkingValue, 'Failed to re-evaluate function')
     % end
     %
-    % function test_flatten(testCase)
-    %   % Tests for flatten method
-    %   [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
-    %   flat = a.flatten();
-    %
-    %   % Test return on unset director
-    %   [val, valset] = sig.transfer.flatten(testCase.net.Id, a.Node.Id, ...
-    %     flat.Node.Id, struct('unappliedInputChanges', true));
-    %   testCase.verifyEqual(a.Node.Value, flat.Node.Value, ...
-    %     'failed to retrieve director value')
-    %
-    %   % Test flatten of signal with regular value
-    %   val = rand;
-    %   a.post(val)
-    %   testCase.verifyEqual(a.Node.Value, flat.Node.Value, ...
-    %     'failed to retrieve director value')
-    %   testCase.verifyMatches(flat.Name, '\w+\.flatten()', 'Unexpected Name')
-    %
-    %   % Test flatten of signal with signal as value
-    %   a.post(b)
-    %   testCase.verifyEqual(flat.Node.Value, val, 'Unexpected node value')
-    %   b.post(rand)
-    %   testCase.verifyEqual(flat.Node.Value, b.Node.Value, ...
-    %     'failed to retrieve source value')
-    %
-    %   % Test new director value with current value
-    %   c.post(rand), a.post(c)
-    %   testCase.verifyEqual(flat.Node.Value, c.Node.Value)
-    % end
+    function test_flatten(testCase)
+      % Tests for flatten method
+      [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
+      flat = a.flatten();
+
+      % Test return on unset director — both a and flat should be empty
+      testCase.verifyEqual(a.Node.Value, flat.Node.Value, ...
+        'failed to retrieve director value')
+
+      % Test flatten of signal with regular value
+      val = rand;
+      a.post(val)
+      testCase.verifyEqual(a.Node.Value, flat.Node.Value, ...
+        'failed to retrieve director value')
+      testCase.verifyMatches(flat.Name, '\w+\.flatten()', 'Unexpected Name')
+
+      % Test flatten of signal with signal as value
+      a.post(b)
+      testCase.verifyEqual(flat.Node.Value, val, 'Unexpected node value')
+      b.post(rand)
+      testCase.verifyEqual(flat.Node.Value, b.Node.Value, ...
+        'failed to retrieve source value')
+
+      % Test new director value with current value
+      c.post(rand), a.post(c)
+      testCase.verifyEqual(flat.Node.Value, c.Node.Value)
+    end
     %
     % function test_nop(testCase)
     %   % Test the NOP transfer function

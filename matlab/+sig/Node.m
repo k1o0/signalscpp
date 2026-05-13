@@ -140,6 +140,67 @@ classdef Node < handle
 
     methods (Static)
 
+        function id = idOf(v)
+        % idOf  Return the node ID (double) if v is a sig.Signal, else -1.
+        %   Called from C++ (via feval) by the flatten_op callable to determine
+        %   whether the director value is a Signal or a plain MATLAB value.
+            if isa(v, 'sig.Signal')
+                id = double(v.Node.Id);
+            else
+                id = -1;
+            end
+        end
+
+        function [fieldNames, nodeIds, template] = flattenInfo(blueprint)
+        % flattenInfo  Extract signal-field metadata from a struct value.
+        %   Called from C++ (via feval) by the flatten_struct_op callable when
+        %   the blueprint signal fires with a new struct value.
+        %
+        %   Returns:
+        %     fieldNames — 1×N cell: char names (scalar struct) or {name,idx} cells (struct array)
+        %     nodeIds    — 1×N double: node ID for each signal field
+        %     template   — struct: non-signal fields filled, signal fields = []
+            fieldNames = {};
+            nodeIds    = double.empty(1, 0);
+            template   = struct();
+            if ~isstruct(blueprint); return; end
+            fn = fieldnames(blueprint);
+            n_elems = numel(blueprint);
+            template = blueprint;
+            for ei = 1:n_elems
+                for fi = 1:numel(fn)
+                    val = blueprint(ei).(fn{fi});
+                    if isa(val, 'sig.Signal')
+                        if n_elems == 1
+                            fieldNames{end+1} = fn{fi}; %#ok<AGROW>
+                        else
+                            fieldNames{end+1} = {fn{fi}, ei}; %#ok<AGROW>
+                        end
+                        nodeIds(end+1) = double(val.Node.Id); %#ok<AGROW>
+                        template(ei).(fn{fi}) = [];
+                    end
+                end
+            end
+        end
+
+        function s = fillStructFields(template, fieldNames, varargin)
+        % fillStructFields  Fill signal-valued fields into a template struct.
+        %   Called from C++ (via feval) by the flatten_struct_op callable to
+        %   assemble the output struct from the latest field-signal values.
+        %
+        %   s = fillStructFields(template, fieldNames, val1, val2, ...)
+        %   fieldNames elements are either char (scalar struct) or {name,idx} cell (array).
+            s = template;
+            for i = 1:numel(fieldNames)
+                key = fieldNames{i};
+                if ischar(key)
+                    s.(key) = varargin{i};
+                else
+                    s(key{2}).(key{1}) = varargin{i};
+                end
+            end
+        end
+
         function n = names(nodes)
         %names  Return the Name of each node as a cell array of strings.
         %

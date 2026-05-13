@@ -222,6 +222,41 @@ std::vector<long> NetworkT<V>::get_node_inputs(long node_id) const {
     return ids;
 }
 
+template <typename V>
+bool NetworkT<V>::set_node_inputs(long node_id, const std::vector<long>& new_input_ids) {
+    if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size()) return false;
+    Node* node = &nodes[static_cast<size_t>(node_id)];
+    if (!node->inUse) return false;
+
+    // Remove this node from all current inputs' target sets.
+    for (Node* inp : node->inputs)
+        inp->targets.erase(node);
+
+    // Build the new input list.
+    std::vector<Node*> new_inputs;
+    new_inputs.reserve(new_input_ids.size());
+    for (long input_id : new_input_ids) {
+        if (input_id < 0 || input_id >= static_cast<long>(n_nodes())) {
+            std::cerr << "Error: set_node_inputs: input node " << input_id << " out of range.\n";
+            return false;
+        }
+        Node* inp = get_node(static_cast<size_t>(input_id));
+        if (!inp || !inp->is_valid()) {
+            std::cerr << "Error: set_node_inputs: input node " << input_id << " invalid.\n";
+            return false;
+        }
+        new_inputs.push_back(inp);
+    }
+
+    node->inputs = std::move(new_inputs);
+
+    // Register this node as a target of each new input.
+    for (Node* inp : node->inputs)
+        inp->add_target(node);
+
+    return true;
+}
+
 
 // ===========================================================================
 // NetworkT<V>::Node methods
@@ -613,6 +648,58 @@ bool NetworkT<V>::Node::transfer() {
             }
         }
     }
+    // ── flatten_struct_op (40) ────────────────────────────────────────────────
+    // callable handles all gating: rewires on blueprint fire, checks field values,
+    // and assembles the output struct.  Same invocation pattern as function_op.
+    else if (op == Operation::flatten_struct_op) {
+        if (callable) {
+            bool any_new = false;
+            for (Node* inp : inputs)
+                if (inp->workingValue) { any_new = true; break; }
+            if (any_new) {
+                std::vector<V> inp_latest;
+                inp_latest.reserve(inputs.size());
+                for (Node* inp : inputs) {
+                    auto v = latest(inp);
+                    inp_latest.push_back(v ? *v : Traits::no_value());
+                }
+                V curr = currentValue.value_or(Traits::no_value());
+                try {
+                    auto [result, valset] = callable(inp_latest, curr, id);
+                    if (valset) {
+                        workingValue = std::move(result);
+                        produced_output = true;
+                    } else if (workingValue) {
+                        workingValue = std::nullopt;
+                        produced_output = true;
+                    }
+                } catch (const signals::Error&) { throw; }
+                  catch (...) {}
+            }
+        }
+    }
+
+    // ── flatten_op (41) ───────────────────────────────────────────────────────
+    // inputs[0] = director.  When director fires, callable may rewire inputs[1]
+    // to a new source node and return that source's latest value (or return the
+    // plain value directly when director holds a non-Signal).
+    // inputs[1] = source (after first rewire): pure C++ passthrough, no feval.
+    else if (op == Operation::flatten_op) {
+        if (!inputs.empty() && inputs[0]->workingValue) {
+            if (callable) {
+                V curr = currentValue.value_or(Traits::no_value());
+                try {
+                    auto [result, valset] = callable({*inputs[0]->workingValue}, curr, id);
+                    if (valset) { workingValue = std::move(result); produced_output = true; }
+                } catch (const signals::Error&) { throw; }
+                  catch (...) {}
+            }
+        } else if (inputs.size() >= 2 && inputs[1]->workingValue) {
+            workingValue = inputs[1]->workingValue;
+            produced_output = true;
+        }
+    }
+
     // nop (51): source node — transfer() is never meaningfully called.
 
     if (produced_output) return true;

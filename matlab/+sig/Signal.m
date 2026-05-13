@@ -35,6 +35,11 @@ classdef Signal < handle
         Node sig.Node
     end
 
+    properties (Hidden, Access = private)
+        OnValueCallbacks   % containers.Map(int32 → function_handle), lazy init
+        NextCallbackId int32 = int32(0)
+    end
+
     methods
 
         function obj = Signal(node)
@@ -262,6 +267,62 @@ classdef Signal < handle
             s = sig.Signal(this.Node.Net.addNode(this.Node, sig.OpCode.identity, false));
         end
 
+        function s = subscriptable(this)
+        % subscriptable  Wrap this signal in a sig.SubscriptableSignal.
+        %   Dot-subscripting the result (e.g. s.fieldName) creates a derived
+        %   signal whose value is the named field of this signal's value.
+        %
+        %   See also sig.SubscriptableSignal, sig.Net/subscriptableOrigin
+            s = sig.SubscriptableSignal(this.Node);
+        end
+
+        function fs = flattenStruct(this)
+        % flattenStruct  Derive a signal that expands signal-valued struct fields.
+        %
+        %   Returns a new signal that fires whenever the blueprint signal (this)
+        %   fires with an updated struct, or whenever any signal-valued field of
+        %   that struct fires.  The output is a plain struct with all fields
+        %   resolved to their current values.
+        %
+        %   The set of signal fields is dynamic: each time the blueprint fires,
+        %   the C++ callable re-inspects the struct and rewires as needed.
+        %   Output is suppressed until all signal fields have at least one value.
+        %
+        %   Example:
+        %     s = net.subscriptableOrigin('s');
+        %     s.x = xSig;   s.y = ySig;
+        %     flat = s.flattenStruct();   % flat follows s, replacing x/y with current values
+        %
+        %   See also sig.SubscriptableSignal, sig.Signal/flatten
+            net  = this.Node.Net;
+            node = net.addNode(this.Node, sig.OpCode.flatten_struct_op, false);
+            node.FormatSpec    = '%s.flattenStruct()';
+            node.DisplayInputs = this.Node;
+            fs = sig.Signal(node);
+        end
+
+        function out = flatten(this)
+        % flatten  Unwrap a signal-of-signals.
+        %
+        %   When this signal fires with a sig.Signal value S, flatten subscribes
+        %   to S: future updates from S pass through directly.  When this signal
+        %   fires with a plain value, that value is output immediately.
+        %
+        %   Example:
+        %     director = net.origin('director');
+        %     s1 = net.origin('s1');
+        %     flat = director.flatten();
+        %     director.post(s1);   % flat now mirrors s1
+        %     s1.post(42);         % flat takes value 42
+        %
+        %   See also sig.Signal/flattenStruct
+            net  = this.Node.Net;
+            node = net.addNode(this.Node, sig.OpCode.flatten_op, false);
+            node.FormatSpec    = '%s.flatten()';
+            node.DisplayInputs = this.Node;
+            out = sig.Signal(node);
+        end
+
         % =================================================================
         % Stubs for ops not yet backed by C++ opcodes
         % ===================================================== ============
@@ -363,8 +424,48 @@ classdef Signal < handle
             error('sig:notImplemented', 'cond() is not yet implemented.');
         end
 
-        function h = onValue(obj, f) %#ok<INUSD>
-            error('sig:notImplemented', 'onValue() is not yet implemented.');
+        function h = onValue(this, f)
+        % onValue  Register a callback invoked each time this signal takes a value.
+        %   h = s.onValue(@(v) disp(v)) calls the function with the new value
+        %   whenever the signal fires.  Deleting h (or letting it go out of scope)
+        %   removes the subscription automatically.
+        %
+        %   Returns a TidyHandle; keep it in scope for as long as the subscription
+        %   should remain active.
+        %
+        %   See also TidyHandle
+            if isempty(this.OnValueCallbacks)
+                this.OnValueCallbacks = ...
+                    containers.Map('KeyType', 'int32', 'ValueType', 'any');
+            end
+            callbackidx = this.NextCallbackId + int32(1);
+            this.NextCallbackId = callbackidx;
+            this.OnValueCallbacks(callbackidx) = f;
+            if this.OnValueCallbacks.Count == 1
+                this.Node.Net.registerSubscription(double(this.Node.Id), this);
+            end
+            h = TidyHandle(@unsub);
+            function unsub()
+                if isvalid(this) && ~isempty(this.OnValueCallbacks) && ...
+                        isKey(this.OnValueCallbacks, callbackidx)
+                    this.OnValueCallbacks.remove(callbackidx);
+                    if this.OnValueCallbacks.Count == 0
+                        this.Node.Net.unregisterSubscription(double(this.Node.Id));
+                    end
+                end
+            end
+        end
+
+        function valueChanged(this, newValue)
+        % valueChanged  Invoke all registered onValue callbacks with newValue.
+        %   Called by sig.Net.notifySubscribers after each apply cycle.
+            if isempty(this.OnValueCallbacks) || this.OnValueCallbacks.Count == 0
+                return
+            end
+            callbacks = this.OnValueCallbacks.values();
+            for ii = 1:numel(callbacks)
+                callbacks{ii}(newValue);
+            end
         end
 
         function h = output(obj)
@@ -474,6 +575,23 @@ classdef Signal < handle
         % sz  New signal whose value is size(this_value[, dim]).
             if nargin < 2, b = a.map(@size);
             else,          b = map2(a, dim, @size); end
+        end
+
+        function [varargout] = subsref(this, s)
+        % subsref  () subscripts create derived signals; others use builtin.
+            if strcmp(s(1).type, '()')
+                subs = s(1);
+                out = this.map(@(v) builtin('subsref', v, subs));
+                inpform = strJoin(repmat({'%s'}, 1, numel(subs)), ',');
+                out.Node.formatSpec = ['%s(' inpform ')'];
+                if length(s) > 1
+                    [varargout{1:nargout}] = subsref(out, s(2:end));
+                else
+                    varargout = {out};
+                end
+            else
+                [varargout{1:nargout}] = builtin('subsref', this, s);
+            end
         end
 
     end

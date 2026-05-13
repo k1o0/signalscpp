@@ -31,3 +31,15 @@ catch e
   fprintf('SIGNALS TESTS FAILED: %s\n', e.message);
   disp(e.getReport('extended'));
 end
+vis_tests = {'grating_test','sinusoidLayer_test','squareWaveLayer_test','gaussianLayer_test'};
+vis_dir = 'c:\Users\Work\source\repos\signalscpp\matlab\tests\vis\';
+addpath(vis_dir);
+for vi = 1:numel(vis_tests)
+  try
+    run(fullfile(vis_dir, vis_tests{vi}));
+    fprintf('VIS %s OK\n', vis_tests{vi});
+  catch e
+    fprintf('VIS %s FAILED: %s\n', vis_tests{vi}, e.message);
+    disp(e.getReport('extended'));
+  end
+end
