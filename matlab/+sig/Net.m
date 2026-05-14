@@ -135,6 +135,13 @@ classdef Net < handle
             tf = obj.Proxy.IsValid();
         end
 
+        function h = networkHandle(obj)
+        % networkHandle  Return an opaque handle to the underlying MexNetwork.
+        %   Used when constructing a sig.DatostimWindow so the C++ proxy can
+        %   share the MexNetwork pointer via the in-DLL registry.
+            h = obj.Proxy.GetNetworkHandle();
+        end
+
         function registerSubscription(obj, nodeId, signal)
         % registerSubscription  Register signal to receive valueChanged calls.
         %   Called automatically by sig.Signal.onValue when the first callback

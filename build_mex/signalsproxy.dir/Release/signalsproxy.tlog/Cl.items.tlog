@@ -1,5 +1,6 @@
-C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\CustomProxyFactory.cpp;c:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\CustomProxyFactory.obj
-C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\mex_network.cpp;c:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\mex_network.obj
-C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NetworkProxy.cpp;c:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\NetworkProxy.obj
-C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NodeProxy.cpp;c:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\NodeProxy.obj
-C:\Users\Work\source\repos\signalscpp\Signals-Mex\plugins\mx_ops.cpp;c:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\mx_ops.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\CustomProxyFactory.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\CustomProxyFactory.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\mex_network.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\mex_network.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NetworkProxy.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\NetworkProxy.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NodeProxy.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\NodeProxy.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\DatostimProxy.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\DatostimProxy.obj
+C:\Users\Work\source\repos\signalscpp\Signals-Mex\plugins\mx_ops.cpp;C:\Users\Work\source\repos\signalscpp\build_mex\signalsproxy.dir\Release\mx_ops.obj

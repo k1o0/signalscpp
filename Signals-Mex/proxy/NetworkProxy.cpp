@@ -11,12 +11,22 @@
 namespace sq::proxy {
 
 // ---------------------------------------------------------------------------
-// Construction
+// Static registry — maps raw MexNetwork pointer (as uintptr_t) to shared_ptr.
+// Lives inside signalsproxy.dll; avoids cross-DLL ProxyManager singleton issues.
+// ---------------------------------------------------------------------------
+
+std::unordered_map<uintptr_t, std::shared_ptr<MexNetwork>>* NetworkProxy::s_registry =
+    new std::unordered_map<uintptr_t, std::shared_ptr<MexNetwork>>();
+
+// ---------------------------------------------------------------------------
+// Construction / destruction
 // ---------------------------------------------------------------------------
 
 NetworkProxy::NetworkProxy(long max_nodes)
     : net_{std::make_shared<MexNetwork>(max_nodes)}
 {
+    (*s_registry)[reinterpret_cast<uintptr_t>(net_.get())] = net_;
+
     REGISTER_METHOD(NetworkProxy, AddNode);
     REGISTER_METHOD(NetworkProxy, DeleteNode);
     REGISTER_METHOD(NetworkProxy, Post);
@@ -28,6 +38,11 @@ NetworkProxy::NetworkProxy(long max_nodes)
     REGISTER_METHOD(NetworkProxy, SetNodeInputs);
     REGISTER_METHOD(NetworkProxy, NActiveNodes);
     REGISTER_METHOD(NetworkProxy, IsValid);
+    REGISTER_METHOD(NetworkProxy, GetNetworkHandle);
+}
+
+NetworkProxy::~NetworkProxy() {
+    s_registry->erase(reinterpret_cast<uintptr_t>(net_.get()));
 }
 
 libmexclass::proxy::MakeResult NetworkProxy::make(
@@ -44,6 +59,21 @@ libmexclass::proxy::MakeResult NetworkProxy::make(
         }
     }
     return std::make_shared<NetworkProxy>(max_nodes);
+}
+
+// ---------------------------------------------------------------------------
+// Registry accessors
+// ---------------------------------------------------------------------------
+
+std::shared_ptr<MexNetwork> NetworkProxy::getNetworkByHandle(uintptr_t handle) {
+    auto it = s_registry->find(handle);
+    return it != s_registry->end() ? it->second : nullptr;
+}
+
+void NetworkProxy::GetNetworkHandle(libmexclass::proxy::method::Context& ctx) {
+    matlab::data::ArrayFactory f;
+    ctx.outputs[0] = f.createScalar<uint64_t>(
+        static_cast<uint64_t>(reinterpret_cast<uintptr_t>(net_.get())));
 }
 
 // ---------------------------------------------------------------------------

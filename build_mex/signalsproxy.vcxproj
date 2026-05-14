@@ -449,6 +449,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\mex_network.cpp" />
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NetworkProxy.cpp" />
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\NodeProxy.cpp" />
+    <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\proxy\DatostimProxy.cpp" />
     <ClCompile Include="C:\Users\Work\source\repos\signalscpp\Signals-Mex\plugins\mx_ops.cpp" />
   </ItemGroup>
   <ItemGroup />
