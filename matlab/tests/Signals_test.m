@@ -746,6 +746,53 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.at_then_test(s)
     end
 
+    function test_to(testCase)
+      % Test for the to method (SR-latch: true between arm and release events)
+      [a, b] = deal(testCase.A, testCase.B);
+      p = a.to(b);
+      testCase.verifyMatches(p.Name, '\w+\.to\(\w+\)', 'Unexpected Name')
+
+      % Starts with no value before either input has fired
+      testCase.verifyEmpty(p.Node.Value, 'Expected p empty before any event')
+
+      % Release fires before arm — p should not be affected
+      affected = testCase.net.transact(b, true);
+      testCase.verifyFalse(ismember(p.Node.Id, affected), ...
+        'Expected p not affected when release fires before arm')
+      testCase.net.apply(affected);
+      testCase.verifyEmpty(p.Node.Value, 'Expected p still empty after premature release')
+
+      % Arm fires truthy — p latches true
+      a.post(true);
+      testCase.verifyTrue(p.Node.Value, 'Expected p true after arm fires truthy')
+
+      % Arm fires again while already armed — p should not re-fire
+      affected = testCase.net.transact(a, true);
+      testCase.verifyFalse(ismember(p.Node.Id, affected), ...
+        'Expected p not affected when arm fires while already armed')
+      testCase.net.apply(affected);
+
+      % Arm fires falsy while armed — p should not change
+      affected = testCase.net.transact(a, false);
+      testCase.verifyFalse(ismember(p.Node.Id, affected), ...
+        'Expected p not affected when arm fires falsy')
+      testCase.net.apply(affected);
+
+      % Release fires truthy — p latches false
+      b.post(true);
+      testCase.verifyFalse(p.Node.Value, 'Expected p false after release fires truthy')
+
+      % Release fires again while released — p should not re-fire
+      affected = testCase.net.transact(b, true);
+      testCase.verifyFalse(ismember(p.Node.Id, affected), ...
+        'Expected p not affected when release fires while already released')
+      testCase.net.apply(affected);
+
+      % Arm fires truthy again — p re-arms
+      a.post(true);
+      testCase.verifyTrue(p.Node.Value, 'Expected p true after re-arming')
+    end
+
   end
 
   methods (Access = private)

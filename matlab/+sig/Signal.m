@@ -436,8 +436,38 @@ classdef Signal < handle
             s.Node.DisplayInputs = [this.Node, gate_node];
         end
 
-        function out = to(obj, b) %#ok<INUSD>
-            error('sig:notImplemented', 'to() is not yet implemented.');
+        function out = to(this, release)
+            % TO  Boolean signal that is true between two events.
+            %
+            %   out = to(this, release) returns a dependent signal with a
+            %   logical value.  When 'this' (the arm signal) fires truthy,
+            %   'out' updates to true.  When 'release' subsequently fires
+            %   truthy, 'out' updates to false.  Re-arming or re-releasing
+            %   without the counterpart firing has no effect.
+            %
+            % Inputs:
+            %   this    (sig.Signal) - arm signal; truthy update sets out true
+            %   release (sig.Signal) - release signal; truthy update (after
+            %                         arm) resets out to false
+            %
+            % Outputs:
+            %   out (sig.Signal) - logical signal; true between arm and
+            %                      release events, false thereafter
+            %
+            % Examples:
+            %   stimOn = onset.to(offset);  % true while stimulus is shown
+            %   inWindow = entered.to(exited);
+            %
+            % See also sig.Signal/at, sig.Signal/keepWhen
+            net = this.Node.Net;
+            if isa(release, 'sig.Signal')
+                release_node = release.Node;
+            else
+                release_node = net.rootNode(release);
+            end
+            out = sig.Signal(net.addNode([this.Node, release_node], sig.OpCode.latch, false));
+            out.Node.FormatSpec    = '%s.to(%s)';
+            out.Node.DisplayInputs = [this.Node, release_node];
         end
 
         function out = setTrigger(obj, release) %#ok<INUSD>
