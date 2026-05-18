@@ -323,13 +323,77 @@ classdef Signal < handle
             out = sig.Signal(node);
         end
 
+        function out = at(this, when)
+            % AT  Sample this signal's value whenever 'when' fires true.
+            %
+            %   out = at(this, when) returns a dependent signal that takes the
+            %   latest value of 'this' at the moment 'when' fires with a truthy
+            %   value.  The output fires in response to 'when' updating, not
+            %   'this' — unlike keepWhen, posting a new value to 'this' alone
+            %   does not cause output to fire.
+            %
+            % Inputs:
+            %   this (sig.Signal) - the signal whose value to sample
+            %   when (sig.Signal) - the gate signal; output fires each time
+            %                       this updates with a truthy value
+            %
+            % Outputs:
+            %   out (sig.Signal) - fires with the current value of 'this'
+            %                      whenever 'when' fires truthy
+            %
+            % Examples:
+            %   x_on_press = x.at(keyboard);  % sample x on each key press
+            %   % Equivalent using then:
+            %   x_on_press = keyboard.then(x);
+            %
+            % See also sig.Signal/then, sig.Signal/keepWhen
+            net = this.Node.Net;
+            if isa(when, 'sig.Signal')
+                when_node = when.Node;
+            else
+                when_node = net.rootNode(when);
+            end
+            out = sig.Signal(net.addNode([this.Node, when_node], sig.OpCode.at_op, false));
+            out.Node.FormatSpec    = '%s.at(%s)';
+            out.Node.DisplayInputs = [this.Node, when_node];
+        end
+
+        function out = then(this, what)
+            % THEN  Sample 'what' whenever this signal fires with a truthy value.
+            %
+            %   out = then(this, what) is equivalent to what.at(this): fires
+            %   the latest value of 'what' whenever 'this' (the gate) fires
+            %   truthy.  The name reads naturally: "when [this fires], then
+            %   [take what]".
+            %
+            % Inputs:
+            %   this (sig.Signal) - the gate signal; output fires each time
+            %                       this updates with a truthy value
+            %   what (sig.Signal) - the signal whose value to sample
+            %
+            % Outputs:
+            %   out (sig.Signal) - fires with the current value of 'what'
+            %                      whenever 'this' fires truthy
+            %
+            % Examples:
+            %   x_on_press = keyboard.then(x);  % equivalent to x.at(keyboard)
+            %   confirmed  = confirm_btn.then(choice);
+            %
+            % See also sig.Signal/at, sig.Signal/keepWhen
+            net = this.Node.Net;
+            if isa(what, 'sig.Signal')
+                what_node = what.Node;
+            else
+                what_node = net.rootNode(what);
+            end
+            out = sig.Signal(net.addNode([what_node, this.Node], sig.OpCode.at_op, false));
+            out.Node.FormatSpec    = '%s.then(%s)';
+            out.Node.DisplayInputs = [this.Node, what_node];
+        end
+
         % =================================================================
         % Stubs for ops not yet backed by C++ opcodes
-        % ===================================================== ============
-
-        function out = at(obj, when) %#ok<INUSD>
-            error('sig:notImplemented', 'at() is not yet implemented.');
-        end
+        % =================================================================
 
         function s = keepWhen(this, when)
             % KEEPWHEN Pass through this value whenever it fires and gate is truthy.
@@ -362,7 +426,7 @@ classdef Signal < handle
             else
                 gate_node = net.rootNode(when);
             end
-            if strcmp(net.TransferMode, 'matlab')
+            if strcmp(net.TransferMode, 'matlab')s
                 transFcn = @(values, states) sig.transfer.keepWhen(values, states, gate_node);
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
             else

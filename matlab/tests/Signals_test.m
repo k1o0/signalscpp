@@ -728,23 +728,23 @@ classdef Signals_test < matlab.unittest.TestCase
     %     'Unexpected values of signals a and s')
     % end
     %
-    % function test_at(testCase)
-    %   % Test for the at method
-    %   [a, b] = deal(testCase.A, testCase.B);
-    %   s = a.at(b);
-    %   testCase.verifyMatches(s.Name, '\w.at(\w+\)', 'Unexpected Name')
-    %
-    %   testCase.at_then_test(s)
-    % end
-    %
-    % function test_then(testCase)
-    %   % Test for the then method
-    %   [a, b] = deal(testCase.A, testCase.B);
-    %   s = b.then(a);
-    %   testCase.verifyMatches(s.Name, '\w.then(\w+\)', 'Unexpected Name')
-    %
-    %   testCase.at_then_test(s)
-    % end
+    function test_at(testCase)
+      % Test for the at method
+      [a, b] = deal(testCase.A, testCase.B);
+      s = a.at(b);
+      testCase.verifyMatches(s.Name, '\w.at(\w+\)', 'Unexpected Name')
+
+      testCase.at_then_test(s)
+    end
+
+    function test_then(testCase)
+      % Test for the then method
+      [a, b] = deal(testCase.A, testCase.B);
+      s = b.then(a);
+      testCase.verifyMatches(s.Name, '\w.then(\w+\)', 'Unexpected Name')
+
+      testCase.at_then_test(s)
+    end
 
   end
 
@@ -755,49 +755,47 @@ classdef Signals_test < matlab.unittest.TestCase
 
       [parent, child] = distribute(s.Node.Inputs);
 
-      % Post a value to parent node (a)
+      % Post a value to parent (a) — only a should be affected; s is
+      % gate-triggered so it does not fire when only its value source updates
       v = rand;
-      affectedIdxs = submit(testCase.net, parent.Id, v);
-      changed = applyNodes(testCase.net, affectedIdxs);
-      % Check only a changed
-      testCase.verifyTrue(isequal(affectedIdxs, changed, parent.Id), ...
+      affected = testCase.net.transact(parent, v);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
         'Unexpected network behaviour upon posting value to signal a')
+      testCase.net.apply(affected);
 
-      % Post a truthy value to child node (b)
-      affectedIdxs = submit(testCase.net, child.Id, true);
-      changed = applyNodes(testCase.net, affectedIdxs);
-      % Check b and s nodes changed
-      testCase.verifyTrue(isequal(affectedIdxs, changed, [child.Id;s.Node.Id]), ...
+      % Post a truthy value to child (b) — b and s should both be affected
+      affected = testCase.net.transact(child, true);
+      testCase.verifyTrue(ismember(child.Id, affected), ...
+        'Expected child node in affected set')
+      testCase.verifyTrue(ismember(s.Node.Id, affected), ...
         'Unexpected network behaviour upon posting value to signal b')
-      testCase.verifyTrue(isequal(v, parent.CurrValue, s.Node.Value), ...
+      testCase.net.apply(affected);
+      testCase.verifyTrue(isequal(v, parent.Value, s.Node.Value), ...
         'Unexpected values of signals a and s')
 
-      % Post a value to signal parent node (a)
+      % Post a new value to parent (a) — only a should be affected: unlike
+      % keepWhen, s will not fire as b has not changed since last update
       v = rand;
-      affectedIdxs = submit(testCase.net, parent.Id, v);
-      changed = applyNodes(testCase.net, affectedIdxs);
-      % Check only a's node affected: unlike keepwhen, s will not be
-      % updated as b (dispite being true) has not changed since last update
-      testCase.verifyTrue(isequal(affectedIdxs, changed, parent.Id), ...
+      affected = testCase.net.transact(parent, v);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
         'Unexpected network behaviour upon posting value to signal a')
-      testCase.verifyTrue(v == parent.CurrValue && s.Node.Value ~= v, ...
+      testCase.net.apply(affected);
+      testCase.verifyTrue(v == parent.Value && s.Node.Value ~= v, ...
         'Unexpected values of signals a and s')
 
-      % Post a non-truthy value to child node (b)
-      affectedIdxs = submit(testCase.net, child.Id, false);
-      changed = applyNodes(testCase.net, affectedIdxs);
-      % Check only b's node affected
-      testCase.verifyTrue(isequal(affectedIdxs, changed, child.Id), ...
+      % Post a non-truthy value to child (b) — s should not be affected
+      affected = testCase.net.transact(child, false);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
         'Unexpected nodes affected when predicate signal false')
+      testCase.net.apply(affected);
 
-      % Post a value to signal parent node (a)
+      % Post a value to parent (a) — s should still not fire (gate is false)
       v = rand;
-      affectedIdxs = submit(testCase.net, parent.Id, v);
-      changed = applyNodes(testCase.net, affectedIdxs);
-      % Check only a's node affected
-      testCase.verifyTrue(isequal(affectedIdxs, changed, parent.Id), ...
+      affected = testCase.net.transact(parent, v);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
         'Unexpected network behaviour upon posting value to signal a')
-      testCase.verifyTrue(v == parent.CurrValue && s.Node.Value ~= v, ...
+      testCase.net.apply(affected);
+      testCase.verifyTrue(v == parent.Value && s.Node.Value ~= v, ...
         'Unexpected values of signals a and s')
     end
 
