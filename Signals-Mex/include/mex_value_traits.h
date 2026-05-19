@@ -132,6 +132,88 @@ struct ValueTraits<matlab::data::Array> {
         } catch (...) { return std::nullopt; }
     }
 
+    // ── buffer_up_to ─────────────────────────────────────────────────────────
+    // Default (strict, cast_on_type_change=false):
+    //   Items must be double scalars/vectors; buffer is a 1×N double row vector.
+    //   Raises signals::TypeError on type change (matching legacy behaviour).
+    //
+    // Cast mode (cast_on_type_change=true):
+    //   Items of any type are accepted.  On a type change the existing typed
+    //   buffer is promoted to a cell array (each scalar element becomes its own
+    //   cell) and accumulation continues in cell mode.
+    //
+    // Mode is selected by the caller (network_impl.h) via the callable-presence
+    // convention: callable set → cast mode; no callable → strict mode.
+    static matlab::data::Array buffer_up_to(const matlab::data::Array& current,
+                                            const matlab::data::Array& new_item,
+                                            size_t max_n,
+                                            bool cast_on_type_change = false) {
+        matlab::data::ArrayFactory f;
+        using AT = matlab::data::ArrayType;
+
+        const bool curr_empty  = current.isEmpty();
+        const bool curr_double = !curr_empty && current.getType() == AT::DOUBLE;
+        const bool curr_cell   = !curr_empty && current.getType() == AT::CELL;
+        const bool item_double = new_item.getType() == AT::DOUBLE;
+
+        // ── Cell mode: current is already a cell array ───────────────────────
+        if (curr_cell) {
+            matlab::data::CellArray ca = const_cast<matlab::data::Array&>(current);
+            std::vector<matlab::data::Array> cells;
+            for (auto& elem : ca) cells.push_back(elem);
+            cells.push_back(new_item);
+            if (max_n > 0 && cells.size() > max_n)
+                cells.erase(cells.begin(),
+                            cells.begin() + static_cast<ptrdiff_t>(cells.size() - max_n));
+            auto out = f.createCellArray({1, cells.size()});
+            for (size_t i = 0; i < cells.size(); ++i) out[0][i] = cells[i];
+            return out;
+        }
+
+        // ── Typed double path: current empty or double, new item is double ───
+        if ((curr_empty || curr_double) && item_double) {
+            std::vector<double> acc;
+            if (curr_double) {
+                matlab::data::TypedArray<double> ta =
+                    const_cast<matlab::data::Array&>(current);
+                for (double d : ta) acc.push_back(d);
+            }
+            {
+                matlab::data::TypedArray<double> ta =
+                    const_cast<matlab::data::Array&>(new_item);
+                for (double d : ta) acc.push_back(d);
+            }
+            if (max_n > 0 && acc.size() > max_n)
+                acc.erase(acc.begin(),
+                          acc.begin() + static_cast<ptrdiff_t>(acc.size() - max_n));
+            auto out = f.createArray<double>({1, acc.size()});
+            std::copy(acc.begin(), acc.end(), out.begin());
+            return out;
+        }
+
+        // ── Type mismatch ────────────────────────────────────────────────────
+        if (!cast_on_type_change)
+            throw signals::TypeError(
+                "bufferUpTo: value type changed; use the 'cell' option to allow mixed types");
+
+        // Promote existing typed (double) buffer to a cell array, then append.
+        std::vector<matlab::data::Array> cells;
+        if (curr_double) {
+            matlab::data::TypedArray<double> ta =
+                const_cast<matlab::data::Array&>(current);
+            for (double d : ta) cells.push_back(f.createScalar<double>(d));
+        } else if (!curr_empty) {
+            cells.push_back(current);
+        }
+        cells.push_back(new_item);
+        if (max_n > 0 && cells.size() > max_n)
+            cells.erase(cells.begin(),
+                        cells.begin() + static_cast<ptrdiff_t>(cells.size() - max_n));
+        auto out = f.createCellArray({1, cells.size()});
+        for (size_t i = 0; i < cells.size(); ++i) out[0][i] = cells[i];
+        return out;
+    }
+
     // ── Arithmetic — throw TypeError; MEX routes arithmetic via mapn_op/@plus ─
 
     static matlab::data::Array add(const matlab::data::Array&, const matlab::data::Array&)

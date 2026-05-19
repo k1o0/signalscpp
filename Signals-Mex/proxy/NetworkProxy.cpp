@@ -157,7 +157,16 @@ void NetworkProxy::Transact(libmexclass::proxy::method::Context& ctx) {
     long node_id = static_cast<long>(double(id_arr[0]));
 
     // Pass the matlab::data::Array directly — no signals::Value conversion.
-    std::vector<long> affected = net_->transact(node_id, ctx.inputs[1]);
+    std::vector<long> affected;
+    try {
+        affected = net_->transact(node_id, ctx.inputs[1]);
+    } catch (const signals::MatlabError& ex) {
+        ctx.error = libmexclass::error::Error{ex.id(), ex.what()};
+        return;
+    } catch (const signals::Error& ex) {
+        ctx.error = libmexclass::error::Error{"signals:runtimeError", ex.what()};
+        return;
+    }
 
     matlab::data::ArrayFactory f;
     auto out = f.createArray<double>({1, affected.empty() ? size_t(0) : affected.size()});

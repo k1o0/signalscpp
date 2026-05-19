@@ -522,12 +522,80 @@ classdef Signal < handle
             error('sig:notImplemented', 'lag() is not yet implemented.');
         end
 
-        function out = bufferUpTo(obj, nSamples) %#ok<INUSD>
-            error('sig:notImplemented', 'bufferUpTo() is not yet implemented.');
+        function bup = bufferUpTo(this, nSamples, typeChange)
+            % BUFFERUPTO  Accumulate up to nSamples recent values in a typed or cell array.
+            %
+            %   bup = this.bufferUpTo(nSamples) accumulates double values into a
+            %   1×N double row vector (matching legacy behaviour).  A type change
+            %   raises an error.
+            %
+            %   bup = this.bufferUpTo(nSamples, 'cell') silently promotes the buffer
+            %   to a 1×N cell array on the first type change and continues in cell
+            %   mode thereafter.
+            %
+            % Inputs:
+            %   this       (sig.Signal) - input signal to buffer
+            %   nSamples   (scalar | sig.Signal) - maximum number of samples to keep
+            %   typeChange (char, optional) - pass 'cell' to allow mixed-type buffering
+            %
+            % Outputs:
+            %   bup (sig.Signal) - buffered values; 1×N double by default or 1×N cell
+            %                      if 'cell' option used or a type change occurred
+            %
+            % See also sig.Signal/buffer
+            net = this.Node.Net;
+            if isa(nSamples, 'sig.Signal')
+                n_node = nSamples.Node;
+            else
+                n_node = net.rootNode(nSamples);
+            end
+            if nargin > 2 && strcmpi(typeChange, 'cell')
+                % Dummy callable signals cast mode to the C++ transfer block;
+                % it is never invoked — its presence is the flag.
+                castMarker = @(varargin) [];
+                bup = sig.Signal(net.addNode([this.Node, n_node], ...
+                    sig.OpCode.buffer_up_to, false, castMarker));
+            else
+                bup = sig.Signal(net.addNode([this.Node, n_node], ...
+                    sig.OpCode.buffer_up_to, false));
+            end
+            bup.Node.FormatSpec    = '%s.bufferUpTo(%s)';
+            bup.Node.DisplayInputs = [this.Node, n_node];
         end
 
-        function out = buffer(obj, nSamples) %#ok<INUSD>
-            error('sig:notImplemented', 'buffer() is not yet implemented.');
+        function b = buffer(this, nSamples, typeChange)
+            % BUFFER  Rolling window: fire a full buffer once nSamples values accumulate.
+            %
+            %   b = this.buffer(nSamples) fires a 1×nSamples double row vector once
+            %   the rolling window is full; suppresses output while filling.
+            %
+            %   b = this.buffer(nSamples, 'cell') uses a cell array buffer, allowing
+            %   mixed-type values (see bufferUpTo for details).
+            %
+            % Inputs:
+            %   this       (sig.Signal) - input signal to buffer
+            %   nSamples   (scalar | sig.Signal) - required buffer length
+            %   typeChange (char, optional) - pass 'cell' to allow mixed-type buffering
+            %
+            % Outputs:
+            %   b (sig.Signal) - fires when buffer is full
+            %
+            % See also sig.Signal/bufferUpTo
+            net  = this.Node.Net;
+            if nargin > 2
+                bup = this.bufferUpTo(nSamples, typeChange);
+            else
+                bup = this.bufferUpTo(nSamples);
+            end
+            full = (bup.nElems() == nSamples);
+            b    = bup.keepWhen(full);
+            if isa(nSamples, 'sig.Signal')
+                n_node = nSamples.Node;
+            else
+                n_node = net.rootNode(nSamples);
+            end
+            b.Node.FormatSpec    = '%s.buffer(%s)';
+            b.Node.DisplayInputs = [this.Node, n_node];
         end
 
         function m = merge(varargin)

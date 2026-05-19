@@ -79,6 +79,13 @@ enum class SIGNALS_API Operation {
     // Legacy analogue: sig.transfer.indexOfFirst
     index_of_first = 26,
 
+    // buffer_up_to: sliding window accumulator.  inputs = [item, maxSamples].
+    // Fires only when inputs[0] (item) has a new working value.
+    // Gets capacity from latest(inputs[1]) via to_index.
+    // Appends item to the current buffer and trims to the last maxSamples elements.
+    // Legacy analogue: sig.transfer.bufferUpTo
+    buffer_up_to = 27,
+
     // ── Pure-C++ unary op (no callable) ──────────────────────────────────────
     // numel: output = number of elements of the input value.
     //   monostate→0, double/bool/string→1, vector<double>→size.

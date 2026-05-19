@@ -26,89 +26,110 @@ classdef Signals_test < matlab.unittest.TestCase
   end
 
   methods (Test)
-    % function test_bufferUpTo(testCase)
-    %   % Test for bufferUpTo method
-    %   a = testCase.A;
-    %   b = a.bufferUpTo(3);
-    %
-    %   a.post(randi(1e4))
-    %   testCase.verifyEqual(b.Node.Value, a.Node.Value, ...
-    %     'Unexpected output when bufferUpTo')
-    %   testCase.verifyMatches(b.Name, '\w+\.bufferUpTo\(\d+)', 'Unexpected Name')
-    %
-    %   % Test filling buffer
-    %   vals = rand(1,4);
-    %   arrayfun(@(v) a.post(v), vals)
-    %   testCase.verifyEqual(b.Node.Value, vals(end-2:end), ...
-    %     'Fails to buffer up to sample number')
-    %
-    %   % Test transfer function directly; no new changes in network
-    %   % ids = pick([b.Node.Inputs], 'Id') % Same as below, requires Rigbox
-    %   inIds = arrayfun(@(n) n.Id, b.Node.Inputs);
-    %   args = {testCase.net.Id, inIds, b.Node.Id};
-    %   [~, valset] = sig.transfer.buffer(args{:});
-    %   testCase.verifyFalse(valset, 'Expected ''valset'' to be false')
-    %
-    %   % Update one of the input nodes
-    %   expected = sort(cellfun(@(n) n.Node.Id, {a,b}));
-    %   actual = submit(testCase.net.Id, a.Node.Id, rand);
-    %   testCase.verifyEqual(expected(:), actual, ...
-    %     'Unexpected affected node indicies returned')
-    %   [val, valset] = sig.transfer.buffer(args{:});
-    %   testCase.verifyTrue(valset, 'Expected ''valset'' to be true')
-    %   testCase.verifyEqual(val(end), a.Node.WorkingValue, 'Failed to re-evaluate function')
-    %
-    %   % Test N samples as signal
-    %   b = testCase.B;
-    %   buff = a.bufferUpTo(b);
-    %   testCase.verifyMatches(buff.Name, '\w+\.bufferUpTo\(\w+)', 'Unexpected Name')
-    %
-    %   % No updates until n samples defined
-    %   a.post(rand)
-    %   inIds = arrayfun(@(n) n.Id, buff.Node.Inputs);
-    %   args = {testCase.net.Id, inIds, buff.Node.Id};
-    %   [~, valset] = sig.transfer.buffer(args{:});
-    %   testCase.verifyFalse(valset, 'Expected ''valset'' to be false')
-    %
-    %   % Initialize N samples
-    %   n = 3;
-    %   b.post(n), arrayfun(@(v) a.post(v), rand(1,n))
-    %   expected = ...
-    %     numel(buff.Node.Value) == n && ...
-    %     buff.Node.Value(end) == a.Node.Value;
-    %   testCase.verifyTrue(expected, ...
-    %     'Unexpected output when nSamples is signal')
-    %
-    %   % Test restricting n samples
-    %   b.post(b.Node.Value-1)
-    %   [~, valset] = sig.transfer.buffer(args{:});
-    %   testCase.verifyFalse(valset, 'Expected ''valset'' to be false')
-    %   a.post(rand)
-    %   expected = ...
-    %     numel(buff.Node.Value) == n-1 && ...
-    %     buff.Node.Value(end) == a.Node.Value;
-    %   testCase.verifyTrue(expected, ...
-    %     'Unexpected output when nSamples is signal')
-    % end
-    %
-    % function test_buffer(testCase)
-    %   % Test for buffer method.  For thorough testing use test_bufferUpTo
-    %   a = testCase.A;
-    %   n = 3;
-    %   b = a.buffer(n);
-    %
-    %   % Test unfilled buffer
-    %   a.post(rand)
-    %   testCase.verifyEmpty(b.Node.Value, ...
-    %     'Expected buffer to be uninitialized while nUpdates < n')
-    %   testCase.verifyMatches(b.Name, '\w+\.buffer\(\d+)', 'Unexpected Name')
-    %
-    %   % Test filling buffer
-    %   vals = rand(1,n);
-    %   arrayfun(@(v) a.post(v), vals)
-    %   testCase.verifyEqual(b.Node.Value, vals(end-2:end), ...
-    %     'Fails to buffer up to sample number')
-    % end
+    function test_bufferUpTo(testCase)
+      % Tests for bufferUpTo: default = typed double; 'cell' option = cell array
+      [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
+
+      % ── Default (typed double) path ───────────────────────────────────────
+      bup = a.bufferUpTo(3);
+      testCase.verifyMatches(bup.Name, '\w+\.bufferUpTo\(\d+\)', 'Unexpected Name')
+
+      v1 = rand;
+      a.post(v1)
+      testCase.verifyEqual(bup.Node.Value, v1, 'Expected scalar double after first post')
+
+      v2 = rand;
+      a.post(v2)
+      testCase.verifyEqual(bup.Node.Value, [v1, v2], 'Expected 1x2 double after second post')
+
+      v3 = rand;
+      a.post(v3)
+      testCase.verifyEqual(bup.Node.Value, [v1, v2, v3], 'Expected 1x3 double when full')
+
+      v4 = rand;
+      a.post(v4)
+      testCase.verifyEqual(bup.Node.Value, [v2, v3, v4], 'Expected trimmed 1x3 double after overflow')
+
+      % Type change in strict (default) mode raises an error
+      testCase.verifyError(@() a.post('x'), 'signals:runtimeError', ...
+        'Expected error on type change in strict mode')
+
+      % ── 'cell' option: mixed-type buffering ──────────────────────────────
+      % Use signal c (independent of bup/a) so the strict-mode bup node doesn't
+      % interfere by throwing before the cast-mode node is evaluated.
+      bup2 = c.bufferUpTo(3, 'cell');
+
+      c.post(1.0)
+      testCase.verifyEqual(bup2.Node.Value, 1.0, 'Expected scalar double in cell-mode start')
+
+      c.post(2.0)
+      testCase.verifyEqual(bup2.Node.Value, [1.0, 2.0], 'Expected typed double before type change')
+
+      c.post('hello')  % type change — should silently cast to cell
+      val = bup2.Node.Value;
+      testCase.verifyTrue(iscell(val), 'Expected cell array after type change')
+      testCase.verifyEqual(numel(val), 3, 'Expected 3-element cell after type change')
+      testCase.verifyEqual(val{end}, 'hello', 'Last cell should be the string item')
+
+      % ── nSamples as a Signal ─────────────────────────────────────────────
+      buff = a.bufferUpTo(b);
+      testCase.verifyMatches(buff.Name, '\w+\.bufferUpTo\(\w+\)', 'Unexpected Name for signal nSamples')
+
+      % No output until b (nSamples) has a value
+      affected = testCase.net.transact(a.Node, rand);
+      testCase.net.apply(affected);
+      testCase.verifyFalse(ismember(buff.Node.Id, affected), ...
+        'bufferUpTo should not fire before nSamples is defined')
+
+      % After b fires, subsequent a posts accumulate as typed doubles
+      n = 3;
+      b.post(n)
+      a.post(rand); a.post(rand); a.post(rand)
+      testCase.verifyEqual(numel(buff.Node.Value), n, ...
+        'Expected buffer length to equal nSamples after filling')
+      testCase.verifyEqual(buff.Node.Value(end), a.Node.Value, ...
+        'Last element should match most recent a value')
+
+      % Shrinking nSamples trims buffer on next item post
+      b.post(n - 1)
+      a.post(rand)
+      testCase.verifyEqual(numel(buff.Node.Value), n - 1, ...
+        'Expected buffer to trim when nSamples decreases')
+      testCase.verifyEqual(buff.Node.Value(end), a.Node.Value, ...
+        'Last element should match most recent a value after trim')
+    end
+
+    function test_buffer(testCase)
+      % Tests for buffer: fires only once nSamples double values accumulated
+      a = testCase.A;
+      n = 3;
+      b = a.buffer(n);
+
+      testCase.verifyMatches(b.Name, '\w+\.buffer\(\d+\)', 'Unexpected Name')
+
+      % Buffer not yet full — b should not fire
+      a.post(rand)
+      testCase.verifyEmpty(b.Node.Value, 'buffer should not fire with < n samples')
+
+      a.post(rand)
+      testCase.verifyEmpty(b.Node.Value, 'buffer should not fire with < n samples')
+
+      % Exactly n posts — buffer fires for the first time
+      v = rand(1, n);
+      arrayfun(@(x) a.post(x), v(1:end-2))  % 2 already posted; post n-2 more
+      a.post(v(end-1)); a.post(v(end))
+      testCase.verifyFalse(isempty(b.Node.Value), 'buffer should fire once n samples posted')
+      testCase.verifyEqual(numel(b.Node.Value), n, 'buffer value should have exactly n elements')
+
+      % Rolling: one more post still fires with n elements, oldest dropped
+      vNext = rand;
+      b_prev = b.Node.Value;
+      a.post(vNext)
+      testCase.verifyFalse(isempty(b.Node.Value), 'buffer should fire after n+1 posts')
+      testCase.verifyEqual(numel(b.Node.Value), n, 'rolling buffer should keep exactly n elements')
+      testCase.verifyEqual(b.Node.Value(end), vNext, 'last element should be newest value')
+      testCase.verifyFalse(isequal(b.Node.Value, b_prev), 'rolling buffer should shift by one')
+    end
 
     function test_filter(testCase)
       % Tests for filter method

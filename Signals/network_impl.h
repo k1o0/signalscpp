@@ -524,6 +524,26 @@ bool NetworkT<V>::Node::transfer() {
         }
     }
 
+    // ── buffer_up_to (27) ────────────────────────────────────────────────────
+    // Gate: fires only when inputs[0] (item) has a new working value AND
+    //       inputs[1] (maxSamples) has at least a current value available.
+    // Capacity: from latest(inputs[1]) via to_index.
+    // Mode flag: callable present → cast on type change; absent → strict (throw).
+    else if (op == Operation::buffer_up_to) {
+        if (inputs.size() >= 2 && inputs[0]->workingValue) {
+            auto n_opt = latest(inputs[1]);
+            if (n_opt) {
+                auto idx = Traits::to_index(*n_opt);
+                size_t max_n = idx ? *idx : 0;
+                const bool cast_mode = static_cast<bool>(callable);
+                const V& new_item = *inputs[0]->workingValue;
+                V curr = currentValue.value_or(Traits::no_value());
+                workingValue = Traits::buffer_up_to(curr, new_item, max_n, cast_mode);
+                produced_output = true;
+            }
+        }
+    }
+
     // ── function (0): MATLAB transfer callable ────────────────────────────────
     // Invoked when any input fired.  Callable handles all gating internally.
     else if (op == Operation::function) {

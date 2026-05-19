@@ -52,6 +52,13 @@ struct ValueTraits {
     static V lt(const V&, const V&)       { throw signals::TypeError("lt not implemented for this value type"); }
     static V le(const V&, const V&)       { throw signals::TypeError("le not implemented for this value type"); }
     static V eq(const V&, const V&)       { throw signals::TypeError("eq not implemented for this value type"); }
+
+    // buffer_up_to — throw by default; specialisations provide typed implementations.
+    // cast_on_type_change: if true, silently promote to cell/variant type on mismatch;
+    //                      if false (default), throw TypeError on type change.
+    static V buffer_up_to(const V&, const V&, size_t, bool = false) {
+        throw signals::TypeError("buffer_up_to not implemented for this value type");
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -96,6 +103,19 @@ struct ValueTraits<signals::Value> {
         double d = std::get<double>(v);
         if (d < 0.0) return std::nullopt;
         return static_cast<size_t>(d);
+    }
+
+    static signals::Value buffer_up_to(const signals::Value& current,
+                                       const signals::Value& new_item,
+                                       size_t max_n,
+                                       bool /* cast_on_type_change */ = false) {
+        signals::Value acc = append(current, new_item);
+        if (max_n > 0 && std::holds_alternative<std::vector<double>>(acc)) {
+            auto& v = std::get<std::vector<double>>(acc);
+            if (v.size() > max_n)
+                v.erase(v.begin(), v.begin() + static_cast<ptrdiff_t>(v.size() - max_n));
+        }
+        return acc;
     }
 
     static signals::Value add     (const signals::Value& a, const signals::Value& b) { return signals::add(a,b);      }
