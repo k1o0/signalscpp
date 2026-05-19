@@ -571,16 +571,139 @@ classdef Signal < handle
             m.Node.DisplayInputs = nodes;
         end
 
-        function out = selectFrom(obj, varargin) %#ok<INUSD>
-            error('sig:notImplemented', 'selectFrom() is not yet implemented.');
+        function s = selectFrom(this, varargin)
+            % SELECTFROM  Select a value by 0-based index.
+            %
+            %   s = selectFrom(this, opt0, opt1, ...) returns a signal that
+            %   fires the latest value of the option addressed by 'this'
+            %   (0-based) whenever the index or the selected option updates.
+            %
+            % Inputs:
+            %   this (sig.Signal) - 0-based integer index signal
+            %   opt0..optN        - signals or constants to select among
+            %
+            % Outputs:
+            %   s (sig.Signal) - fires the selected option's latest value
+            %
+            % Examples:
+            %   s = idx.selectFrom(a, b, c);  % s = a/b/c when idx = 0/1/2
+            %
+            % See also sig.Signal/cond, sig.Signal/indexOfFirst
+            net = this.Node.Net;
+            option_nodes = this.Node.from(varargin{:});
+            nodes  = [this.Node, option_nodes];
+            n_opts = numel(option_nodes);
+            fmt = ['%s.selectFrom([ ' strjoin(repmat({'%s'}, 1, n_opts), ' ; ') ' ])'];
+            s = sig.Signal(net.addNode(nodes, sig.OpCode.select_from, false));
+            s.Node.FormatSpec    = fmt;
+            s.Node.DisplayInputs = nodes;
         end
 
-        function out = indexOfFirst(obj, varargin) %#ok<INUSD>
-            error('sig:notImplemented', 'indexOfFirst() is not yet implemented.');
+        function f = indexOfFirst(varargin)
+            % INDEXOFFIRST  0-based index of first truthy signal.
+            %
+            %   f = indexOfFirst(pred0, pred1, ...) returns a signal that
+            %   fires the 0-based index of the first input whose latest
+            %   value is truthy.  If no input is truthy, no output is
+            %   produced.  Used internally by cond/iff.
+            %
+            % Inputs:
+            %   pred0..predN (sig.Signal|scalar) - predicate signals
+            %
+            % Outputs:
+            %   f (sig.Signal) - 0-based index of first truthy pred, or
+            %                    no output when all predicates are falsy
+            %
+            % See also sig.Signal/cond, sig.Signal/selectFrom
+            refNode = [];
+            for k = 1:numel(varargin)
+                if isa(varargin{k}, 'sig.Signal')
+                    refNode = varargin{k}.Node; break;
+                end
+            end
+            assert(~isempty(refNode), 'sig:noNet', ...
+                'indexOfFirst: no sig.Signal found in inputs.');
+            nodes = refNode.from(varargin{:});
+            net   = refNode.Net;
+            n     = numel(nodes);
+            fmt   = ['indexOfFirst([ ' strjoin(repmat({'%s'}, 1, n), ' ; ') ' ])'];
+            f = sig.Signal(net.addNode(nodes, sig.OpCode.index_of_first, false));
+            f.Node.FormatSpec    = fmt;
+            f.Node.DisplayInputs = nodes;
         end
 
-        function out = cond(obj, value1, varargin) %#ok<INUSD>
-            error('sig:notImplemented', 'cond() is not yet implemented.');
+        function c = cond(this, value1, varargin)
+            % COND  Conditional signal: first value whose predicate is truthy.
+            %
+            %   c = cond(pred1, val1, pred2, val2, ...) returns a signal
+            %   that fires the value corresponding to the first truthy
+            %   predicate.  Predicates are re-evaluated whenever any fires.
+            %   If no predicate is truthy, no output is produced.
+            %
+            % Inputs:
+            %   pred1, pred2, ... (sig.Signal) - gate signals evaluated
+            %                                    in order
+            %   val1,  val2,  ... (sig.Signal|any) - values to select
+            %
+            % Outputs:
+            %   c (sig.Signal) - fires the value paired with the first
+            %                    truthy predicate
+            %
+            % Examples:
+            %   c = cond(x > 0, posVal, x < 0, negVal);
+            %   c = cond(flag, onSig);   % fires onSig only while flag truthy
+            %
+            % See also sig.Signal/iff, sig.Signal/selectFrom,
+            %          sig.Signal/indexOfFirst
+            preds = [{this}, varargin(1:2:end)];
+            vals  = [{value1}, varargin(2:2:end)];
+            assert(numel(preds) == numel(vals), 'sig:cond:mismatch', ...
+                'cond: number of predicates must equal number of values.');
+            nc = numel(preds);
+
+            firstTrue = indexOfFirst(preds{:});
+            c         = firstTrue.selectFrom(vals{:});
+
+            % DisplayInputs: interleave value and predicate nodes so the
+            % format string 'cond( %s if %s ; … )' receives them in order.
+            val_nodes  = c.Node.Inputs(2:end);        % skip firstTrue.Node
+            pred_nodes = firstTrue.Node.Inputs;
+            interleave = reshape([1:nc; nc+(1:nc)], 1, []);
+            all_display = [val_nodes, pred_nodes];
+            c.Node.DisplayInputs = all_display(interleave);
+            c.Node.FormatSpec = ...
+                ['cond( ' strjoin(repmat({'%s if %s'}, 1, nc), ' ; ') ' )'];
+        end
+
+        function r = iff(this, trueVal, falseVal)
+            % IFF  Binary conditional: trueVal when pred truthy, else falseVal.
+            %
+            %   r = iff(pred, trueVal, falseVal) is equivalent to
+            %   cond(pred, trueVal, true, falseVal): fires trueVal while
+            %   pred is truthy, falseVal otherwise.
+            %
+            %   r = iff(pred, trueVal) fires trueVal whenever pred is truthy
+            %   and produces no output when pred is falsy.
+            %
+            % Inputs:
+            %   this     (sig.Signal) - predicate signal
+            %   trueVal  (sig.Signal|any) - value when pred is truthy
+            %   falseVal (sig.Signal|any) - value when pred is falsy
+            %                               (optional; no output if omitted)
+            %
+            % Outputs:
+            %   r (sig.Signal) - conditional output
+            %
+            % Examples:
+            %   reward = correct.iff(bigReward, smallReward);
+            %   active = running.iff(speed);  % fires speed only while running
+            %
+            % See also sig.Signal/cond, sig.Signal/keepWhen
+            if nargin > 2
+                r = cond(this, trueVal, true, falseVal);
+            else
+                r = cond(this, trueVal);
+            end
         end
 
         function h = onValue(this, f)

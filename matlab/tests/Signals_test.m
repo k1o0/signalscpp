@@ -834,6 +834,139 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.net.apply(affected);
     end
 
+    function test_indexOfFirst(testCase)
+      % Test for the indexOfFirst method
+      [a, b] = deal(testCase.A, testCase.B);
+      f = indexOfFirst(a, b);
+      testCase.verifyMatches(f.Name, 'indexOfFirst\(', 'Unexpected Name')
+
+      % Starts empty before any pred fires
+      testCase.verifyEmpty(f.Node.Value, 'Expected f empty before any pred fires')
+
+      % Both preds fire false — no output (neither truthy)
+      a.post(false); b.post(false);
+      testCase.verifyEmpty(f.Node.Value, 'Expected no output when all preds falsy')
+
+      % Second pred fires truthy — output = 1 (b is inputs[1])
+      b.post(true);
+      testCase.verifyEqual(f.Node.Value, 1.0, 'Expected index 1 when only b truthy')
+
+      % First pred fires truthy — output = 0 (a wins, b still truthy)
+      a.post(true);
+      testCase.verifyEqual(f.Node.Value, 0.0, 'Expected index 0 when a truthy (first wins)')
+
+      % First pred fires false — output = 1 (b still truthy)
+      a.post(false);
+      testCase.verifyEqual(f.Node.Value, 1.0, 'Expected index 1 after a goes false')
+
+      % Second pred fires false — no output (none truthy), value unchanged
+      affected = testCase.net.transact(b, false);
+      testCase.verifyFalse(ismember(f.Node.Id, affected), ...
+        'Expected no output from indexOfFirst when no pred truthy')
+      testCase.net.apply(affected);
+    end
+
+    function test_selectFrom(testCase)
+      % Test for the selectFrom method
+      [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
+      s = a.selectFrom(b, c);  % a = 0-based index; b = option 0, c = option 1
+      testCase.verifyMatches(s.Name, '\.selectFrom\(', 'Unexpected Name')
+
+      % Starts empty before index fires
+      testCase.verifyEmpty(s.Node.Value, 'Expected s empty before index fires')
+
+      % Post values to options before index fires — s should not update
+      vb = rand; b.post(vb);
+      testCase.verifyEmpty(s.Node.Value, 'Expected s empty when only option fires before index')
+
+      % Index fires 0 — s takes b's latest value
+      a.post(0);
+      testCase.verifyEqual(s.Node.Value, vb, 'Expected s = b when idx = 0')
+
+      % Selected option (b) updates — s fires with new value
+      vb2 = rand; b.post(vb2);
+      testCase.verifyEqual(s.Node.Value, vb2, 'Expected s to update when selected option fires')
+
+      % Non-selected option (c) updates — s should NOT fire
+      vc = rand;
+      affected = testCase.net.transact(c, vc);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
+        'Expected s not affected when non-selected option fires')
+      testCase.net.apply(affected);
+
+      % Switch index to 1 — s takes c's latest value
+      a.post(1);
+      testCase.verifyEqual(s.Node.Value, vc, 'Expected s = c when idx = 1')
+
+      % Now b (no longer selected) updates — s should NOT fire
+      affected = testCase.net.transact(b, rand);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
+        'Expected s not affected when previously-selected option fires after switch')
+      testCase.net.apply(affected);
+    end
+
+    function test_cond(testCase)
+      % Test for the cond method
+      [a, b] = deal(testCase.A, testCase.B);
+      c = cond(a, 10, b, 20);  % if a then 10, if b then 20
+      testCase.verifyMatches(c.Name, 'cond\(', 'Unexpected Name')
+
+      % Starts empty before any pred fires
+      testCase.verifyEmpty(c.Node.Value, 'Expected cond empty before any pred fires')
+
+      % Second pred fires truthy — c = 20
+      b.post(true);
+      testCase.verifyEqual(c.Node.Value, 20.0, 'Expected val2 when only pred2 truthy')
+
+      % First pred fires truthy — c = 10 (first pred wins over second)
+      a.post(true);
+      testCase.verifyEqual(c.Node.Value, 10.0, 'Expected val1 when pred1 truthy (first wins)')
+
+      % First pred fires false — c = 20 (second pred still truthy)
+      a.post(false);
+      testCase.verifyEqual(c.Node.Value, 20.0, 'Expected val2 when only pred2 truthy')
+
+      % Both preds fire false — no new output, c retains its value
+      b.post(false);
+      affected = testCase.net.transact(a, false);
+      testCase.verifyFalse(ismember(c.Node.Id, affected), ...
+        'Expected cond not affected when no pred truthy')
+      testCase.net.apply(affected);
+      testCase.verifyEqual(c.Node.Value, 20.0, 'Expected c unchanged when no pred truthy')
+    end
+
+    function test_iff(testCase)
+      % Test for the iff method
+      [a, b] = deal(testCase.A, testCase.B);
+
+      % 3-arg form: iff(pred, trueVal, falseVal)
+      r = iff(a, 1, 0);
+      testCase.verifyMatches(r.Name, 'cond\(', 'Unexpected Name')
+
+      % pred fires truthy — r = 1
+      a.post(true);
+      testCase.verifyEqual(r.Node.Value, 1.0, 'Expected 1 when pred truthy')
+
+      % pred fires falsy — r = 0 (constant-true fallback pred selects val2)
+      a.post(false);
+      testCase.verifyEqual(r.Node.Value, 0.0, 'Expected 0 when pred falsy')
+
+      % pred fires truthy again — back to 1
+      a.post(true);
+      testCase.verifyEqual(r.Node.Value, 1.0, 'Expected 1 when pred truthy again')
+
+      % 2-arg form: iff(pred, trueVal) — no output when pred falsy
+      r2 = iff(b, 42);
+      b.post(true);
+      testCase.verifyEqual(r2.Node.Value, 42.0, 'Expected 42 when pred truthy')
+
+      affected = testCase.net.transact(b, false);
+      testCase.verifyFalse(ismember(r2.Node.Id, affected), ...
+        'Expected no output from 2-arg iff when pred falsy')
+      testCase.net.apply(affected);
+      testCase.verifyEqual(r2.Node.Value, 42.0, 'Expected r2 unchanged when pred falsy')
+    end
+
   end
 
   methods (Access = private)

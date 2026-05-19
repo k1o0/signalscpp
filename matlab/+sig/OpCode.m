@@ -34,6 +34,7 @@ classdef OpCode < uint32
         latch          (23)
         skip_repeats   (24)
         select_from    (25)
+        index_of_first (26)
         numel_op       (30)
         flatten_struct_op (40)
         flatten_op     (41)

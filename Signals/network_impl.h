@@ -507,6 +507,23 @@ bool NetworkT<V>::Node::transfer() {
         }
     }
 
+    // ── index_of_first (26) ──────────────────────────────────────────────────
+    else if (op == Operation::index_of_first) {
+        bool any_new = false;
+        for (Node* inp : inputs)
+            if (inp->workingValue) { any_new = true; break; }
+        if (any_new) {
+            for (size_t i = 0; i < inputs.size(); ++i) {
+                auto v = latest(inputs[i]);
+                if (v && Traits::is_truthy(*v)) {
+                    workingValue = Traits::from_double(static_cast<double>(i));
+                    produced_output = true;
+                    break;
+                }
+            }
+        }
+    }
+
     // ── function (0): MATLAB transfer callable ────────────────────────────────
     // Invoked when any input fired.  Callable handles all gating internally.
     else if (op == Operation::function) {

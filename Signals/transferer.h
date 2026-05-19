@@ -72,6 +72,13 @@ enum class SIGNALS_API Operation {
     // Legacy analogue: sig.transfer.selectFrom
     select_from = 25,
 
+    // index_of_first: inputs = [pred0, pred1, ...]
+    // Fires when any input has a new working value.
+    // Output: 0-based double index of the first input whose latest value is
+    // truthy.  No output produced if no input is currently truthy.
+    // Legacy analogue: sig.transfer.indexOfFirst
+    index_of_first = 26,
+
     // ── Pure-C++ unary op (no callable) ──────────────────────────────────────
     // numel: output = number of elements of the input value.
     //   monostate→0, double/bool/string→1, vector<double>→size.
