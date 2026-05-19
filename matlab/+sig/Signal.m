@@ -502,8 +502,45 @@ classdef Signal < handle
             error('sig:notImplemented', 'buffer() is not yet implemented.');
         end
 
-        function out = merge(obj, varargin) %#ok<INUSD>
-            error('sig:notImplemented', 'merge() is not yet implemented.');
+        function m = merge(varargin)
+            % MERGE  Signal that takes the value of whichever input fires most recently.
+            %
+            %   m = merge(s1, s2, ..., sN) returns a signal which updates
+            %   whenever any input fires, taking that input's value.  When
+            %   multiple inputs fire in the same transaction the earliest in
+            %   the argument list wins.
+            %
+            %   merge(s1, s2) may also be called as s1.merge(s2) — MATLAB
+            %   dispatches to this method for any call where at least one
+            %   argument is a sig.Signal.
+            %
+            % Inputs:
+            %   s1..sN (sig.Signal) - two or more signals to merge
+            %
+            % Outputs:
+            %   m (sig.Signal) - fires with the value of the most-recently
+            %                    updated input
+            %
+            % Examples:
+            %   latest = merge(left, right);      % fires when either fires
+            %   m = a.merge(b, c);                % method-call form
+            %
+            % See also sig.Signal/at, sig.Signal/keepWhen
+            refNode = [];
+            for k = 1:numel(varargin)
+                if isa(varargin{k}, 'sig.Signal')
+                    refNode = varargin{k}.Node;
+                    break;
+                end
+            end
+            assert(~isempty(refNode), 'sig:noNet', 'merge: no sig.Signal in inputs.');
+            nodes = refNode.from(varargin{:});
+            net   = refNode.Net;
+            n     = numel(nodes);
+            fmt   = ['( ' strjoin(repmat({'%s'}, 1, n), ' ~ ') ' )'];
+            m = sig.Signal(net.addNode(nodes, sig.OpCode.merge, false));
+            m.Node.FormatSpec    = fmt;
+            m.Node.DisplayInputs = nodes;
         end
 
         function out = selectFrom(obj, varargin) %#ok<INUSD>

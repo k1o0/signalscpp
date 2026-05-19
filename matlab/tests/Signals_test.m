@@ -234,35 +234,35 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.verifyEqual(s.Node.Value, v, 'Expected s blocked when gate falsy')
     end
 
-    % function test_merge(testCase)
-    %   % Tests for map method
-    %   [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
-    %
-    %   % Test merge
-    %   m = merge(a, b, c);
-    %   testCase.verifyMatches(m.Name, '( \w ~ \w ~ \w )', 'Unexpected Name')
-    %   for s = {c, b, a, b}
-    %     v = rand;
-    %     post(s{1}, v)
-    %     testCase.verifyEqual(m.Node.Value, v, 'Unexpected output using merge')
-    %   end
-    %
-    %   % Test transfer function directly
-    %   % No new changes in network;
-    %   ids = @(varargin) cellfun(@(s) s.Node.Id, varargin);
-    %   args = {testCase.net.Id, ids(a, b, c), m.Node.Id};
-    %   [~, valset] = sig.transfer.merge(args{:});
-    %   testCase.verifyFalse(valset, 'Expected ''valset'' to be false')
-    %   % Update one of the input nodes
-    %   expected = sort(ids(m, b));
-    %   actual = submit(testCase.net.Id, b.Node.Id, rand);
-    %   testCase.verifyEqual(expected(:), actual, ...
-    %     'Unexpected affected node indicies returned')
-    %   [val, valset] = sig.transfer.merge(args{:});
-    %   testCase.verifyTrue(valset, 'Expected ''valset'' to be true')
-    %   testCase.verifyEqual(val, b.Node.WorkingValue, 'Failed to re-evaluate function')
-    % end
-    %
+    function test_merge(testCase)
+      % Tests for merge method
+      [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
+
+      m = merge(a, b, c);
+      testCase.verifyMatches(m.Name, '\( \w+ ~ \w+ ~ \w+ \)', 'Unexpected Name')
+
+      % Starts with no value
+      testCase.verifyEmpty(m.Node.Value, 'Expected m empty before any input fires')
+
+      % Each input independently updates m
+      for sig_cell = {c, b, a, b}
+        v = rand;
+        sig_cell{1}.post(v);
+        testCase.verifyEqual(m.Node.Value, v, 'Unexpected output using merge')
+      end
+
+      % Priority: when multiple inputs fire in the same transaction,
+      % the earliest in the argument list wins (merge iterates inputs
+      % and takes the first with a working value)
+      v_a = rand;
+      v_b = rand;
+      affected_a = testCase.net.transact(a, v_a);
+      affected_b = testCase.net.transact(b, v_b);
+      testCase.net.apply(unique([affected_a(:); affected_b(:)]));
+      testCase.verifyEqual(m.Node.Value, v_a, ...
+        'Expected first input to win when multiple fire in same transaction')
+    end
+
     function test_flatten(testCase)
       % Tests for flatten method
       [a, b, c] = deal(testCase.A, testCase.B, testCase.C);
