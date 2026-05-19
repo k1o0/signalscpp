@@ -26,6 +26,47 @@ classdef Signals_test < matlab.unittest.TestCase
   end
 
   methods (Test)
+    function test_skipRepeats(testCase)
+      % Tests for skipRepeats: passes new values, suppresses duplicates
+      a = testCase.A;
+      s = a.skipRepeats();
+      testCase.verifyMatches(s.Name, '\w+\.skipRepeats\(\)', 'Unexpected Name')
+
+      % Starts empty before any post
+      testCase.verifyEmpty(s.Node.Value, 'Expected s empty before any post')
+
+      % First value always passes through (no prior value to compare)
+      v1 = rand;
+      a.post(v1);
+      testCase.verifyEqual(s.Node.Value, v1, 'Expected s to fire on first post')
+
+      % Same double value is suppressed
+      affected = testCase.net.transact(a, v1);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
+        'Expected s not in affected when same double posted twice')
+      testCase.net.apply(affected);
+      testCase.verifyEqual(s.Node.Value, v1, 'Expected s unchanged after repeat')
+
+      % Different double value passes through
+      v2 = rand;
+      a.post(v2);
+      testCase.verifyEqual(s.Node.Value, v2, 'Expected s to fire on different double')
+
+      % Non-double (string) — isequal fallback in C++
+      a.post('hello');
+      testCase.verifyEqual(s.Node.Value, 'hello', 'Expected s to fire on first string post')
+
+      % Same string is suppressed
+      affected = testCase.net.transact(a, 'hello');
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
+        'Expected s not in affected when same string posted twice')
+      testCase.net.apply(affected);
+
+      % Different string passes through
+      a.post('world');
+      testCase.verifyEqual(s.Node.Value, 'world', 'Expected s to fire on different string')
+    end
+
     function test_bufferUpTo(testCase)
       % Tests for bufferUpTo: default = typed double; 'cell' option = cell array
       [a, b, c] = deal(testCase.A, testCase.B, testCase.C);

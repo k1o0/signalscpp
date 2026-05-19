@@ -506,8 +506,24 @@ classdef Signal < handle
             error('sig:notImplemented', 'setEpochTrigger() is not yet implemented.');
         end
 
-        function out = skipRepeats(obj)
-            error('sig:notImplemented', 'skipRepeats() is not yet implemented.');
+        function out = skipRepeats(this)
+            % SKIPREPEATS  Pass through only values that differ from the previous one.
+            %
+            %   out = this.skipRepeats() fires whenever the input value differs
+            %   from the most recently committed value.  Repeated identical
+            %   values are suppressed.  The first value always passes through.
+            %
+            %   For scalar doubles, equality is tested in C++.  For all other
+            %   types the MATLAB isequal() built-in is used as a fallback.
+            %
+            % Outputs:
+            %   out (sig.Signal) - fires only when value changes
+            %
+            % See also sig.Signal/keepWhen, sig.Signal/filter
+            net = this.Node.Net;
+            out = sig.Signal(net.addNode(this.Node, sig.OpCode.skip_repeats, false));
+            out.Node.FormatSpec    = '%s.skipRepeats()';
+            out.Node.DisplayInputs = this.Node;
         end
 
         function out = delta(obj)
