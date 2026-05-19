@@ -526,16 +526,46 @@ classdef Signal < handle
             out.Node.DisplayInputs = this.Node;
         end
 
-        function out = delta(obj)
-            error('sig:notImplemented', 'delta() is not yet implemented.');
+        function out = delta(this)
+            % DELTA  Difference between consecutive values.
+            %
+            %   out = this.delta() fires this(t) - this(t-1) whenever 'this'
+            %   updates.  No output is produced until at least two values have
+            %   been posted.
+            %
+            % Outputs:
+            %   out (sig.Signal) - fires the step difference on each update
+            %
+            % See also sig.Signal/lag, sig.Signal/scan
+            out = this - this.lag(1);
+            out.Node.FormatSpec    = '%s.delta()';
+            out.Node.DisplayInputs = this.Node;
         end
 
         function out = delay(obj, period) %#ok<INUSD>
             error('sig:notImplemented', 'delay() is not yet implemented.');
         end
 
-        function out = lag(obj, n) %#ok<INUSD>
-            error('sig:notImplemented', 'lag() is not yet implemented.');
+        function out = lag(this, n)
+            % LAG  Signal delayed by n updates.
+            %
+            %   out = this.lag(n) fires the value that 'this' held n updates ago.
+            %   No output is produced until at least n+1 values have been posted.
+            %   lag(0) is equivalent to identity.
+            %
+            % Inputs:
+            %   this (sig.Signal) - input signal
+            %   n    (non-negative integer scalar) - number of steps to delay
+            %
+            % Outputs:
+            %   out (sig.Signal) - fires this(t-n) whenever this(t) fires and
+            %                      the internal buffer has at least n+1 elements
+            %
+            % See also sig.Signal/bufferUpTo, sig.Signal/identity
+            bup  = this.bufferUpTo(n + 1);
+            out  = bup.keepWhen(bup.nElems() == n + 1).map(@(v) v(1));
+            out.Node.FormatSpec    = sprintf('%%s.lag(%d)', n);
+            out.Node.DisplayInputs = this.Node;
         end
 
         function bup = bufferUpTo(this, nSamples, typeChange)

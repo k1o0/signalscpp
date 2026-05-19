@@ -26,6 +26,63 @@ classdef Signals_test < matlab.unittest.TestCase
   end
 
   methods (Test)
+    function test_delta(testCase)
+      % Tests for delta: fires this(t) - this(t-1)
+      a = testCase.A;
+      d = a.delta();
+      testCase.verifyMatches(d.Name, '\w+\.delta\(\)', 'Unexpected Name')
+
+      % No output after first post (need a previous value)
+      v1 = rand;
+      a.post(v1);
+      testCase.verifyEmpty(d.Node.Value, 'Expected d empty after first post')
+
+      % Second post — fires v2 - v1
+      v2 = rand;
+      a.post(v2);
+      testCase.verifyEqual(d.Node.Value, v2 - v1, 'Expected d = v2 - v1')
+
+      % Third post — fires v3 - v2
+      v3 = rand;
+      a.post(v3);
+      testCase.verifyEqual(d.Node.Value, v3 - v2, 'Expected d = v3 - v2')
+    end
+
+    function test_lag(testCase)
+      % Tests for lag: fires the value from n updates ago
+      [a, b] = deal(testCase.A, testCase.B);
+
+      % lag(1): fires the value from 1 step back
+      l1 = a.lag(1);
+      testCase.verifyMatches(l1.Name, '\w+\.lag\(\d+\)', 'Unexpected Name')
+
+      % No output after only 1 post (need n+1=2 posts)
+      v1 = rand;
+      a.post(v1);
+      testCase.verifyEmpty(l1.Node.Value, 'Expected l1 empty after first post')
+
+      % Second post — l1 fires v1 (the value from 1 step ago)
+      v2 = rand;
+      a.post(v2);
+      testCase.verifyEqual(l1.Node.Value, v1, 'Expected l1 = v1 after second post')
+
+      % Third post — l1 fires v2
+      v3 = rand;
+      a.post(v3);
+      testCase.verifyEqual(l1.Node.Value, v2, 'Expected l1 = v2 after third post')
+
+      % lag(2): fires the value from 2 steps back
+      l2 = b.lag(2);
+      w1 = rand; b.post(w1);
+      testCase.verifyEmpty(l2.Node.Value, 'Expected l2 empty after 1 post')
+      w2 = rand; b.post(w2);
+      testCase.verifyEmpty(l2.Node.Value, 'Expected l2 empty after 2 posts')
+      w3 = rand; b.post(w3);
+      testCase.verifyEqual(l2.Node.Value, w1, 'Expected l2 = w1 after 3 posts')
+      w4 = rand; b.post(w4);
+      testCase.verifyEqual(l2.Node.Value, w2, 'Expected l2 = w2 after 4 posts')
+    end
+
     function test_skipRepeats(testCase)
       % Tests for skipRepeats: passes new values, suppresses duplicates
       a = testCase.A;
