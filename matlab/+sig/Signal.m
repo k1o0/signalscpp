@@ -214,7 +214,7 @@ classdef Signal < handle
             %     pass are kept.
             %
             % Outputs:
-            %   s (sig.Signal) - a signal that updates to true after 'set' 
+            %   s (sig.Signal) - a signal that updates to true after 'set'
             %     and 'release' update in that order
             %
             % Examples:
@@ -391,10 +391,6 @@ classdef Signal < handle
             out.Node.DisplayInputs = [this.Node, what_node];
         end
 
-        % =================================================================
-        % Stubs for ops not yet backed by C++ opcodes
-        % =================================================================
-
         function s = keepWhen(this, when)
             % KEEPWHEN Pass through this value whenever it fires and gate is truthy.
             %
@@ -402,9 +398,9 @@ classdef Signal < handle
             % value of 'what' whenever it updates, provided 'when' evaluates
             % true.
             %
-            % Note: 's' fires only when 'this' fires; 'when' is sampled 
-            % lazily at that moment.to sample the value of 'this' whenever 
-            % 'when' updates, use the 'at' method. 
+            % Note: 's' fires only when 'this' fires; 'when' is sampled
+            % lazily at that moment.to sample the value of 'this' whenever
+            % 'when' updates, use the 'at' method.
             %
             % Inputs:
             %   this (sig.Signal) - a signal whose values to take
@@ -426,7 +422,7 @@ classdef Signal < handle
             else
                 gate_node = net.rootNode(when);
             end
-            if strcmp(net.TransferMode, 'matlab')s
+            if strcmp(net.TransferMode, 'matlab')
                 transFcn = @(values, states) sig.transfer.keepWhen(values, states, gate_node);
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
             else
@@ -470,8 +466,40 @@ classdef Signal < handle
             out.Node.DisplayInputs = [this.Node, release_node];
         end
 
-        function out = setTrigger(obj, release) %#ok<INUSD>
-            error('sig:notImplemented', 'setTrigger() is not yet implemented.');
+        function tr = setTrigger(this, release)
+            % SETTRIGGER  Fire true once per arm/release cycle.
+            %
+            %   tr = setTrigger(this, release) returns a signal that fires
+            %   true once when 'release' updates truthy after 'this' has
+            %   updated.  Subsequent 'release' updates are ignored until
+            %   'this' updates again, re-arming the trigger.
+            %
+            % Inputs:
+            %   this    (sig.Signal) - arm signal; re-enables the trigger on
+            %                          each update
+            %   release (sig.Signal) - release signal; fires the trigger when
+            %                          it updates truthy while armed
+            %
+            % Outputs:
+            %   tr (sig.Signal) - fires true each time the arm/release
+            %                     sequence completes
+            %
+            % Examples:
+            %   responseMade = trialStart.setTrigger(wheelThreshold);
+            %
+            % See also sig.Signal/to, sig.Signal/at
+            net = this.Node.Net;
+            if isa(release, 'sig.Signal')
+                release_node = release.Node;
+            else
+                release_node = net.rootNode(release);
+            end
+            armed     = this.to(release);
+            not_armed = ~armed;
+            true_node = net.rootNode(true);
+            tr = sig.Signal(net.addNode([true_node, not_armed.Node], sig.OpCode.at_op, false));
+            tr.Node.FormatSpec    = '%s.setTrigger(%s)';
+            tr.Node.DisplayInputs = [this.Node, release_node];
         end
 
         function out = setEpochTrigger(obj, t, x, threshold) %#ok<INUSD>

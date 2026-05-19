@@ -793,6 +793,47 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.verifyTrue(p.Node.Value, 'Expected p true after re-arming')
     end
 
+    function test_setTrigger(testCase)
+      % Test for the setTrigger method (one-shot per arm/release cycle)
+      [a, b] = deal(testCase.A, testCase.B);
+      tr = a.setTrigger(b);
+      testCase.verifyMatches(tr.Name, '\w+\.setTrigger\(\w+\)', 'Unexpected Name')
+
+      % Starts with no value before either input has fired
+      testCase.verifyEmpty(tr.Node.Value, 'Expected tr empty before any event')
+
+      % Arm fires — tr should NOT fire (only arm, no release yet)
+      affected = testCase.net.transact(a, true);
+      testCase.verifyFalse(ismember(tr.Node.Id, affected), ...
+        'Expected tr not affected when only arm fires')
+      testCase.net.apply(affected);
+      testCase.verifyEmpty(tr.Node.Value, 'Expected tr still empty after arm only')
+
+      % Release fires truthy — tr fires true
+      b.post(true);
+      testCase.verifyTrue(tr.Node.Value, 'Expected tr true after release fires truthy')
+
+      % Release fires again without re-arming — tr should NOT fire
+      affected = testCase.net.transact(b, true);
+      testCase.verifyFalse(ismember(tr.Node.Id, affected), ...
+        'Expected tr not affected on second release without re-arm')
+      testCase.net.apply(affected);
+
+      % Re-arm then release — tr fires again
+      a.post(true);
+      testCase.verifyTrue(tr.Node.Value, ...
+        'Expected tr still true after re-arm (no change yet)')
+      b.post(true);
+      testCase.verifyTrue(tr.Node.Value, 'Expected tr true after second arm/release cycle')
+
+      % Release fires falsy — tr should NOT fire even when armed
+      a.post(true);  % re-arm
+      affected = testCase.net.transact(b, false);
+      testCase.verifyFalse(ismember(tr.Node.Id, affected), ...
+        'Expected tr not affected when release fires falsy')
+      testCase.net.apply(affected);
+    end
+
   end
 
   methods (Access = private)
