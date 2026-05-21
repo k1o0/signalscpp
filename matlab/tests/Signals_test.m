@@ -26,6 +26,86 @@ classdef Signals_test < matlab.unittest.TestCase
   end
 
   methods (Test)
+    function test_setEpochTrigger(testCase)
+      % Tests for setEpochTrigger: fires when t advances >= duration since x last changed
+      [dur_sig, t_sig, x_sig] = deal(testCase.A, testCase.B, testCase.C);
+
+      dur = 5;
+      dur_sig.post(dur);
+      tr = dur_sig.setEpochTrigger(t_sig, x_sig);  % default threshold = 0
+
+      % Name contains Δ and the < threshold s.t. Δ structure
+      testCase.verifyMatches(tr.Name, ...
+        sprintf('%1$s\\w+/%1$s\\w+ < \\S+ s\\.t\\. %1$s\\w+ = \\w+', char(916)), ...
+        'Unexpected Name')
+
+      % No value before x fires (epoch not yet started)
+      testCase.verifyEmpty(tr.Node.Value, 'Expected tr empty before x fires')
+
+      % x fires: epoch starts, x_ref = 1.0, remaining = dur, tr = false
+      x_sig.post(1.0);
+      testCase.verifyFalse(tr.Node.Value, 'Expected tr false after x fires')
+
+      % t fires for the first time (no delta yet)
+      t_sig.post(0);
+      testCase.verifyFalse(tr.Node.Value, 'Expected tr false after first t post')
+
+      % t advances but not enough (delta = 3 < dur = 5; remaining = 2)
+      t_sig.post(3);
+      testCase.verifyFalse(tr.Node.Value, 'Expected tr false with insufficient elapsed time')
+
+      % t advances enough: delta = 3, remaining = 2-3 = -1 → tr = true
+      t_sig.post(6);
+      testCase.verifyTrue(tr.Node.Value, 'Expected tr true when epoch elapses')
+
+      % Further t while already expired: skipRepeats suppresses
+      affected = testCase.net.transact(t_sig, 7);
+      testCase.verifyFalse(ismember(tr.Node.Id, affected), ...
+        'Expected tr not in affected after epoch already expired')
+      testCase.net.apply(affected);
+
+      % x fires with a different value (threshold=0 default: any change resets)
+      x_sig.post(2.0);  % |2.0 - 1.0| = 1.0 > 0 → epoch resets
+      testCase.verifyFalse(tr.Node.Value, 'Expected tr false after x resets epoch')
+
+      % t delta = 1 (7→8): remaining = 5-1 = 4
+      t_sig.post(8);
+      testCase.verifyFalse(tr.Node.Value, 'Expected tr false with insufficient time after reset')
+
+      % t delta = 5 (8→13): remaining = 4-5 = -1 → tr = true again
+      t_sig.post(13);
+      testCase.verifyTrue(tr.Node.Value, 'Expected tr true after second epoch elapses')
+
+      % ── Finite threshold: small x changes do not reset the epoch ────────────
+      dur_sig2 = testCase.net.origin('dur2');
+      t_sig2   = testCase.net.origin('t2');
+      x_sig2   = testCase.net.origin('x2');
+      testCase.addTeardown(@delete, dur_sig2, t_sig2, x_sig2)
+
+      dur_sig2.post(3);
+      tr2 = dur_sig2.setEpochTrigger(t_sig2, x_sig2, 0.5);
+
+      % Epoch starts; x_ref = 1.0
+      x_sig2.post(1.0);
+      t_sig2.post(0);
+
+      % Small x changes (within threshold) do not reset the countdown
+      x_sig2.post(1.3);   % |1.3-1.0| = 0.3 <= 0.5: no reset
+      t_sig2.post(2);     % delta=2, remaining=3-2=1
+      x_sig2.post(1.4);   % |1.4-1.0| = 0.4 <= 0.5: no reset
+      t_sig2.post(3);     % delta=1, remaining=1-1=0 → 0<=0 → true
+      testCase.verifyTrue(tr2.Node.Value, 'Expected tr2 true: small x moves within threshold')
+
+      % Large x change (exceeds threshold) resets the epoch → tr2 = false
+      x_sig2.post(2.5);   % |2.5-1.0| = 1.5 > 0.5: epoch resets, x_ref=2.5, remaining=3
+      testCase.verifyFalse(tr2.Node.Value, 'Expected tr2 false after large x resets epoch')
+
+      % Epoch elapses again after the reset
+      t_sig2.post(5);     % delta=2 (3→5), remaining=3-2=1
+      t_sig2.post(7);     % delta=2 (5→7), remaining=1-2=-1 → true
+      testCase.verifyTrue(tr2.Node.Value, 'Expected tr2 true after epoch elapses post-reset')
+    end
+
     function test_delta(testCase)
       % Tests for delta: fires this(t) - this(t-1)
       a = testCase.A;
@@ -324,33 +404,6 @@ classdef Signals_test < matlab.unittest.TestCase
       s = a.mapn(b, @(x, y) x + y);
       a.post(3); b.post(7);
       testCase.verifyEqual(s.Node.Value, 10.0, 'mapn single output incorrect')
-    end
-
-    function test_keepWhen(testCase)
-      % Tests for keepWhen method
-      [a, b] = deal(testCase.A, testCase.B);
-      s = a.keepWhen(b);
-      testCase.verifyMatches(s.Name, '\w+\.keepWhen\(\w+\)', 'Unexpected Name')
-
-      % Gate not yet set — a fires but s stays empty
-      a.post(rand)
-      testCase.verifyEmpty(s.Node.Value, 'Expected s empty when gate unset')
-
-      % Gate truthy — a fires, s passes through
-      b.post(true)
-      v = rand;
-      a.post(v)
-      testCase.verifyEqual(s.Node.Value, v, 'Expected s to pass through when gate truthy')
-
-      % Gate fires alone — s must not appear in the affected set at all
-      affected = testCase.net.transact(b, false);
-      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
-        'Expected s not affected when only gate fires')
-      testCase.net.apply(affected);
-
-      % Gate falsy — a fires, s blocked
-      a.post(rand)
-      testCase.verifyEqual(s.Node.Value, v, 'Expected s blocked when gate falsy')
     end
 
     function test_merge(testCase)
@@ -805,48 +858,59 @@ classdef Signals_test < matlab.unittest.TestCase
     %   a.post(x)
     %   testCase.verifyEqual(b.Node.Value, e)
     % end
-    %
-    % function test_keepWhen(testCase)
-    %   % Test for the keepWhen method
-    %   [a, b] = deal(testCase.A, testCase.B);
-    %   s = a.keepWhen(b);
-    %   testCase.verifyMatches(s.Name, '\w.keepWhen(\w+\)', 'Unexpected Name')
-    %
-    %   % Post a truthy value to b
-    %   affectedIdxs = submit(testCase.net.Id, b.Node.Id, true);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only b's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
-    %     'Unexpected nodes affected when predicate signal true')
-    %
-    %   % Post a value to signal a
-    %   v = rand;
-    %   affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check a and s nodes changed
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, [a.Node.Id;s.Node.Id]), ...
-    %     'Unexpected network behaviour upon posting value to signal a')
-    %   testCase.verifyTrue(isequal(v, a.Node.Value, s.Node.Value), ...
-    %     'Unexpected values of signals a and s')
-    %
-    %   % Post a non-truthy value to b
-    %   affectedIdxs = submit(testCase.net.Id, b.Node.Id, false);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only b's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, b.Node.Id), ...
-    %     'Unexpected nodes affected when predicate signal false')
-    %
-    %   % Post a value to signal a
-    %   v = rand;
-    %   affectedIdxs = submit(testCase.net.Id, a.Node.Id, v);
-    %   changed = applyNodes(testCase.net.Id, affectedIdxs);
-    %   % Check only a's node affected
-    %   testCase.verifyTrue(isequal(affectedIdxs, changed, a.Node.Id), ...
-    %     'Unexpected network behaviour upon posting value to signal a')
-    %   testCase.verifyTrue(v == a.Node.Value && s.Node.Value ~= v, ...
-    %     'Unexpected values of signals a and s')
-    % end
-    %
+
+    function test_keepWhen(testCase)
+      % Tests for keepWhen method
+      [a, b] = deal(testCase.A, testCase.B);
+      s = a.keepWhen(b);
+      testCase.verifyMatches(s.Name, '\w+\.keepWhen\(\w+\)', 'Unexpected Name')
+
+      % Gate not yet set — a fires but s stays empty
+      a.post(rand)
+      testCase.verifyEmpty(s.Node.Value, 'Expected s empty when gate unset')
+
+      % Gate truthy — a fires, s passes through
+      b.post(true)
+      v = rand;
+      a.post(v)
+      testCase.verifyEqual(s.Node.Value, v, 'Expected s to pass through when gate truthy')
+
+      % Gate fires alone — s must not appear in the affected set at all
+      affected = testCase.net.transact(b, false);
+      testCase.verifyFalse(ismember(s.Node.Id, affected), ...
+        'Expected s not affected when only gate fires')
+      testCase.net.apply(affected);
+
+      % Gate falsy — a fires, s blocked
+      a.post(rand)
+      testCase.verifyEqual(s.Node.Value, v, 'Expected s blocked when gate falsy')
+
+      % Test when a not set
+      aa = testCase.net.origin('a');
+      bb = testCase.net.origin('b');
+      testCase.addTeardown(@delete, aa)
+      testCase.addTeardown(@delete, bb)
+
+      s = aa.keepWhen(bb);
+
+      % Post a truthy value to b
+      affected = testCase.net.transact(bb, true);
+      % Check only b's node affected
+      testCase.verifyTrue(isequal(affected, bb.Node.Id), ...
+        'Unexpected nodes affected when predicate signal true')
+      testCase.net.apply(affected);
+
+      % Post a value to signal a
+      v = rand;
+      affected = testCase.net.transact(aa, v);
+      % Check a and s nodes changed
+      testCase.verifyTrue(isequal(affected, [aa.Node.Id s.Node.Id]), ...
+        'Unexpected network behaviour upon posting value to signal a')
+      testCase.net.apply(affected);
+      testCase.verifyTrue(isequal(v, aa.Node.Value, s.Node.Value), ...
+        'Unexpected values of signals a and s')
+    end
+
     function test_at(testCase)
       % Test for the at method
       [a, b] = deal(testCase.A, testCase.B);
@@ -1086,6 +1150,47 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.verifyEqual(r2.Node.Value, 42.0, 'Expected r2 unchanged when pred falsy')
     end
 
+    function test_subsref(testCase)
+        % A test for indexing into a signal
+        [i, seq] = deal(testCase.A, testCase.B);
+        indexed = seq(i);
+        testCase.verifyInstanceOf(indexed, 'sig.Signal')
+        testCase.verifyTrue(isempty(indexed.Node.Value))
+        testCase.verifyEqual(indexed.Name, "b(a)")
+        seq.Name = 'sequence';
+        testCase.verifyEqual(indexed.Name, "sequence(a)")
+        seq.post(1:50)
+        testCase.verifyTrue(isempty(indexed.Node.Value))
+        i.post(5)
+        testCase.verifyEqual(indexed.Node.Value, 5)
+        try  % TODO test that standard error raised (Index exceeds the number of array elements (50).)
+            i.post(51)
+            failToRaise = true;
+        catch
+            failToRaise = false;
+        end
+        testCase.verifyFalse(failToRaise)
+        seq.post(1:100)
+        testCase.verifyEqual(indexed.Node.Value, 51)
+        i.post(1)  % avoid error by posting low index
+
+        % Test that it can handle ranges and end
+        range = seq(5:10);
+        testCase.verifyEqual(range.Name, "sequence(5   6   7   8   9   10)")
+        seq.post(1:20)
+        testCase.verifyEqual(range.Node.Value, 5:10)
+        e = seq(end);
+        seq.post(1:50)
+        testCase.verifyEqual(e.Node.Value, 50)
+        testCase.verifyError(@() seq(end-5:end), 'sig:signal:indexEndRangeError')
+
+        % Finally test behaviour when seq uninitialized
+        seq2 = testCase.C;
+        indexed = seq2(i);
+        testCase.verifyTrue(isempty(indexed.Node.Value))
+        seq2.post(1:100)
+        testCase.verifyEqual(indexed.Node.Value, 1)
+    end
   end
 
   methods (Access = private)

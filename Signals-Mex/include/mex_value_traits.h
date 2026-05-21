@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <string>
 #include <vector>
 
 template <>
@@ -214,26 +215,87 @@ struct ValueTraits<matlab::data::Array> {
         return out;
     }
 
-    // ── Arithmetic — throw TypeError; MEX routes arithmetic via mapn_op/@plus ─
+    // ── Arithmetic / comparison helpers ──────────────────────────────────────
+    //
+    // Both arguments must be DOUBLE arrays.  Otherwise: throw TypeError so the
+    // network falls back to the @plus / @le / etc. callable (option ii).
+    // Sizes must either match exactly or one side must be a scalar (broadcast).
+    // Element-wise multiplication is used for `multiply` — matching MATLAB's
+    // `.*` (and `*` for scalars).  Matrix multiplication (`*` on matrices) is
+    // not natively supported; route those through map2/mapn with @mtimes.
 
-    static matlab::data::Array add(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("add not implemented for matlab::data::Array"); }
-    static matlab::data::Array subtract(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("subtract not implemented for matlab::data::Array"); }
-    static matlab::data::Array multiply(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("multiply not implemented for matlab::data::Array"); }
-    static matlab::data::Array rdivide(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("rdivide not implemented for matlab::data::Array"); }
-    static matlab::data::Array ldivide(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("ldivide not implemented for matlab::data::Array"); }
-    static matlab::data::Array gt(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("gt not implemented for matlab::data::Array"); }
-    static matlab::data::Array ge(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("ge not implemented for matlab::data::Array"); }
-    static matlab::data::Array lt(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("lt not implemented for matlab::data::Array"); }
-    static matlab::data::Array le(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("le not implemented for matlab::data::Array"); }
-    static matlab::data::Array eq(const matlab::data::Array&, const matlab::data::Array&)
-        { throw signals::TypeError("eq not implemented for matlab::data::Array"); }
+private:
+    template <typename Out, typename Op>
+    static matlab::data::Array binop_double(
+        const matlab::data::Array& a,
+        const matlab::data::Array& b,
+        Op op,
+        const char* what)
+    {
+        using AT = matlab::data::ArrayType;
+        if (a.getType() != AT::DOUBLE || b.getType() != AT::DOUBLE)
+            throw signals::TypeError(std::string(what) + ": non-double inputs");
+
+        matlab::data::TypedArray<double> ta = const_cast<matlab::data::Array&>(a);
+        matlab::data::TypedArray<double> tb = const_cast<matlab::data::Array&>(b);
+        const size_t na = a.getNumberOfElements();
+        const size_t nb = b.getNumberOfElements();
+
+        matlab::data::ArrayFactory f;
+        if (na == 1 && nb == 1) {
+            return f.createScalar<Out>(static_cast<Out>(op(double(ta[0]), double(tb[0]))));
+        }
+        if (na == 1) {
+            const double av = double(ta[0]);
+            auto out = f.createArray<Out>(b.getDimensions());
+            for (size_t i = 0; i < nb; ++i)
+                out[i] = static_cast<Out>(op(av, double(tb[i])));
+            return out;
+        }
+        if (nb == 1) {
+            const double bv = double(tb[0]);
+            auto out = f.createArray<Out>(a.getDimensions());
+            for (size_t i = 0; i < na; ++i)
+                out[i] = static_cast<Out>(op(double(ta[i]), bv));
+            return out;
+        }
+        if (a.getDimensions() != b.getDimensions())
+            throw signals::TypeError(std::string(what) + ": shape mismatch");
+        auto out = f.createArray<Out>(a.getDimensions());
+        for (size_t i = 0; i < na; ++i)
+            out[i] = static_cast<Out>(op(double(ta[i]), double(tb[i])));
+        return out;
+    }
+
+public:
+    static matlab::data::Array add(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<double>(a, b, [](double x, double y) { return x + y; }, "add");
+    }
+    static matlab::data::Array subtract(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<double>(a, b, [](double x, double y) { return x - y; }, "subtract");
+    }
+    static matlab::data::Array multiply(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<double>(a, b, [](double x, double y) { return x * y; }, "multiply");
+    }
+    static matlab::data::Array rdivide(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<double>(a, b, [](double x, double y) { return x / y; }, "rdivide");
+    }
+    static matlab::data::Array ldivide(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<double>(a, b, [](double x, double y) { return y / x; }, "ldivide");
+    }
+    static matlab::data::Array gt(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<bool>(a, b, [](double x, double y) { return x > y; }, "gt");
+    }
+    static matlab::data::Array ge(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<bool>(a, b, [](double x, double y) { return x >= y; }, "ge");
+    }
+    static matlab::data::Array lt(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<bool>(a, b, [](double x, double y) { return x < y; }, "lt");
+    }
+    static matlab::data::Array le(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<bool>(a, b, [](double x, double y) { return x <= y; }, "le");
+    }
+    static matlab::data::Array eq(const matlab::data::Array& a, const matlab::data::Array& b) {
+        return binop_double<bool>(a, b, [](double x, double y) { return x == y; }, "eq");
+    }
 };

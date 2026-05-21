@@ -43,6 +43,11 @@ classdef Node < handle
         Inputs sig.Node
     end
 
+    properties (Transient)
+        % For storing handles to Node update callbacks
+        Listeners TidyHandle
+    end
+
     properties (Dependent)
         % The name of the node
         Name (1,1) string
@@ -105,40 +110,59 @@ classdef Node < handle
             v = obj.Proxy.GetValue();
         end
 
-        % -----------------------------------------------------------------
-        % from() — coerce mixed inputs to a cell array of sig.Node objects
-        % -----------------------------------------------------------------
-
-        function nodes = from(this, varargin)
-        % from  Coerce each argument to a sig.Node in this node's network.
-        %
-        %   nodes = n.from(arg1, arg2, ...)
-        %
-        %   Each argument may be:
-        %     sig.Node   — returned as-is; network identity is asserted.
-        %     sig.Signal — its .Node is extracted; network identity is asserted.
-        %     scalar data — posted to a fresh constant node via net.rootNode().
-        %
-        %   Returns a 1×N array of sig.Node handles, one per argument.
-            nodes = sig.Node.empty(0, numel(varargin));
-            for k = 1:numel(varargin)
-                v = varargin{k};
-                if isa(v, 'sig.Node')
-                    assert(v.Net.Id == this.Net.Id, 'sig:wrongNet', ...
-                        'sig.Node.from: Node belongs to a different network.');
-                    nodes(k) = v;
-                elseif isa(v, 'sig.Signal')
-                    assert(v.Node.Net.Id == this.Net.Id, 'sig:wrongNet', ...
-                        'sig.Node.from: Signal belongs to a different network.');
-                    nodes(k) = v.Node;
-                else
-                    nodes(k) = this.Net.rootNode(v);
-                end
-            end
-        end
     end
 
     methods (Static)
+
+        function [nodes, net] = from(varargin)
+            % FROM Returns an array of nodes from a set of inputs
+            %
+            %   The inputs may contain signals, nodes, and/or values of
+            %   another type.  All signals/nodes must be part of the same
+            %   parent network.  If a source value is not a signal, a root
+            %   node is created to hold that value.  This is useful for
+            %   deriving a new node, whose inputs are derived from one or
+            %   more other signals.
+            %
+            %   Each argument may be:
+            %     sig.Node   — returned as-is; network identity is asserted.
+            %     sig.Signal — its Node is extracted; network identity is asserted.
+            %     scalar data — posted to a fresh constant node via net.rootNode().
+            %
+            %   Returns a 1×N array of sig.Node handles, one per argument,
+            %   and the shared sig.Net instance.
+            %
+            % See also sig.Net.rootNode
+            nodes = sig.Node.empty(0, numel(varargin));
+
+            isSignal = cellfun(@(s) isa(s, 'sig.Signal') || isa(s, 'sig.Node'), varargin);
+            try
+                sgl = varargin{find(isSignal, 1)};
+                if isa(sgl, 'sig.Signal')
+                    net = sgl.Node.Net;
+                else
+                    net = sgl.Net;
+                end
+            catch
+                error('sig:node:noNet', 'No network provided')
+            end
+
+            % Now coerce nodes from each input
+            for k = 1:numel(varargin)
+                v = varargin{k};
+                if isa(v, 'sig.Node')
+                    assert(v.Net.Id == net.Id, 'sig:wrongNet', ...
+                        'sig.Node.from: Node belongs to a different network.');
+                    nodes(k) = v;
+                elseif isa(v, 'sig.Signal')
+                    assert(v.Node.Net.Id == net.Id, 'sig:wrongNet', ...
+                        'sig.Node.from: Signal belongs to a different network.');
+                    nodes(k) = v.Node;
+                else
+                    nodes(k) = net.rootNode(v);
+                end
+            end
+        end
 
         function id = idOf(v)
         % idOf  Return the node ID (double) if v is a sig.Signal, else -1.

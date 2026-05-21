@@ -235,3 +235,48 @@ function test_mapn_fires_when_one_input_updates(testCase)
     testCase.verifyEqual(out.Node.Value, 10.0, ...
         'mapn should recompute using latest value of unchanged input');
 end
+
+% ---------------------------------------------------------------------------
+% delay tests
+% ---------------------------------------------------------------------------
+function test_delay_constant_delay(testCase)
+    net = testCase.TestData.net;
+    src = net.origin();
+    delayed = src.delay(0.001);  % 1 ms delay
+
+    % Post a value to source
+    affected = net.transact(src, 42);
+    net.apply(affected);
+
+    % delayed should not have a value yet (not scheduled/applied)
+    testCase.verifyTrue(isempty(delayed.Node.Value), ...
+        'delayed signal should have no value before schedule is run');
+
+    % Run the schedule to apply delayed updates
+    pause(0.002);  % wait past the delay
+    net.runSchedule();
+
+    testCase.verifyEqual(delayed.Node.Value, 42.0, ...
+        'delayed signal should have source value after schedule runs');
+end
+
+function test_delay_signal_delay(testCase)
+    net = testCase.TestData.net;
+    src = net.origin();
+    delayAmount = net.origin();
+    delayed = src.delay(delayAmount);
+
+    % Set delay amount
+    net.apply(net.transact(delayAmount, 0.001));
+
+    % Post a value to source
+    affected = net.transact(src, 99);
+    net.apply(affected);
+
+    % Wait past delay and run schedule
+    pause(0.002);
+    net.runSchedule();
+
+    testCase.verifyEqual(delayed.Node.Value, 99.0, ...
+        'delayed signal should use delay from signal');
+end

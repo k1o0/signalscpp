@@ -248,3 +248,40 @@ relevant area is touched — flagged here so they don't get lost.
 - Replacing the legacy MATLAB `+sig/` user-facing API. The new MEX
   bindings should be drop-in compatible with the legacy MEX entry
   points so `+sig/` continues to work unchanged.
+
+  ---
+
+  ## Summary of method implementation
+
+| Method | MEX | transfer f checked | test | docstring | perf test |
+|---|---|---|---|---|---|
+| keepWhen | Y | Y | Y |  |  |
+| scan |  |  |  |  |  |
+| skipRepeats |  |  |  |  |  |
+| filter |  |  |  |  |  |
+| iff |  |  |  |  |  |
+| cond |  |  |  |  |  |
+| selectFrom |  |  |  |  |  |
+| indexOfFirst |  |  |  |  |  |
+| map |  |  |  |  |  |
+| map2 |  |  |  |  |  |
+| mapn |  |  |  |  |  |
+| at |  |  |  |  |  |
+| then |  |  |  |  |  |
+| subscriptable |  |  |  |  |  |
+| buffer |  |  |  |  |  |
+| bufferUpTo |  |  |  |  |  |
+| delta |  |  |  |  |  |
+| lag |  |  |  |  |  |
+| to |  |  |  |  |  |
+| setTrigger |  |  |  |  |  |
+| setEpochTrigger |  |  |  |  |  |
+| merge |  |  |  |  |  |
+| delay |  |  |  |  |  |
+| identity |  |  |  |  |  |
+| flatten |  |  |  |  |  |
+| flattenStruct |  |  |  |  |  |
+| output |  |  |  |  |  |
+| onValue |  |  |  |  |  |
+| into |  |  |  |  |  |
+| valueChanged |  |  |  |  |  |

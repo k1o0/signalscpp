@@ -8,15 +8,6 @@ classdef Net < handle
 % PROPERTIES
 %   Id           (uint64, read-only) unique identifier for this network instance
 %   nActiveNodes (double, read-only) number of nodes currently in use
-%   TransferMode ('cpp' | 'matlab') how new combinator nodes are implemented:
-%      'cpp'    (default) each combinator uses its named C++ opcode
-%               (map_op=60, filter_op=62, …).  The MATLAB function handle is
-%               stored on the node as a callable but gating & dispatch are
-%               done in C++.  Use this for maximum performance.
-%      'matlab' each combinator falls back to function_op (opcode 0) and a
-%               MATLAB closure that implements the full transfer semantics.
-%               Mirrors legacy sig.transfer.* approach for debugging or
-%               custom-transfer experiments.
 %
 % CREATING SIGNALS
 %   x = net.origin()   % sig.OriginSignal — inject values with x.post(value)
@@ -31,12 +22,10 @@ classdef Net < handle
 % All methods that accept a node also accept a numeric node id.
 
     properties (Access = private)
+        % Network MEX proxy class
         Proxy libmexclass.proxy.Proxy
-        Subscriptions  % containers.Map(double nodeId → sig.Signal)
-    end
 
-    properties
-        TransferMode (1,:) char {mustBeMember(TransferMode, {'cpp','matlab'})} = 'matlab'
+        Subscriptions  % containers.Map(double nodeId → sig.Signal)
     end
 
     properties (Dependent)
@@ -45,6 +34,15 @@ classdef Net < handle
 
         % Number of nodes in use within network
         nActiveNodes uint64
+    end
+
+    properties (Transient)
+        % A structure holding node ids, the values they should take and the
+        % delay before they are applied.  Used for delayed posting of values.
+        Schedule
+
+        % For storing handles to Node update callbacks
+        Listeners TidyHandle
     end
 
     methods
@@ -56,6 +54,7 @@ classdef Net < handle
                 "Name", "sig.NetworkProxy", ...
                 "ConstructorArguments", {double(maxNodes)});
             obj.Subscriptions = containers.Map('KeyType', 'double', 'ValueType', 'any');
+            obj.Schedule = struct('nodeid', [], 'value', {}, 'when', []);
         end
 
         % -----------------------------------------------------------------
@@ -76,30 +75,6 @@ classdef Net < handle
                     double(inputIds(:)'), double(opId), logical(appendValues), fn);
             end
             node = sig.Node(proxyId, obj, inputNodes);
-        end
-
-        function deleteNode(obj, node)
-            obj.Proxy.DeleteNode(node.Id);
-        end
-
-        function post(obj, node, value)
-        % post  Inject value into a node, propagate, and notify subscribers.
-            if isa(node, 'sig.Signal'); node = node.Node; end
-            affected = obj.transact(node, value);
-            obj.apply(affected);
-            obj.notifySubscribers(affected);
-        end
-
-        function affected = transact(obj, node, value)
-            if isa(node, 'sig.Signal'); node = node.Node; end
-            affected = obj.Proxy.Transact(node.Id, value);
-        end
-
-        function apply(obj, affected)
-            if isempty(affected)
-                return
-            end
-            obj.Proxy.Apply(double(affected(:)'));
         end
 
         function value = getCurrentValue(obj, node)
@@ -151,21 +126,54 @@ classdef Net < handle
             end
         end
 
-        function notifySubscribers(obj, affected)
+        function notifySubscribers(this, affected)
         % notifySubscribers  Deliver valueChanged to any signals registered via onValue.
         %   Called by post() after each apply cycle.
-            if isempty(affected) || obj.Subscriptions.Count == 0
+            if isempty(affected) || this.Subscriptions.Count == 0
                 return
             end
             for ii = 1:numel(affected)
                 nodeId = affected(ii);
-                if obj.Subscriptions.isKey(nodeId)
-                    s = obj.Subscriptions(nodeId);
+                if this.Subscriptions.isKey(nodeId)
+                    s = this.Subscriptions(nodeId);
                     if isvalid(s)
-                        s.valueChanged(obj.getCurrentValue(s.Node));
+                        s.valueChanged(this.getCurrentValue(s.Node));
                     end
                 end
             end
+        end
+
+        function runSchedule(this)
+        % Apply values to nodes that are due to be updated
+        %
+        %   Applies values to nodes that are due to be updated, i.e. those that
+        %   have a delayed post.  This method should be manually run or set as
+        %   a callback in a timer function.
+        %   Example:
+        %     net = sig.Net; % Create network
+        %     tmr = timer('TimerFcn', @(~,~)net.runSchedule,...
+        %       'ExecutionMode', 'fixedrate', 'Period', 0.01);
+        %     start(tmr) % Run schedule every 100 ms
+        %     
+        %     delayedSig = sig1.delay(5) % New signal delayed by 5 sec
+        %     h = output(delayedSig);
+        %     delayedPost(s, pi, 5) % Post to input signal also delayed by 5 sec
+        %     ... 10 seconds later...
+        %     3.1416
+        %
+        % See also sig.node.OriginSignal/delayedPost, sig.node.Signal/delay
+          if numel(this.Schedule) > 0
+            % slice out due tasks
+            dueIdx = [this.Schedule.when] < GetSecs;
+            dueTasks = this.Schedule(dueIdx);
+            this.Schedule(dueIdx) = [];
+            % work through them
+            for ti = 1:numel(dueTasks)
+              % dt = GetSecs - dueTasks(ti).when;
+              affectedIdxs = submit(this.Id, dueTasks(ti).nodeid, dueTasks(ti).value);
+              applyNodes(this.Id, affectedIdxs);
+            end
+          end
         end
 
         function s = subscriptableOrigin(obj, name)
@@ -222,6 +230,37 @@ classdef Net < handle
             n = s.Node;
             n.Name = toStr(value);
         end
+    end
+
+    methods (Access = {?sig.OriginSignal, ?sig.SubscriptableOriginSignal})
+        function post(obj, node, value)
+        % POST  Inject value into a node, propagate, and notify subscribers.
+            if isa(node, 'sig.Signal'); node = node.Node; end
+            affected = obj.transact(node, value);
+            obj.apply(affected);
+            obj.notifySubscribers(affected);
+        end
+
+    end
+
+    methods (Access = private)
+        function deleteNode(obj, node)
+            obj.Proxy.DeleteNode(node.Id);
+        end
+       
+        function affected = transact(obj, node, value)
+            if isa(node, 'sig.Signal'); node = node.Node; end
+            % TODO Proxy should raise when posting to dependant nodes
+            affected = obj.Proxy.Transact(node.Id, value);
+        end
+
+        function apply(obj, affected)
+            if isempty(affected)
+                return
+            end
+            obj.Proxy.Apply(double(affected(:)'));
+        end
+
     end
 
 end

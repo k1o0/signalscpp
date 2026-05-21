@@ -647,18 +647,20 @@ bool NetworkT<V>::Node::transfer() {
     }
 
     // ── scan_op (63) ──────────────────────────────────────────────────────────
+    // inputs[0] = item (triggers accumulator on update)
+    // inputs[1] = seed (triggers reset on update)
+    // inputs[2..] = pars (sampled and passed to callable, but do NOT trigger).
+    //               Match legacy semantics: "When pars take new values, the
+    //               accumulator function is not called."
     else if (op == Operation::scan_op) {
         if (inputs.size() >= 2 && callable) {
             const bool item_new = inputs[0]->workingValue.has_value();
             const bool seed_new = inputs[1]->workingValue.has_value();
-            bool extra_new = false;
-            for (size_t i = 2; i < inputs.size(); ++i)
-                if (inputs[i]->workingValue) { extra_new = true; break; }
 
-            if (seed_new && !item_new && !extra_new) {
+            if (seed_new && !item_new) {
                 workingValue = inputs[1]->workingValue;
                 produced_output = true;
-            } else if (item_new || extra_new) {
+            } else if (item_new) {
                 // Accumulator: seed this tick > committed current > seed's latest
                 std::optional<V> acc_opt;
                 if (seed_new)
@@ -672,15 +674,21 @@ bool NetworkT<V>::Node::transfer() {
                 if (acc_opt && item_opt) {
                     std::vector<V> call_inputs;
                     call_inputs.push_back(*item_opt);
+                    // Pars: sample latest; node still requires all pars to have
+                    // a value before firing (matches legacy "all inputs needed").
+                    bool all_pars_available = true;
                     for (size_t i = 2; i < inputs.size(); ++i) {
                         auto v = latest(inputs[i]);
-                        call_inputs.push_back(v ? *v : Traits::no_value());
+                        if (!v) { all_pars_available = false; break; }
+                        call_inputs.push_back(*v);
                     }
-                    try {
-                        auto [result, valset] = callable(call_inputs, *acc_opt, id);
-                        if (valset) { workingValue = std::move(result); produced_output = true; }
-                    } catch (const signals::Error&) { throw; }
-                      catch (...) {}
+                    if (all_pars_available) {
+                        try {
+                            auto [result, valset] = callable(call_inputs, *acc_opt, id);
+                            if (valset) { workingValue = std::move(result); produced_output = true; }
+                        } catch (const signals::Error&) { throw; }
+                          catch (...) {}
+                    }
                 }
             }
         }

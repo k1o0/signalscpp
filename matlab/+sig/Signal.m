@@ -55,10 +55,6 @@ classdef Signal < handle
             this.Node.Name = v;
         end
 
-        % =================================================================
-        % Core combinators
-        % =================================================================
-
         function m = map(this, f, formatSpec)
             % MAP Evaluate a function on each signal update.
             %
@@ -84,109 +80,57 @@ classdef Signal < handle
             %
             % See also SIG.SIGNAL/MAP2, SIG.SIGNAL/MAPN
 
-            if nargin < 3; formatSpec = sprintf('%%s.map(%s)', toStr(f)); end
             net = this.Node.Net;
             if isa(f, 'function_handle')
-                if strcmp(net.TransferMode, 'matlab')
-                    transFcn = @(values, states) sig.transfer.map(values, states, f);
-                    m = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
-                else
-                    m = sig.Signal(net.addNode(this.Node, sig.OpCode.map_op, false, f));
-                end
+                m = sig.Signal(net.addNode(this.Node, sig.OpCode.map_op, false, f));
+                if nargin < 3; formatSpec = sprintf('%%s.map(%s)', toStr(f)); end
                 m.Node.FormatSpec = formatSpec;
-                m.Node.DisplayInputs = this.Node;
             else
                 % Constant or signal: f_node holds the value to sample when this fires.
-                if isa(f, 'sig.Signal'); f_node = f.Node; else; f_node = net.rootNode(f); end
-                % For a signal, override the baked-in name with a dynamic placeholder.
-                if nargin < 3 && isa(f, 'sig.Signal')
-                    formatSpec = '%s.map(%s)';
-                end
+                f_node = this.Node.from(f);
                 nodes = [this.Node, f_node];
-                if strcmp(net.TransferMode, 'matlab')
-                    transFcn = @(values, states) sig.transfer.mapVal(values, states);
-                    m = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
-                else
-                    % No callable: map_op samples inputs[1] when inputs[0] fires.
-                    m = sig.Signal(net.addNode(nodes, sig.OpCode.map_op, false));
-                end
-                m.Node.FormatSpec    = formatSpec;
-                if isa(f, 'sig.Signal'); m.Node.DisplayInputs = nodes;
-                else;                  m.Node.DisplayInputs = this.Node; end
+                % No callable: map_op samples inputs[1] when inputs[0] fires.
+                m = sig.Signal(net.addNode(nodes, sig.OpCode.map_op, false));
+                if nargin < 3; formatSpec = '%s.map(%s)'; end
+                m.Node.FormatSpec = formatSpec;
             end
         end
 
-        function s = map2(sig1, sig2, f)
+        function m = map2(sig1, sig2, f, varargin)
         % map2  New signal = f(sig1, sig2) whenever either fires.
         %   Either argument may be a constant — it is wrapped automatically.
         %   Note: MATLAB may dispatch here with sig1 as a numeric constant
         %   (e.g., 3 + signal) due to class-precedence rules.
-            if isa(sig1, 'sig.Signal')
-                refNode = sig1.Node;
-            elseif isa(sig2, 'sig.Signal')
-                refNode = sig2.Node;
-            else
-                error('sig:noNet', 'map2: neither argument is a sig.Signal.');
-            end
-            nodes = refNode.from(sig1, sig2);
-            net   = refNode.Net;
-            if strcmp(net.TransferMode, 'matlab')
-                transFcn = @(values, states) sig.transfer.mapn(values, states, f);
-                s = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
-            else
-                s = sig.Signal(net.addNode(nodes, sig.OpCode.mapn_op, false, f));
-            end
+            m = mapn(sig1, sig2, f, varargin{:});
         end
 
         function varargout = mapn(varargin)
-        % mapn  New signal(s) by applying f to N input signals/constants.
-        %   Call as:  out = s1.mapn(s2, ..., sN, f)
-        %          or: out = mapn(s1, s2, ..., sN, f)   (MATLAB dispatch)
-        %   f is always the last argument; all preceding args are inputs.
-        %   Multi-output: [X, Y] = a.mapn(b, @meshgrid)
-            f         = varargin{end};
-            rawInputs = varargin(1:end-1);
-            refNode   = [];
-            for k = 1:numel(rawInputs)
-                if isa(rawInputs{k}, 'sig.Signal')
-                    refNode = rawInputs{k}.Node;
-                    break;
-                end
+            % mapn  New signal(s) by applying f to N input signals/constants.
+            %   Call as:  out = s1.mapn(s2, ..., sN, f)
+            %          or: out = mapn(s1, s2, ..., sN, f)   (MATLAB dispatch)
+            %   f is always the last argument; all preceding args are inputs.
+            %   Multi-output: [X, Y] = a.mapn(b, @meshgrid)
+            % FIXME Format specs all wrong
+            if isa(varargin{end}, 'function_handle')
+                [rawInputs{1:nargin-1}, f] = varargin{:};
+                formatSpec = sprintf(['mapn(' repmat('%%s, ', 1, numel(rawInputs)) '%s)'], toStr(f));
+            else
+                [rawInputs{1:nargin-2}, f, formatSpec] = varargin{:};
             end
-            assert(~isempty(refNode), 'sig:noNet', ...
-                'mapn: no sig.Signal found in inputs.');
-            nodes  = refNode.from(rawInputs{:});
-            net    = refNode.Net;
+            [nodes, net] = sig.Node.from(rawInputs{:});
             nout   = max(1, nargout);
 
-            % Build FormatSpec: mapn(in0, in1, ..., @fn)
-            fn_str  = toStr(f);
-            n_nodes = numel(nodes);
-            phs     = strjoin(repmat({'%s'}, 1, n_nodes), ', ');
-            fmt     = sprintf('mapn(%s, %s)', phs, fn_str);
-
             if nout == 1
-                if strcmp(net.TransferMode, 'matlab')
-                    transFcn = @(values, states) sig.transfer.mapn(values, states, f);
-                    varargout{1} = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
-                else
-                    varargout{1} = sig.Signal(net.addNode(nodes, sig.OpCode.mapn_op, false, f));
-                end
-                varargout{1}.Node.FormatSpec    = fmt;
-                varargout{1}.Node.DisplayInputs = nodes;
+                varargout{1} = sig.Signal(net.addNode(nodes, sig.OpCode.mapn_op, false, f));
+                varargout{1}.Node.FormatSpec = formatSpec;
             else
                 % Pack all outputs into a cell, then unpack per output.
                 pack_f = @(varargin) pack_outputs(f, nout, varargin{:});
-                if strcmp(net.TransferMode, 'matlab')
-                    transFcn = @(values, states) sig.transfer.mapn(values, states, pack_f);
-                    packNode = net.addNode(nodes, sig.OpCode.function_op, false, transFcn);
-                else
-                    packNode = net.addNode(nodes, sig.OpCode.mapn_op, false, pack_f);
-                end
-                packNode.FormatSpec    = fmt;
+                packNode = net.addNode(nodes, sig.OpCode.mapn_op, false, pack_f);
+                packNode.FormatSpec = formatSpec;
                 packNode.DisplayInputs = nodes;
-                packSig    = sig.Signal(packNode);
-                pack_name  = packNode.Name;
+                packSig = sig.Signal(packNode);
+                pack_name = packNode.Name;
                 for i = 1:nout
                     varargout{i} = packSig.map(@(c) c{i});
                     if i == 1
@@ -234,15 +178,11 @@ classdef Signal < handle
             assert(nargout(f) ~= 0, 'function must return at least one output arg')
 
             net = this.Node.Net;
-            if strcmp(net.TransferMode, 'matlab')
+            if isa(criterion, 'sig.Signal') || isa(criterion, 'sig.Node')
                 nodes    = this.Node.from(this, criterion);
                 transFcn = @(values, states) sig.transfer.filter(values, states, f);
                 s = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
             else
-                if isa(criterion, 'sig.Signal') || isa(criterion, 'sig.Node')
-                    error('sig:criterionSignal', ...
-                        'Signal criterion requires TransferMode=''matlab''');
-                end
                 pred = @(x) isequal(f(x), criterion);
                 s = sig.Signal(net.addNode(this.Node, sig.OpCode.filter_op, false, pred));
             end
@@ -250,10 +190,26 @@ classdef Signal < handle
             s.Node.FormatSpec = sprintf('%%s.filter(%s)', toStr(f));
         end
 
-        function s = scan(this, f, seed)
+        function s = scan(this, f, seed, varargin)
         % scan  Running fold: acc = f(acc, new_value).
         %   seed — initial accumulator value, or a signal that resets it.
-            nodes = this.Node.from(this, seed);
+        %   'pars' — optional parameter signals (non-triggering, sampled on update).
+        %     Usage: s = sig.Signal(...).scan(f, seed, 'pars', p1, p2, ...)
+            pars = {};
+            idx = 1;
+            while idx <= numel(varargin)
+                if strcmp(varargin{idx}, 'pars')
+                    idx = idx + 1;
+                    while idx <= numel(varargin)
+                        pars{end+1} = varargin{idx};
+                        idx = idx + 1;
+                    end
+                    break;
+                end
+                idx = idx + 1;
+            end
+            all_inputs = [{this, seed}, pars];
+            nodes = this.Node.from(all_inputs{:});
             s = sig.Signal(this.Node.Net.addNode(nodes, sig.OpCode.scan_op, false, f));
         end
 
@@ -297,7 +253,6 @@ classdef Signal < handle
             net  = this.Node.Net;
             node = net.addNode(this.Node, sig.OpCode.flatten_struct_op, false);
             node.FormatSpec    = '%s.flattenStruct()';
-            node.DisplayInputs = this.Node;
             fs = sig.Signal(node);
         end
 
@@ -319,26 +274,25 @@ classdef Signal < handle
             net  = this.Node.Net;
             node = net.addNode(this.Node, sig.OpCode.flatten_op, false);
             node.FormatSpec    = '%s.flatten()';
-            node.DisplayInputs = this.Node;
             out = sig.Signal(node);
         end
 
-        function out = at(this, when)
+        function s = at(what, when)
             % AT  Sample this signal's value whenever 'when' fires true.
             %
-            %   out = at(this, when) returns a dependent signal that takes the
-            %   latest value of 'this' at the moment 'when' fires with a truthy
+            %   out = at(what, when) returns a dependent signal that takes the
+            %   latest value of 'what' at the moment 'when' fires with a truthy
             %   value.  The output fires in response to 'when' updating, not
-            %   'this' — unlike keepWhen, posting a new value to 'this' alone
+            %   'what' — unlike keepWhen, posting a new value to 'what' alone
             %   does not cause output to fire.
             %
             % Inputs:
-            %   this (sig.Signal) - the signal whose value to sample
+            %   what (sig.Signal) - the signal whose value to sample
             %   when (sig.Signal) - the gate signal; output fires each time
             %                       this updates with a truthy value
             %
             % Outputs:
-            %   out (sig.Signal) - fires with the current value of 'this'
+            %   s (sig.Signal) - fires with the current value of 'what'
             %                      whenever 'when' fires truthy
             %
             % Examples:
@@ -347,15 +301,9 @@ classdef Signal < handle
             %   x_on_press = keyboard.then(x);
             %
             % See also sig.Signal/then, sig.Signal/keepWhen
-            net = this.Node.Net;
-            if isa(when, 'sig.Signal')
-                when_node = when.Node;
-            else
-                when_node = net.rootNode(when);
-            end
-            out = sig.Signal(net.addNode([this.Node, when_node], sig.OpCode.at_op, false));
-            out.Node.FormatSpec    = '%s.at(%s)';
-            out.Node.DisplayInputs = [this.Node, when_node];
+            [inputs, net] = sig.Node.from(what, when);
+            s = sig.Signal(net.addNode(inputs, sig.OpCode.at_op, false));
+            s.Node.FormatSpec = '%s.at(%s)';
         end
 
         function out = then(this, what)
@@ -380,15 +328,9 @@ classdef Signal < handle
             %   confirmed  = confirm_btn.then(choice);
             %
             % See also sig.Signal/at, sig.Signal/keepWhen
-            net = this.Node.Net;
-            if isa(what, 'sig.Signal')
-                what_node = what.Node;
-            else
-                what_node = net.rootNode(what);
-            end
-            out = sig.Signal(net.addNode([what_node, this.Node], sig.OpCode.at_op, false));
-            out.Node.FormatSpec    = '%s.then(%s)';
-            out.Node.DisplayInputs = [this.Node, what_node];
+            [inputs, net] = sig.Node.from(this, what);
+            out = sig.Signal(net.addNode(inputs, sig.OpCode.at_op, false));
+            out.Node.FormatSpec = '%s.then(%s)';
         end
 
         function s = keepWhen(this, when)
@@ -416,20 +358,9 @@ classdef Signal < handle
             %
             % See also SIG.NODE.SIGNAL/FILTER
 
-            net = this.Node.Net;
-            if isa(when, 'sig.Signal')
-                gate_node = when.Node;
-            else
-                gate_node = net.rootNode(when);
-            end
-            if strcmp(net.TransferMode, 'matlab')
-                transFcn = @(values, states) sig.transfer.keepWhen(values, states, gate_node);
-                s = sig.Signal(net.addNode(this.Node, sig.OpCode.function_op, false, transFcn));
-            else
-                s = sig.Signal(net.addNode([this.Node, gate_node], sig.OpCode.keep_when, false));
-            end
+            [inputs, net] = sig.Node.from(this, when);
+            s = sig.Signal(net.addNode(inputs, sig.OpCode.keep_when, false));
             s.Node.FormatSpec = '%s.keepWhen(%s)';
-            s.Node.DisplayInputs = [this.Node, gate_node];
         end
 
         function out = to(this, release)
@@ -455,15 +386,9 @@ classdef Signal < handle
             %   inWindow = entered.to(exited);
             %
             % See also sig.Signal/at, sig.Signal/keepWhen
-            net = this.Node.Net;
-            if isa(release, 'sig.Signal')
-                release_node = release.Node;
-            else
-                release_node = net.rootNode(release);
-            end
-            out = sig.Signal(net.addNode([this.Node, release_node], sig.OpCode.latch, false));
-            out.Node.FormatSpec    = '%s.to(%s)';
-            out.Node.DisplayInputs = [this.Node, release_node];
+            [inputs, net] = sig.Node.from(this, release);
+            out = sig.Signal(net.addNode(inputs, sig.OpCode.latch, false));
+            out.Node.FormatSpec = '%s.to(%s)';
         end
 
         function tr = setTrigger(this, release)
@@ -489,12 +414,7 @@ classdef Signal < handle
             %
             % See also sig.Signal/to, sig.Signal/at
             net = this.Node.Net;
-            if isa(release, 'sig.Signal')
-                release_node = release.Node;
-            else
-                release_node = net.rootNode(release);
-            end
-            armed     = this.to(release);
+            armed = this.to(release);
             not_armed = ~armed;
             true_node = net.rootNode(true);
             tr = sig.Signal(net.addNode([true_node, not_armed.Node], sig.OpCode.at_op, false));
@@ -502,8 +422,55 @@ classdef Signal < handle
             tr.Node.DisplayInputs = [this.Node, release_node];
         end
 
-        function out = setEpochTrigger(obj, t, x, threshold) %#ok<INUSD>
-            error('sig:notImplemented', 'setEpochTrigger() is not yet implemented.');
+        function tr = setEpochTrigger(this, t, x, threshold)
+            % SETEPOCH TRIGGER  Fire when x has been stable for a full epoch.
+            %
+            %   tr = duration.setEpochTrigger(t, x) fires true once when
+            %   time t has advanced by at least duration since x last changed.
+            %   Any x update that differs from x_ref (the value at epoch start)
+            %   by more than threshold resets the countdown.  Fires false when
+            %   the epoch resets.  No output until x fires at least once.
+            %
+            %   tr = duration.setEpochTrigger(t, x, threshold) uses a custom
+            %   threshold for what counts as a significant x change (default 0:
+            %   any distinct value resets; Inf: only the first x post starts the
+            %   epoch and subsequent x updates never reset it).
+            %
+            % Inputs:
+            %   this      (sig.Signal) - epoch duration
+            %   t         (sig.Signal) - absolute time (monotonically increasing)
+            %   x         (sig.Signal) - position/state whose changes reset the epoch
+            %   threshold (scalar, optional) - minimum |x - x_ref| to reset (default 0)
+            %
+            % Outputs:
+            %   tr (sig.Signal) - logical; fires true when epoch elapses, false
+            %                     when x resets the epoch
+            %
+            % See also sig.Signal/setTrigger, sig.Signal/delta
+            if nargin < 4; threshold = 0; end
+
+            % Track x_ref: x value at the start of the current epoch.
+            % State starts as NaN (no epoch yet).  Updates to x_new when
+            % |x_new - x_ref| > threshold (or on the very first x post).
+            th = threshold;
+            x_ref_sig = x.scan( ...
+                @(x_new, x_ref) epoch_x_ref_update(x_new, x_ref, th), NaN);
+
+            % epoch_reset fires 'duration' whenever a new epoch starts.
+            epoch_reset = x_ref_sig.skipRepeats().map(this);
+
+            % Countdown: reset to duration on epoch start; decrement each t step.
+            remaining = t.delta().scan(@(dt, rem) rem - dt, epoch_reset);
+
+            % Fire when countdown expires; suppress repeated fires in same state.
+            expired = remaining <= 0;
+            tr = expired.skipRepeats();
+
+            % Name: Δx/Δt < threshold s.t. Δt = duration
+            % FormatSpec has 4 %s: x-name, t-name, t-name, duration-name
+            tr.Node.FormatSpec    = sprintf([char(916), '%%s/', char(916), ...
+                '%%s < %s s.t. ', char(916), '%%s = %%s'], num2str(threshold));
+            tr.Node.DisplayInputs = [x.Node, t.Node, t.Node, this.Node];
         end
 
         function out = skipRepeats(this)
@@ -522,8 +489,7 @@ classdef Signal < handle
             % See also sig.Signal/keepWhen, sig.Signal/filter
             net = this.Node.Net;
             out = sig.Signal(net.addNode(this.Node, sig.OpCode.skip_repeats, false));
-            out.Node.FormatSpec    = '%s.skipRepeats()';
-            out.Node.DisplayInputs = this.Node;
+            out.Node.FormatSpec = '%s.skipRepeats()';
         end
 
         function out = delta(this)
@@ -538,12 +504,54 @@ classdef Signal < handle
             %
             % See also sig.Signal/lag, sig.Signal/scan
             out = this - this.lag(1);
-            out.Node.FormatSpec    = '%s.delta()';
+            out.Node.FormatSpec = '%s.delta()';
             out.Node.DisplayInputs = this.Node;
         end
 
-        function out = delay(obj, period) %#ok<INUSD>
-            error('sig:notImplemented', 'delay() is not yet implemented.');
+        function d = delay(this, period)
+            % DELAY Update with `this` value after a period
+            %
+            %   d = this.delay(period) updates with the value of `this`
+            %   after a delay of `period` seconds.
+            %
+            % Inputs:
+            %   this (sig.Signal) - The signal who's value to take after
+            %     the delay period.
+            %   period (sig.Signal|double) - The delay period in seconds.
+            %
+            % Outputs:
+            %   d (sig.Signal) - a signal that updates after a delay
+            %
+            % Examples:
+            %   d = x.delay(5); % d updates with value of x after 5 seconds
+            %   d = x.delay(delaySignal); % delay determined by another signal
+            %
+            % See also sig.Signal/lag, sig.Signal/identity
+
+            net = this.Node.Net;
+
+            % Create a scheduler signal that combines the value and delay
+            % into a {value, delay} packet using the schedule transfer function
+            nodes = this.Node.from(this, period);
+            transFcn = @(values, states) sig.transfer.schedule(values, states, []);
+            scheduler = sig.Signal(net.addNode(nodes, sig.OpCode.function_op, false, transFcn));
+            scheduler.Node.FormatSpec = '%s.schedule(%s)';
+
+            % Create an OriginSignal to output delayed values
+            d = net.origin();
+
+            % Attach a listener that posts values after the delay
+            % The listener function is called with the scheduler packet {value, delay}
+            delayedPost = scheduler.onValue(@(packet) d.delayedPost(packet));
+
+            % Derive a dependent (i.e. non-origin) signal to obscure the
+            % origin signal and its post methods
+            d = identity(d);  % a standard signal is returned
+            d.Node.FormatSpec = '%s.delay(%s)';
+            d.Node.DisplayInputs = scheduler.Node.DisplayInputs;
+
+            % Store the listener to prevent garbage collection
+            d.Node.Listeners = [d.Node.Listeners delayedPost];
         end
 
         function out = lag(this, n)
@@ -562,9 +570,9 @@ classdef Signal < handle
             %                      the internal buffer has at least n+1 elements
             %
             % See also sig.Signal/bufferUpTo, sig.Signal/identity
-            bup  = this.bufferUpTo(n + 1);
-            out  = bup.keepWhen(bup.nElems() == n + 1).map(@(v) v(1));
-            out.Node.FormatSpec    = sprintf('%%s.lag(%d)', n);
+            bup = this.bufferUpTo(n + 1);
+            out = bup.keepWhen(bup.nElems() == n + 1).map(@(v) v(1));
+            out.Node.FormatSpec = sprintf('%%s.lag(%d)', n);
             out.Node.DisplayInputs = this.Node;
         end
 
@@ -589,24 +597,18 @@ classdef Signal < handle
             %                      if 'cell' option used or a type change occurred
             %
             % See also sig.Signal/buffer
-            net = this.Node.Net;
-            if isa(nSamples, 'sig.Signal')
-                n_node = nSamples.Node;
-            else
-                n_node = net.rootNode(nSamples);
-            end
+            [inputs, net] = sig.Node.from(this, nSamples);
             if nargin > 2 && strcmpi(typeChange, 'cell')
                 % Dummy callable signals cast mode to the C++ transfer block;
                 % it is never invoked — its presence is the flag.
                 castMarker = @(varargin) [];
-                bup = sig.Signal(net.addNode([this.Node, n_node], ...
+                bup = sig.Signal(net.addNode(inputs, ...
                     sig.OpCode.buffer_up_to, false, castMarker));
             else
-                bup = sig.Signal(net.addNode([this.Node, n_node], ...
+                bup = sig.Signal(net.addNode(inputs, ...
                     sig.OpCode.buffer_up_to, false));
             end
             bup.Node.FormatSpec    = '%s.bufferUpTo(%s)';
-            bup.Node.DisplayInputs = [this.Node, n_node];
         end
 
         function b = buffer(this, nSamples, typeChange)
@@ -668,21 +670,10 @@ classdef Signal < handle
             %   m = a.merge(b, c);                % method-call form
             %
             % See also sig.Signal/at, sig.Signal/keepWhen
-            refNode = [];
-            for k = 1:numel(varargin)
-                if isa(varargin{k}, 'sig.Signal')
-                    refNode = varargin{k}.Node;
-                    break;
-                end
-            end
-            assert(~isempty(refNode), 'sig:noNet', 'merge: no sig.Signal in inputs.');
-            nodes = refNode.from(varargin{:});
-            net   = refNode.Net;
-            n     = numel(nodes);
-            fmt   = ['( ' strjoin(repmat({'%s'}, 1, n), ' ~ ') ' )'];
-            m = sig.Signal(net.addNode(nodes, sig.OpCode.merge, false));
-            m.Node.FormatSpec    = fmt;
-            m.Node.DisplayInputs = nodes;
+            [inputs, net] = sig.Node.from(varargin{:});
+            m = sig.Signal(net.addNode(inputs, sig.OpCode.merge, false));
+            n = numel(inputs);
+            m.Node.FormatSpec = ['( ' strjoin(repmat({'%s'}, 1, n), ' ~ ') ' )'];
         end
 
         function s = selectFrom(this, varargin)
@@ -710,7 +701,6 @@ classdef Signal < handle
             fmt = ['%s.selectFrom([ ' strjoin(repmat({'%s'}, 1, n_opts), ' ; ') ' ])'];
             s = sig.Signal(net.addNode(nodes, sig.OpCode.select_from, false));
             s.Node.FormatSpec    = fmt;
-            s.Node.DisplayInputs = nodes;
         end
 
         function f = indexOfFirst(varargin)
@@ -729,21 +719,10 @@ classdef Signal < handle
             %                    no output when all predicates are falsy
             %
             % See also sig.Signal/cond, sig.Signal/selectFrom
-            refNode = [];
-            for k = 1:numel(varargin)
-                if isa(varargin{k}, 'sig.Signal')
-                    refNode = varargin{k}.Node; break;
-                end
-            end
-            assert(~isempty(refNode), 'sig:noNet', ...
-                'indexOfFirst: no sig.Signal found in inputs.');
-            nodes = refNode.from(varargin{:});
-            net   = refNode.Net;
-            n     = numel(nodes);
-            fmt   = ['indexOfFirst([ ' strjoin(repmat({'%s'}, 1, n), ' ; ') ' ])'];
+            [nodes, net] = sig.Node.from(varargin{:});
+            n = numel(nodes);
             f = sig.Signal(net.addNode(nodes, sig.OpCode.index_of_first, false));
-            f.Node.FormatSpec    = fmt;
-            f.Node.DisplayInputs = nodes;
+            f.Node.FormatSpec = ['indexOfFirst([ ' strjoin(repmat({'%s'}, 1, n), ' ; ') ' ])'];
         end
 
         function c = cond(this, value1, varargin)
@@ -852,6 +831,16 @@ classdef Signal < handle
             end
         end
 
+        function h = output(this)
+            % OUTPUT Display current value each update
+            %   Prints the value of this Signal to the command window each time
+            %   it updates.  Returns a listener handle which when cleared removes
+            %   this callback.
+            %
+            % See also onValue
+            h = onValue(this, @disp);
+        end
+
         function valueChanged(this, newValue)
         % valueChanged  Invoke all registered onValue callbacks with newValue.
         %   Called by sig.Net.notifySubscribers after each apply cycle.
@@ -864,107 +853,192 @@ classdef Signal < handle
             end
         end
 
-        function h = output(obj)
-            error('sig:notImplemented', 'output() is not yet implemented.');
+        %% Overloaded MATLAB Methods
+
+        function y = vertcat(varargin)
+            % New signal carrying the vertical concatenation of signals
+            formatSpec = ['[' strJoin(repmat({'%s'}, 1, nargin), '; ') ']'];
+            y = mapn(varargin{:}, @vertcat, formatSpec);
         end
 
-        % =================================================================
-        % Operator overloads — all implemented via map / map2 / mapn
-        % =================================================================
+        function y = horzcat(varargin)
+            % New signal carrying the horizontal concatenation of signals
+            formatSpec = ['[' strJoin(repmat({'%s'}, 1, nargin), ' ') ']'];
+            y = mapn(varargin{:}, @horzcat, formatSpec);
+        end
 
-        function b = floor(a),     b = a.map(@floor);      end
-        function b = abs(a),       b = a.map(@abs);         end
-        function b = sign(a),      b = a.map(@sign);        end
-        function b = sin(a),       b = a.map(@sin);         end
-        function b = cos(a),       b = a.map(@cos);         end
-        function b = uminus(a),    b = a.map(@uminus);      end
-        function b = not(a),       b = a.map(@not);         end
-        function b = exp(a),       b = a.map(@exp);         end
-        function b = sqrt(a),      b = a.map(@sqrt);        end
-        function b = erf(a),       b = a.map(@erf);         end
-        function b = transpose(a), b = a.map(@transpose);   end
-        function b = fliplr(a),    b = a.map(@fliplr);      end
-        function b = flipud(a),    b = a.map(@flipud);      end
-        function b = str2num(a),   b = a.map(@str2num);     end %#ok<ST2NM>
+        function c = ge(a, b)
+            % New signal carrying the current inequality (>=) between signals
+            % The function handle fcn is attached as a fallback callable,
+            % invoked only when the C++ traits throw signals::TypeError
+            % (i.e. for non-basic types).
+            [inputs, net] = sig.Node.from(a, b);
+            c = sig.Signal(net.addNode(inputs, sig.OpCode.ge_op, false, @ge));
+            c.Node.FormatSpec = '%s >= %s';
+        end
 
-        function c = plus(a, b),    c = map2(a, b, @plus);    end
-        function c = minus(a, b),   c = map2(a, b, @minus);   end
-        function c = times(a, b),   c = map2(a, b, @times);   end
-        function c = mtimes(a, b),  c = map2(a, b, @mtimes);  end
-        function c = rdivide(a, b), c = map2(a, b, @rdivide); end
-        function c = mrdivide(a,b), c = map2(a, b, @mrdivide);end
-        function c = mpower(a, b),  c = map2(a, b, @mpower);  end
-        function c = power(a, b),   c = map2(a, b, @power);   end
-        function c = mod(a, b),     c = map2(a, b, @mod);     end
-        function c = strcmp(a, b),  c = map2(a, b, @strcmp);  end
-        function c = gt(a, b),      c = map2(a, b, @gt);      end
-        function c = ge(a, b),      c = map2(a, b, @ge);      end
-        function c = lt(a, b),      c = map2(a, b, @lt);      end
-        function c = le(a, b),      c = map2(a, b, @le);      end
-        function c = and(a, b),     c = map2(a, b, @and);     end
-        function c = or(a, b),      c = map2(a, b, @or);      end
+        function c = gt(a, b)
+            % New signal carrying the current inequality (>) between signals
+            [inputs, net] = sig.Node.from(a, b);
+            c = sig.Signal(net.addNode(inputs, sig.OpCode.gt_op, false, @gt));
+            c.Node.FormatSpec = '%s > %s';
+        end
+
+        function c = le(a, b)
+            % New signal carrying the current inequality (<=) between signals
+            [inputs, net] = sig.Node.from(a, b);
+            c = sig.Signal(net.addNode(inputs, sig.OpCode.le_op, false, @le));
+            c.Node.FormatSpec = '%s <= %s';
+        end
+
+        function c = lt(a, b)
+            % New signal carrying the current inequality (<) between signals
+            [inputs, net] = sig.Node.from(a, b);
+            c = sig.Signal(net.addNode(inputs, sig.OpCode.lt_op, false, @lt));
+            c.Node.FormatSpec = '%s < %s';
+        end
+
+        function c = ne(a, b, handleComparison)
+            % New signal carrying the current non-equality (~=) between signals
+            if nargin < 3 || ~handleComparison
+                c = map2(a, b, @ne, '%s ~= %s');
+            else
+                c = ne@handle(a, b);
+            end
+        end
+
+        function x = num2str(numSig, precision)
+            % New signal carrying numeric-to-charecter converted array of the
+            % input signal
+            narginchk(1,2)
+            if nargin == 1
+                x = map(numSig, @num2str, 'num2str(%s)');
+            else
+                x = map2(numSig, precision, @num2str, 'num2str(%s)');
+            end
+        end
+
+        function b = round(a,N,type)
+            % New signals carrying the result of rounding 'a' to 'N' digits
+            if nargin < 2
+                b = map(a, @round, 'round(%s)');
+            elseif nargin < 3
+                b = map2(a, N, @round, 'round(%s) to %s digits');
+            else
+                b = mapn(a, N, type, @round, 'round(%s) to %s digits by %s');
+            end
+        end
+
+        function b = sum(a, dim)
+            % New signal carrying the sum of all array elements in 'a' across
+            % dimention 'dim'
+            if nargin < 2
+                b = map(a, @sum, 'sum(%s)');
+            else
+                b = map2(a, dim, @sum, 'sum(%s) over dim %s');
+            end
+        end
+
+        function varargout = min(A,B,dim)
+            % [M,I] = min(A,B,dim) New signal carrying the min value of inputs.
+            if nargin < 2
+                [varargout{1:nargout}] = mapn(A, @min, 'min(%s)');
+            elseif nargin < 3
+                [varargout{1:nargout}] = mapn(A, B, @min, 'min(%s,%s)');
+            else
+                [varargout{1:nargout}] = mapn(A, B, dim, @min, 'min(%s) over dim %s');
+                for i = 1:nargout; varargout{i}.Node.DisplayInputs(2) = []; end
+            end
+        end
+
+        function varargout = max(A,B,dim)
+            % [M,I] = max(A,B,dim) New signal carrying the max value of its
+            % inputs
+            if nargin < 2
+                [varargout{1:nargout}] = mapn(A, @max, 'max(%s)');
+            elseif nargin < 3
+                [varargout{1:nargout}] = mapn(A, B, @max, 'max(%s,%s)');
+            else
+                [varargout{1:nargout}] = mapn(A, B, dim, @max, 'max(%s) over dim %s');
+                for i = 1:nargout; varargout{i}.Node.DisplayInputs(2) = []; end
+            end
+        end
+
+        function b = rot90(a, k)
+            % New signal carrying 'a' rotated 90 degrees counter-clockwise 'k'
+            % times
+            if nargin < 2
+                b = map(a, @rot90, 'rot90(%s)');
+            else
+                b = map2(a, k, @rot90, 'rot90(%s) %s times');
+            end
+        end
+
+        function b = any(a, dim)
+            if nargin < 2
+                b = map(a, @any, 'any(%s)');
+            else
+                b = map2(a, dim, @any, 'any(%s) over dim %s');
+            end
+        end
+
+        function b = all(a, dim)
+            if nargin < 2
+                b = map(a, @all, 'all(%s)');
+            else
+                b = map2(a, dim, @all, 'all(%s) over dim %s');
+            end
+        end
+
+        function a = colon(i,j,k)
+            if nargin < 3
+                a = map2(i,j, @colon, '%s : %s');
+            else
+                a = mapn(i,j,k, @colon, '%s : %s : %s');
+            end
+        end
+      
+        % % =================================================================
+        % % Operator overloads — all implemented via map / map2 / mapn
+        % % =================================================================
+        % 
+        function b = floor(a),     b = a.map(@floor, 'floor(%s)');         end
+        function b = abs(a),       b = a.map(@abs, '|%s|');                end
+        function b = sign(a),      b = a.map(@sign, 'sgn(%s)');            end
+        function b = sin(a),       b = a.map(@sin, 'sin(%s)');             end
+        function b = cos(a),       b = a.map(@cos, 'cos(%s)');             end
+        function b = uminus(a),    b = a.map(@uminus, '-%s');              end
+        function b = not(a),       b = a.map(@not, '~%s');                 end
+        function b = exp(a),       b = a.map(@exp, 'exp(%s)');             end
+        function b = sqrt(a),      b = a.map(@sqrt, [char(8730), '(%s)']); end
+        function b = erf(a),       b = a.map(@erf, 'erf(%s)');             end
+        function b = transpose(a), b = a.map(@transpose, '%s''');          end
+        function b = fliplr(a),    b = a.map(@fliplr, 'fliplr(%s)');      end
+        function b = flipud(a),    b = a.map(@flipud, 'flipud(%s)');      end
+        function b = str2num(a),   b = a.map(@str2num, 'str2num(%s)'); end
+        
+        function c = plus(a, b),    c = map2(a, b, @plus, '(%s + %s)');    end
+        function c = minus(a, b),   c = map2(a, b, @minus, '(%s - %s)');   end
+        function c = times(a, b),   c = map2(a, b, @times, '%s.*%s');   end
+        function c = mtimes(a, b),  c = map2(a, b, @mtimes, '%s*%s');  end
+        function c = rdivide(a, b), c = map2(a, b, @rdivide, '%s./%s'); end
+        function c = mrdivide(a,b), c = map2(a, b, @mrdivide, '%s/%s');end
+        function c = mpower(a, b),  c = map2(a, b, @mpower, '%s^%s');  end
+        function c = power(a, b),   c = map2(a, b, @power, '%s.^%s');   end
+        function c = mod(a, b),     c = map2(a, b, @mod, '%s %% %s');           end
+        function c = strcmp(a, b),  c = map2(a, b, @strcmp, 'strcmp(%s, %s)');  end
+        function c = and(a, b),     c = map2(a, b, @and, '%s & %s');     end
+        function c = or(a, b),      c = map2(a, b, @or, '%s | %s');      end
 
         function c = eq(a, b, handleComparison)
         % eq  Signal equality, or handle identity when handleComparison=true.
             if nargin >= 3 && handleComparison
                 c = eq@handle(a, b);
             else
-                c = map2(a, b, @eq);
+                [inputs, net] = sig.Node.from(a, b);
+                c = sig.Signal(net.addNode(inputs, sig.OpCode.eq_op, false, @eq));
+                c.Node.FormatSpec = '%s == %s';
             end
-        end
-
-        function c = ne(a, b, handleComparison)
-            if nargin >= 3 && handleComparison
-                c = ne@handle(a, b);
-            else
-                c = map2(a, b, @ne);
-            end
-        end
-
-        function y = vertcat(varargin), y = mapn(varargin{:}, @vertcat); end
-        function y = horzcat(varargin), y = mapn(varargin{:}, @horzcat); end
-
-        function b = rot90(a, k)
-            if nargin < 2, b = a.map(@rot90);
-            else,          b = map2(a, k, @rot90); end
-        end
-
-        function b = any(a, dim)
-            if nargin < 2, b = a.map(@any);
-            else,          b = map2(a, dim, @any); end
-        end
-
-        function b = all(a, dim)
-            if nargin < 2, b = a.map(@all);
-            else,          b = map2(a, dim, @all); end
-        end
-
-        function b = sum(a, dim)
-            if nargin < 2, b = a.map(@sum);
-            else,          b = map2(a, dim, @sum); end
-        end
-
-        function b = num2str(a, precision)
-            if nargin < 2, b = a.map(@num2str);
-            else,          b = map2(a, precision, @num2str); end
-        end
-
-        function b = round(a, N, type)
-            if nargin < 2,     b = a.map(@round);
-            elseif nargin < 3, b = map2(a, N, @round);
-            else,              b = mapn(a, N, type, @round); end
-        end
-
-        function varargout = min(A, B, dim)
-            if nargin < 2,     [varargout{1:nargout}] = A.mapn(@min);
-            elseif nargin < 3, [varargout{1:nargout}] = mapn(A, B, @min);
-            else,              [varargout{1:nargout}] = mapn(A, B, dim, @min); end
-        end
-
-        function varargout = max(A, B, dim)
-            if nargin < 2,     [varargout{1:nargout}] = A.mapn(@max);
-            elseif nargin < 3, [varargout{1:nargout}] = mapn(A, B, @max);
-            else,              [varargout{1:nargout}] = mapn(A, B, dim, @max); end
         end
 
         function b = sz(a, dim)
@@ -976,10 +1050,56 @@ classdef Signal < handle
         function [varargout] = subsref(this, s)
         % subsref  () subscripts create derived signals; others use builtin.
             if strcmp(s(1).type, '()')
-                subs = s(1);
-                out = this.map(@(v) builtin('subsref', v, subs));
-                inpform = strJoin(repmat({'%s'}, 1, numel(subs)), ',');
-                out.Node.formatSpec = ['%s(' inpform ')'];
+                subs = s(1).subs;
+
+                % Use transfer function for consistent handling
+                net = this.Node.Net;
+
+                % Build input nodes, excluding sig.End objects.
+                % Only pass non-sig.End subscripts to from()
+                subs_for_nodes = {};
+                for k = 1:numel(subs)
+                    if ~isa(subs{k}, 'sig.End')
+                        subs_for_nodes{end+1} = subs{k};
+                    end
+                end
+
+                inpNodes = this.Node.from(this, subs_for_nodes{:});
+
+                % Create a wrapper that passes subs directly
+                subsref_with_subs = @(values, states) sig.transfer.subsref_direct(values, states, subs);
+                outNode = net.addNode(inpNodes, sig.OpCode.function_op, false, subsref_with_subs);
+
+                % Format the display name
+                sigNames = cell(numel(subs), 1);
+                displayNodes = this.Node;  % start with the array node
+                nodeIdx = 2;  % track which node in inpNodes we're using
+
+                for k = 1:numel(subs)
+                    if isa(subs{k}, 'sig.Signal')
+                        sigNames{k} = '%s';  % placeholder for signal name
+                        displayNodes = [displayNodes, inpNodes(nodeIdx)];
+                        nodeIdx = nodeIdx + 1;
+                    elseif isa(subs{k}, 'sig.End')
+                        sigNames{k} = 'end';
+                        % Don't add to displayNodes for sig.End objects
+                    elseif isvector(subs{k}) && isrow(subs{k}) && numel(subs{k}) > 1
+                        % For ranges/vectors, show individual elements
+                        numStrs = cellstr(num2str(subs{k}(:)));
+                        numStrs = cellfun(@strtrim, numStrs, 'UniformOutput', false);
+                        sigNames{k} = strJoin(numStrs, '   ');
+                        nodeIdx = nodeIdx + 1;  % skip the root node
+                    else
+                        sigNames{k} = toStr(subs{k});
+                        nodeIdx = nodeIdx + 1;  % skip the root node
+                    end
+                end
+                inpform = strJoin(sigNames, ' ');
+                outNode.FormatSpec = ['%s(' inpform ')'];
+                outNode.DisplayInputs = displayNodes;
+
+                out = sig.Signal(outNode);
+
                 if length(s) > 1
                     [varargout{1:nargout}] = subsref(out, s(2:end));
                 else
@@ -990,5 +1110,26 @@ classdef Signal < handle
             end
         end
 
+        function e = end(~, k, n)
+        % end  Support MATLAB's end keyword in signal subscripting
+        %   This method is called automatically by MATLAB when 'end' is used
+        %   in subscripts. It returns a sig.End object that will be resolved
+        %   when the signal's value is known.
+        %
+        %   Example:
+        %     last = signal(end)        % last element
+        %     range = signal(end-5:end) % last 6 elements
+            e = sig.End(k, n);
+        end
     end
+
+end
+
+
+function x_ref = epoch_x_ref_update(x_new, x_ref, threshold)
+% Update x_ref for setEpochTrigger: start a new epoch when the position has
+% moved more than threshold from the epoch-start reference.
+if isnan(x_ref) || abs(x_new - x_ref) > threshold
+    x_ref = x_new;
+end
 end
