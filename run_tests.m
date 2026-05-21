@@ -1,18 +1,20 @@
-addpath('c:\Users\Work\source\repos\signalscpp\matlab');
+repoRoot = fileparts(mfilename('fullpath'));
+matlabRoot = fullfile(repoRoot, 'matlab');
+addpath(matlabRoot);
 try
-  run('c:\Users\Work\source\repos\signalscpp\matlab\tests\smoke_test');
+  run(fullfile(matlabRoot, 'tests', 'smoke_test'));
   fprintf('SMOKE TESTS OK\n');
 catch e
   fprintf('SMOKE TESTS FAILED: %s\n', e.message);
 end
 try
-  run('c:\Users\Work\source\repos\signalscpp\matlab\tests\node_test');
+  run(fullfile(matlabRoot, 'tests', 'node_test'));
   fprintf('NODE TESTS OK\n');
 catch e
   fprintf('NODE TESTS FAILED: %s\n', e.message);
 end
 try
-  results = runtests('c:\Users\Work\source\repos\signalscpp\matlab\tests\transfer_test');
+  results = runtests(fullfile(matlabRoot, 'tests', 'transfer_test'));
   for i = 1:numel(results)
     fprintf('%s: Passed=%d Failed=%d\n', results(i).Name, results(i).Passed, results(i).Failed);
   end
@@ -22,7 +24,7 @@ catch e
   disp(e.getReport('extended'));
 end
 try
-  results = runtests('c:\Users\Work\source\repos\signalscpp\matlab\tests\Signals_test');
+  results = runtests(fullfile(matlabRoot, 'tests', 'Signals_test'));
   for i = 1:numel(results)
     fprintf('%s: Passed=%d Failed=%d\n', results(i).Name, results(i).Passed, results(i).Failed);
   end
@@ -32,7 +34,7 @@ catch e
   disp(e.getReport('extended'));
 end
 vis_tests = {'grating_test','sinusoidLayer_test','squareWaveLayer_test','gaussianLayer_test'};
-vis_dir = 'c:\Users\Work\source\repos\signalscpp\matlab\tests\vis\';
+vis_dir = fullfile(matlabRoot, 'tests', 'vis');
 addpath(vis_dir);
 for vi = 1:numel(vis_tests)
   try

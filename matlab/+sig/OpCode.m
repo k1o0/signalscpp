@@ -3,12 +3,12 @@ classdef OpCode < uint32
 %
 % AUTO-GENERATED - do not edit by hand.
 % Source:    Signals/transferer.h  (enum class Operation)
-% Generator: scripts/gen_opcodes.ps1
+% Generator: scripts/gen_opcodes.cmake
 %
-% This file is rebuilt as a CMake PRE_BUILD step on signalsproxy,
+% This file is rebuilt as a CMake build dependency of signalsproxy,
 % ensuring the MATLAB enum always matches the C++ enum.
 % To regenerate manually from the repo root:
-%   powershell -File scripts\gen_opcodes.ps1
+%   cmake -DHEADER_FILE=Signals/transferer.h -DOUTPUT_FILE=matlab/+sig/OpCode.m -P scripts/gen_opcodes.cmake
 %
 % Usage:
 %   net.addNode(src, sig.OpCode.map_op,  false, fn)

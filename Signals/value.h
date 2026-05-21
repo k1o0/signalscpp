@@ -6,14 +6,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-
-#if defined(SIGNALS_STATIC_LIB)
-#define SIGNALS_API
-#elif defined(SIGNALS_EXPORTS)
-#define SIGNALS_API __declspec(dllexport)
-#else
-#define SIGNALS_API __declspec(dllimport)
-#endif
+#include "signals_api.h"
 
 // ── signals::Value ────────────────────────────────────────────────────────────
 //

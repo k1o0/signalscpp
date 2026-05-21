@@ -223,9 +223,10 @@ relevant area is touched — flagged here so they don't get lost.
    remain in the project (they compile without error) but contain no live code.
    They can be deleted from the `.vcxproj` and the filesystem in a follow-up
    cleanup once the PORTING checklist is further along.
-2. **MSVC-only `__declspec` macros** in every header. Replace with a
-   cross-platform `SIGNALS_API` macro that picks `__declspec` on MSVC
-   and `__attribute__((visibility("default")))` on GCC/Clang.
+2. ~~**MSVC-only `__declspec` macros** in every header.~~ **Done.**
+   Shared `Signals/signals_api.h` now defines `SIGNALS_API` cross-platform:
+   empty for static builds, `__declspec(...)` on Windows, and
+   `__attribute__((visibility("default")))` on GCC/Clang.
 3. ~~**Manual `delete workingValue` / `delete currentValue`** in
    `Node::destroy`.~~ **Done.** Resolved when `DataContainer*` was replaced
    by `signals::Value` (held by value, not pointer).

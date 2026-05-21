@@ -144,7 +144,7 @@ end
 %% Example 1: cos(x * pi)
 x = net.origin('x'); % Create an origin signal
 y = cos(x * pi);
-sig.timeplot(x, y, 'mode', [0 2]); % Plot each variable against time
+sig.test.timeplot(x, y, 'mode', [0 2]); % Plot each variable against time
 
 for i = 0:0.1:10
   pause(0.05)

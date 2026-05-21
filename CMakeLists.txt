@@ -36,8 +36,11 @@ target_compile_definitions(signals_core
 # ---------------------------------------------------------------------------
 if(SIGNALSCPP_BUILD_MEX)
 
-    # Require MATLAB
-    set(Matlab_ROOT_DIR "C:/Program Files/MATLAB/R2025a" CACHE PATH "MATLAB installation root")
+    # Require MATLAB. Keep a Windows-friendly default, but avoid hard-coding
+    # a platform-incompatible path on macOS/Linux.
+    if(WIN32 AND NOT DEFINED Matlab_ROOT_DIR)
+        set(Matlab_ROOT_DIR "C:/Program Files/MATLAB/R2025a" CACHE PATH "MATLAB installation root")
+    endif()
     find_package(Matlab REQUIRED COMPONENTS MX_LIBRARY MEX_LIBRARY ENGINE_LIBRARY DATAARRAY_LIBRARY)
 
     # libmexclass — already cloned as a submodule at extern/libmexclass
@@ -66,16 +69,26 @@ if(SIGNALSCPP_BUILD_MEX)
     )
     target_compile_features(signalsproxy PRIVATE cxx_std_17)
 
-    # Regenerate matlab/+sig/OpCode.m from Signals/transferer.h before every
-    # signalsproxy build.  This keeps the MATLAB opcode enum in lockstep with the
-    # C++ enum class Operation — the two can never silently diverge.
+    # Regenerate matlab/+sig/OpCode.m from Signals/transferer.h.
+    # Use a CMake script so generation is platform-independent.
+    set(OPCODE_HEADER "${CMAKE_SOURCE_DIR}/Signals/transferer.h")
+    set(OPCODE_MATLAB "${CMAKE_SOURCE_DIR}/matlab/+sig/OpCode.m")
+    set(OPCODE_GENERATOR "${CMAKE_SOURCE_DIR}/scripts/gen_opcodes.cmake")
+
     add_custom_command(
-        TARGET signalsproxy PRE_BUILD
-        COMMAND powershell -NoProfile -ExecutionPolicy Bypass
-                -File "${CMAKE_SOURCE_DIR}/scripts/gen_opcodes.ps1"
+        OUTPUT "${OPCODE_MATLAB}"
+        COMMAND ${CMAKE_COMMAND}
+                "-DHEADER_FILE=${OPCODE_HEADER}"
+                "-DOUTPUT_FILE=${OPCODE_MATLAB}"
+                -P "${OPCODE_GENERATOR}"
+        DEPENDS
+            "${OPCODE_HEADER}"
+            "${OPCODE_GENERATOR}"
         VERBATIM
         COMMENT "Generating matlab/+sig/OpCode.m from Signals/transferer.h"
     )
+    add_custom_target(generate_opcodes DEPENDS "${OPCODE_MATLAB}")
+    add_dependencies(signalsproxy generate_opcodes)
 
     # MEX gateway
     libmexclass_client_add_mex_gateway(

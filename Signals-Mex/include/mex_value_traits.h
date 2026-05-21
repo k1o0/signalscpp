@@ -161,7 +161,7 @@ struct ValueTraits<matlab::data::Array> {
         if (curr_cell) {
             matlab::data::CellArray ca = const_cast<matlab::data::Array&>(current);
             std::vector<matlab::data::Array> cells;
-            for (auto& elem : ca) cells.push_back(elem);
+            for (auto elem : ca) cells.push_back(elem);
             cells.push_back(new_item);
             if (max_n > 0 && cells.size() > max_n)
                 cells.erase(cells.begin(),

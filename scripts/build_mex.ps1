@@ -148,6 +148,14 @@ if ($SkipInstall) {
     exit 0
 }
 
+# libmexclass_client_install() installs both the proxy library and gateway.
+# Build gateway explicitly so install succeeds on a clean build tree.
+if ($Target -ne 'ALL_BUILD' -and $Target -ne 'gateway') {
+    Write-Host "`n[build] config=$Config  target=gateway" -ForegroundColor Cyan
+    & $CMAKE_EXE --build $BuildDir --config $Config --target gateway
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
 Write-Host "`n[install] Copying to: $InstallPrefix" -ForegroundColor Cyan
 Write-Host "  If this fails, close MATLAB and re-run." -ForegroundColor Yellow
 & $CMAKE_EXE --install $BuildDir --config $Config

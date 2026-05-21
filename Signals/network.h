@@ -2,14 +2,7 @@
 #ifndef __NETWORK_H_INCLUDED__
 #define __NETWORK_H_INCLUDED__
 
-#if defined(SIGNALS_STATIC_LIB)
-#define SIGNALS_API
-#elif defined(SIGNALS_EXPORTS)
-#define SIGNALS_API __declspec(dllexport)
-#else
-#define SIGNALS_API __declspec(dllimport)
-#endif
-
+#include "signals_api.h"
 #include "transferer.h"
 #include "value_traits.h"
 #include <algorithm>

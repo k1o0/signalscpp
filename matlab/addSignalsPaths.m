@@ -11,16 +11,15 @@ function addSignalsPaths(savePaths)
 % After this function returns the following are on the MATLAB path:
 %   • matlab/          — +sig package and +libmexclass proxy runtime
 %
-% The libmexclass gateway MEX (gateway.mexw64) and the Signals proxy
-% (signalsproxy.dll) live in matlab/+libmexclass/+proxy/.  They are
+% The libmexclass gateway MEX (gateway.mex*) and the Signals proxy shared
+% library (signalsproxy.*) live in matlab/+libmexclass/+proxy/. They are
 % rebuilt by the CMake project in build_mex/ and installed with:
 %
-%   msbuild build_mex\signalsproxy.vcxproj /p:Configuration=Release
-%   msbuild build_mex\INSTALL.vcxproj      /p:Configuration=Release
+%   cmake --build build_mex --config Release --target signalsproxy
+%   cmake --install build_mex --config Release
 %
-% MATLAB must be closed before running the INSTALL step (Windows locks
-% loaded DLLs).  Calling addSignalsPaths() afterwards forces the reloaded
-% DLL to be picked up fresh.
+% MATLAB must be closed before replacing loaded binaries. Calling
+% addSignalsPaths() afterwards forces the proxy to be reloaded from disk.
 %
 % Example — add to startup.m:
 %   addSignalsPaths('C:\repos\signalscpp');

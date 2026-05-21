@@ -38,6 +38,7 @@ cmake_install.cmake
 /matlab/*.mexw64
 /matlab/*.exp
 /matlab/*.lib
+/matlab/**/*.asv
 
 # Temporary test artefacts
 test_output.txt
@@ -45,3 +46,5 @@ test_output.txt
 # Other
 *.VC.db
 *.VC.opendb
+/extern/
+/legacy/

@@ -51,7 +51,9 @@ fprintf('ticks = %g\n', running.CurrentValue); % → 2
 | Requirement | Notes |
 |---|---|
 | MATLAB R2022b or later | Required for `arguments` blocks and the libmexclass gateway MEX |
-| Visual C++ Redistributable 2022 (x64) | The pre-built `.dll` files were compiled with MSVC v143 |
+| CMake 3.21+ | Required only when rebuilding the MEX layer |
+| C++ toolchain | Visual Studio 2022 on Windows, Xcode Command Line Tools on macOS |
+| Visual C++ Redistributable 2022 (x64) | Windows only; needed for pre-built `.dll` binaries |
 
 ### Steps
 
@@ -137,14 +139,18 @@ unit-test binaries).
 **Close MATLAB first** — Windows locks the loaded DLL and the install step
 will fail while MATLAB is running.
 
-From any PowerShell prompt at the repo root:
+From a shell at the repo root:
 
 ```powershell
 .\scripts\build_mex.ps1
 ```
 
+```bash
+./scripts/build_mex.sh
+```
+
 This runs cmake configure (if needed), builds `signalsproxy` in Release, and
-installs the DLLs into `matlab/+libmexclass/+proxy/`.  Then in MATLAB:
+installs the binaries into `matlab/+libmexclass/+proxy/`. Then in MATLAB:
 
 ```matlab
 addSignalsPaths   % reloads the freshly installed DLL
@@ -163,6 +169,20 @@ Common flags:
 .\scripts\build_mex.ps1 -Target ALL_BUILD
 ```
 
+```bash
+# Debug build, skip install
+./scripts/build_mex.sh --config Debug --skip-install
+
+# Force reconfigure
+./scripts/build_mex.sh --reconfigure
+
+# Rebuild everything, including the gateway
+./scripts/build_mex.sh --target ALL_BUILD
+
+# Explicit MATLAB app path
+./scripts/build_mex.sh --matlab-root /Applications/MATLAB_R2026a.app
+```
+
 Run `Get-Help .\scripts\build_mex.ps1 -Full` for all options.
 
 ### Manual cmake commands (any machine)
@@ -170,21 +190,21 @@ Run `Get-Help .\scripts\build_mex.ps1 -Full` for all options.
 The script uses the cmake bundled with VS 2022.  On a machine where cmake is
 on `PATH`, the equivalent commands are:
 
-```bat
-rem Configure (once, or after editing CMakeLists.txt)
-cmake -S . -B build_mex -G "Visual Studio 17 2022" -A x64 ^
-      -DSIGNALSCPP_BUILD_MEX=ON ^
-      -DMatlab_ROOT_DIR="C:\Program Files\MATLAB\R2025a" ^
-      -DCMAKE_INSTALL_PREFIX="%cd%\matlab"
+```bash
+# Configure (once, or after editing CMakeLists.txt)
+cmake -S . -B build_mex \
+   -DSIGNALSCPP_BUILD_MEX=ON \
+   -DMatlab_ROOT_DIR="/Applications/MATLAB_R2025a.app" \
+   -DCMAKE_INSTALL_PREFIX="$PWD/matlab"
 
-rem Build signalsproxy
+# Build signalsproxy
 cmake --build build_mex --config Release --target signalsproxy
 
-rem Install into matlab/
+# Install into matlab/
 cmake --install build_mex --config Release
 ```
 
-Adjust `-DMatlab_ROOT_DIR` and `-G` to match your toolchain.
+On Windows, add `-G "Visual Studio 17 2022" -A x64` and use a Windows MATLAB path.
 
 ### Rebuild gateway.mexw64 (rare)
 
