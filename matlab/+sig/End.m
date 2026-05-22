@@ -66,9 +66,14 @@ classdef End
 
         function result = colon(varargin)
             % colon  Support end-5:end syntax
-            %   This doesn't work directly because MATLAB evaluates : before
-            %   we see it. We need to handle this in Signal.subsref instead.
-            error('sig:signal:indexEndRangeError', 'Use ranges like (end-5:end) in signal subscripts directly')
+            if nargin == 2
+                result = sig.RangeEnd(varargin{1}, varargin{2});
+            elseif nargin == 3
+                result = sig.RangeEnd(varargin{1}, varargin{3}, varargin{2});
+            else
+                error('sig:signal:indexEndRangeError', ...
+                    'Unsupported range expression involving end')
+            end
         end
 
         function s = str(~)

@@ -23,6 +23,7 @@
 *.log
 *.cache
 *.db
+*.DS_Store
 
 # CMake generated files
 CMakeFiles/

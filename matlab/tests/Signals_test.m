@@ -1286,7 +1286,10 @@ classdef Signals_test < matlab.unittest.TestCase
         e = seq(end);
         seq.post(1:50)
         testCase.verifyEqual(e.Node.Value, 50)
-        testCase.verifyError(@() seq(end-5:end), 'sig:signal:indexEndRangeError')
+        endRange = seq(end-5:end);
+        testCase.verifyEqual(endRange.Name, "sequence(end-5:end)")
+        seq.post(1:50)
+        testCase.verifyEqual(endRange.Node.Value, 45:50)
 
         % Finally test behaviour when seq uninitialized
         seq2 = testCase.C;

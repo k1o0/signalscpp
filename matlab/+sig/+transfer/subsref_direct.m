@@ -79,6 +79,8 @@ function [val, valset] = subsref_direct(values, states, subs)
         if isa(sub, 'sig.End')
             % Resolve sig.End based on array size
             resolvedSubs{k} = sub.resolve(what);
+        elseif isa(sub, 'sig.RangeEnd')
+            resolvedSubs{k} = sub.resolve(what);
         elseif isa(sub, 'sig.Signal')
             % Get the signal's value from values
             if valueIdx <= numel(values)

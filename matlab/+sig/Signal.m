@@ -1081,6 +1081,8 @@ classdef Signal < handle
                     elseif isa(subs{k}, 'sig.End')
                         sigNames{k} = 'end';
                         % Don't add to displayNodes for sig.End objects
+                    elseif isa(subs{k}, 'sig.RangeEnd')
+                        sigNames{k} = subs{k}.str();
                     elseif isvector(subs{k}) && isrow(subs{k}) && numel(subs{k}) > 1
                         % For ranges/vectors, show individual elements
                         numStrs = cellstr(num2str(subs{k}(:)));
