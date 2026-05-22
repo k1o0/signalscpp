@@ -61,11 +61,12 @@ end
 if nameValueIdx == 0
   % All arguments are positional (no name-value pairs found)
   signalVarargin = varargin;
+  p.parse()
 else
   % First (nameValueIdx-1) arguments are positional
   signalVarargin = varargin(1:nameValueIdx-1);
   % Parse the name-value pairs
-  parse(p, varargin{nameValueIdx:end});
+  parse(p, varargin{nameValueIdx:end})
 end
 
 % Extract parameter values

@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -152,10 +153,8 @@ struct ValueTraits<matlab::data::Array> {
         matlab::data::ArrayFactory f;
         using AT = matlab::data::ArrayType;
 
-        const bool curr_empty  = current.isEmpty();
-        const bool curr_double = !curr_empty && current.getType() == AT::DOUBLE;
-        const bool curr_cell   = !curr_empty && current.getType() == AT::CELL;
-        const bool item_double = new_item.getType() == AT::DOUBLE;
+        const bool curr_empty = current.isEmpty();
+        const bool curr_cell  = !curr_empty && current.getType() == AT::CELL;
 
         // ── Cell mode: current is already a cell array ───────────────────────
         if (curr_cell) {
@@ -171,40 +170,51 @@ struct ValueTraits<matlab::data::Array> {
             return out;
         }
 
-        // ── Typed double path: current empty or double, new item is double ───
-        if ((curr_empty || curr_double) && item_double) {
-            std::vector<double> acc;
-            if (curr_double) {
-                matlab::data::TypedArray<double> ta =
-                    const_cast<matlab::data::Array&>(current);
-                for (double d : ta) acc.push_back(d);
+        // Empty buffers should adopt the type of their first value. Existing
+        // typed buffers continue only when the incoming item has the same type.
+        if (curr_empty || current.getType() == new_item.getType()) {
+            switch (new_item.getType()) {
+                case AT::DOUBLE:
+                    return buffer_up_to_typed<double>(current, new_item, max_n);
+                case AT::SINGLE:
+                    return buffer_up_to_typed<float>(current, new_item, max_n);
+                case AT::INT8:
+                    return buffer_up_to_typed<int8_t>(current, new_item, max_n);
+                case AT::INT16:
+                    return buffer_up_to_typed<int16_t>(current, new_item, max_n);
+                case AT::INT32:
+                    return buffer_up_to_typed<int32_t>(current, new_item, max_n);
+                case AT::INT64:
+                    return buffer_up_to_typed<int64_t>(current, new_item, max_n);
+                case AT::UINT8:
+                    return buffer_up_to_typed<uint8_t>(current, new_item, max_n);
+                case AT::UINT16:
+                    return buffer_up_to_typed<uint16_t>(current, new_item, max_n);
+                case AT::UINT32:
+                    return buffer_up_to_typed<uint32_t>(current, new_item, max_n);
+                case AT::UINT64:
+                    return buffer_up_to_typed<uint64_t>(current, new_item, max_n);
+                case AT::LOGICAL:
+                    return buffer_up_to_typed<bool>(current, new_item, max_n);
+                case AT::CHAR:
+                    return buffer_up_to_char(current, new_item, max_n);
+                default:
+                    break;
             }
-            {
-                matlab::data::TypedArray<double> ta =
-                    const_cast<matlab::data::Array&>(new_item);
-                for (double d : ta) acc.push_back(d);
-            }
-            if (max_n > 0 && acc.size() > max_n)
-                acc.erase(acc.begin(),
-                          acc.begin() + static_cast<ptrdiff_t>(acc.size() - max_n));
-            auto out = f.createArray<double>({1, acc.size()});
-            std::copy(acc.begin(), acc.end(), out.begin());
-            return out;
         }
 
         // ── Type mismatch ────────────────────────────────────────────────────
         if (!cast_on_type_change)
             throw signals::TypeError(
-                "bufferUpTo: value type changed; use the 'cell' option to allow mixed types");
+                "bufferUpTo: value type changed from " + describe_array(current) +
+                " to " + describe_array(new_item) +
+                "; use the 'cell' option to allow mixed types");
 
-        // Promote existing typed (double) buffer to a cell array, then append.
+        // Promote existing typed buffer to a cell array, then append.
         std::vector<matlab::data::Array> cells;
-        if (curr_double) {
-            matlab::data::TypedArray<double> ta =
-                const_cast<matlab::data::Array&>(current);
-            for (double d : ta) cells.push_back(f.createScalar<double>(d));
-        } else if (!curr_empty) {
-            cells.push_back(current);
+        if (!curr_empty) {
+            if (!append_cells_from_array(current, cells, f))
+                cells.push_back(current);
         }
         cells.push_back(new_item);
         if (max_n > 0 && cells.size() > max_n)
@@ -225,6 +235,123 @@ struct ValueTraits<matlab::data::Array> {
     // not natively supported; route those through map2/mapn with @mtimes.
 
 private:
+    static const char* array_type_name(matlab::data::ArrayType type) noexcept {
+        using AT = matlab::data::ArrayType;
+        switch (type) {
+            case AT::DOUBLE: return "double";
+            case AT::SINGLE: return "single";
+            case AT::LOGICAL: return "logical";
+            case AT::CHAR: return "char";
+            case AT::INT8: return "int8";
+            case AT::INT16: return "int16";
+            case AT::INT32: return "int32";
+            case AT::INT64: return "int64";
+            case AT::UINT8: return "uint8";
+            case AT::UINT16: return "uint16";
+            case AT::UINT32: return "uint32";
+            case AT::UINT64: return "uint64";
+            case AT::MATLAB_STRING: return "string";
+            case AT::CELL: return "cell";
+            case AT::STRUCT: return "struct";
+            default: return "unknown";
+        }
+    }
+
+    static std::string describe_array(const matlab::data::Array& arr) {
+        std::ostringstream oss;
+        if (arr.isEmpty() && arr.getType() == matlab::data::ArrayType::DOUBLE) {
+            oss << "empty double sentinel";
+        } else {
+            oss << array_type_name(arr.getType());
+        }
+        oss << '[';
+        const auto dims = arr.getDimensions();
+        for (size_t i = 0; i < dims.size(); ++i) {
+            if (i > 0) oss << 'x';
+            oss << dims[i];
+        }
+        oss << ']';
+        return oss.str();
+    }
+
+    template <typename T>
+    static matlab::data::Array buffer_up_to_typed(const matlab::data::Array& current,
+                                                  const matlab::data::Array& new_item,
+                                                  size_t max_n) {
+        matlab::data::ArrayFactory f;
+        std::vector<T> acc;
+        if (!current.isEmpty()) {
+            matlab::data::TypedArray<T> ta = const_cast<matlab::data::Array&>(current);
+            for (const auto& v : ta) acc.push_back(static_cast<T>(v));
+        }
+        {
+            matlab::data::TypedArray<T> ta = const_cast<matlab::data::Array&>(new_item);
+            for (const auto& v : ta) acc.push_back(static_cast<T>(v));
+        }
+        if (max_n > 0 && acc.size() > max_n)
+            acc.erase(acc.begin(),
+                      acc.begin() + static_cast<ptrdiff_t>(acc.size() - max_n));
+        auto out = f.createArray<T>({1, acc.size()});
+        for (size_t i = 0; i < acc.size(); ++i)
+            out[i] = acc[i];
+        return out;
+    }
+
+    static matlab::data::Array buffer_up_to_char(const matlab::data::Array& current,
+                                                 const matlab::data::Array& new_item,
+                                                 size_t max_n) {
+        matlab::data::ArrayFactory f;
+        std::string acc;
+        if (!current.isEmpty()) {
+            matlab::data::CharArray ca = const_cast<matlab::data::Array&>(current);
+            acc = ca.toAscii();
+        }
+        {
+            matlab::data::CharArray ca = const_cast<matlab::data::Array&>(new_item);
+            acc += ca.toAscii();
+        }
+        if (max_n > 0 && acc.size() > max_n)
+            acc.erase(0, acc.size() - max_n);
+        return f.createCharArray(acc);
+    }
+
+    template <typename T>
+    static void append_cells_from_typed(const matlab::data::Array& current,
+                                        std::vector<matlab::data::Array>& cells,
+                                        matlab::data::ArrayFactory& f) {
+        matlab::data::TypedArray<T> ta = const_cast<matlab::data::Array&>(current);
+        for (const auto& v : ta)
+            cells.push_back(f.createScalar<T>(static_cast<T>(v)));
+    }
+
+    static bool append_cells_from_array(const matlab::data::Array& current,
+                                        std::vector<matlab::data::Array>& cells,
+                                        matlab::data::ArrayFactory& f) {
+        using AT = matlab::data::ArrayType;
+        switch (current.getType()) {
+            case AT::DOUBLE: append_cells_from_typed<double>(current, cells, f); return true;
+            case AT::SINGLE: append_cells_from_typed<float>(current, cells, f); return true;
+            case AT::LOGICAL: append_cells_from_typed<bool>(current, cells, f); return true;
+            case AT::INT8: append_cells_from_typed<int8_t>(current, cells, f); return true;
+            case AT::INT16: append_cells_from_typed<int16_t>(current, cells, f); return true;
+            case AT::INT32: append_cells_from_typed<int32_t>(current, cells, f); return true;
+            case AT::INT64: append_cells_from_typed<int64_t>(current, cells, f); return true;
+            case AT::UINT8: append_cells_from_typed<uint8_t>(current, cells, f); return true;
+            case AT::UINT16: append_cells_from_typed<uint16_t>(current, cells, f); return true;
+            case AT::UINT32: append_cells_from_typed<uint32_t>(current, cells, f); return true;
+            case AT::UINT64: append_cells_from_typed<uint64_t>(current, cells, f); return true;
+            case AT::CHAR: {
+                matlab::data::CharArray ca = const_cast<matlab::data::Array&>(current);
+                std::string chars = ca.toAscii();
+                for (char ch : chars)
+                    cells.push_back(f.createCharArray(std::string(1, ch)));
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+
     template <typename Out, typename Op>
     static matlab::data::Array binop_double(
         const matlab::data::Array& a,

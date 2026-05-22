@@ -350,6 +350,8 @@ bool NetworkT<V>::Node::transfer() {
 
     bool produced_output = false;
 
+    try {
+
     // ── Binary arithmetic and comparison ops (opcodes 1-14) ──────────────────
     if (op_int >= 1 && op_int <= 14) {
         if (inputs.size() >= 2 &&
@@ -756,4 +758,14 @@ bool NetworkT<V>::Node::transfer() {
         return true;
     }
     return false;
+    } catch (const signals::MatlabError& ex) {
+        throw signals::MatlabError(ex.id(),
+            std::string("node ") + std::to_string(id) + ": " + ex.what());
+    } catch (const signals::TypeError& ex) {
+        throw signals::TypeError(
+            std::string("node ") + std::to_string(id) + ": " + ex.what());
+    } catch (const signals::Error& ex) {
+        throw signals::Error(
+            std::string("node ") + std::to_string(id) + ": " + ex.what());
+    }
 }

@@ -228,9 +228,69 @@ classdef Signals_test < matlab.unittest.TestCase
       a.post(v4)
       testCase.verifyEqual(bup.Node.Value, [v2, v3, v4], 'Expected trimmed 1x3 double after overflow')
 
-      % Type change in strict (default) mode raises an error
-      testCase.verifyError(@() a.post('x'), 'signals:runtimeError', ...
-        'Expected error on type change in strict mode')
+      % Type change in strict (default) mode raises an error with useful
+      % type and node-id context for debugging.
+      err = [];
+      try
+        a.post('x');
+      catch ex
+        err = ex;
+      end
+      testCase.verifyEqual(err.identifier, 'signals:runtimeError', ...
+        'Expected runtime error on type change in strict mode')
+      testCase.verifyTrue(contains(err.message, 'node '), ...
+        'Expected strict-mode error to include the failing node id')
+      testCase.verifyTrue(contains(err.message, 'bufferUpTo: value type changed from'), ...
+        'Expected strict-mode error to include type-change context')
+      testCase.verifyTrue(contains(err.message, 'double'), ...
+        'Expected strict-mode error to mention the current buffer type')
+      testCase.verifyTrue(contains(err.message, 'char'), ...
+        'Expected strict-mode error to mention the incoming item type')
+
+      % First non-double value should seed the typed buffer instead of
+      % looking like a type change from the empty sentinel.
+      logicSrc = testCase.net.origin('logicSrc');
+      testCase.addTeardown(@delete, logicSrc)
+      logic = logicSrc >= 0.5;
+      logicBuf = logic.bufferUpTo(3);
+
+      logicSrc.post(1)
+      testCase.verifyTrue(islogical(logicBuf.Node.Value), ...
+        'Expected logical buffer after first logical post')
+      testCase.verifyEqual(logicBuf.Node.Value, true, ...
+        'Expected first logical value to seed the buffer type')
+
+      logicSrc.post(0)
+      testCase.verifyEqual(logicBuf.Node.Value, [true false], ...
+        'Expected logical buffer to accumulate subsequent logical values')
+
+      charSrc = testCase.net.origin('charSrc');
+      testCase.addTeardown(@delete, charSrc)
+      charBuf = charSrc.bufferUpTo(3);
+
+      charSrc.post('a')
+      testCase.verifyClass(charBuf.Node.Value, 'char', ...
+        'Expected char buffer after first char post')
+      testCase.verifyEqual(charBuf.Node.Value, 'a', ...
+        'Expected first char value to seed the buffer type')
+
+      charSrc.post('b')
+      testCase.verifyEqual(charBuf.Node.Value, 'ab', ...
+        'Expected char buffer to accumulate subsequent char values')
+
+      uintSrc = testCase.net.origin('uintSrc');
+      testCase.addTeardown(@delete, uintSrc)
+      uintBuf = uintSrc.bufferUpTo(3);
+
+      uintSrc.post(uint8(1))
+      testCase.verifyClass(uintBuf.Node.Value, 'uint8', ...
+        'Expected uint8 buffer after first uint8 post')
+      testCase.verifyEqual(uintBuf.Node.Value, uint8(1), ...
+        'Expected first uint8 value to seed the buffer type')
+
+      uintSrc.post(uint8(2))
+      testCase.verifyEqual(uintBuf.Node.Value, uint8([1 2]), ...
+        'Expected uint8 buffer to accumulate subsequent uint8 values')
 
       % ── 'cell' option: mixed-type buffering ──────────────────────────────
       % Use signal c (independent of bup/a) so the strict-mode bup node doesn't
@@ -307,6 +367,50 @@ classdef Signals_test < matlab.unittest.TestCase
       testCase.verifyEqual(numel(b.Node.Value), n, 'rolling buffer should keep exactly n elements')
       testCase.verifyEqual(b.Node.Value(end), vNext, 'last element should be newest value')
       testCase.verifyFalse(isequal(b.Node.Value, b_prev), 'rolling buffer should shift by one')
+
+      % Logical inputs should also be able to seed and fill the buffer.
+      logicSrc = testCase.net.origin('logicBufferSrc');
+      testCase.addTeardown(@delete, logicSrc)
+      logic = logicSrc >= 0.5;
+      logicBuffer = logic.buffer(2);
+
+      logicSrc.post(1)
+      testCase.verifyEmpty(logicBuffer.Node.Value, ...
+        'Logical buffer should not fire before it is full')
+
+      logicSrc.post(0)
+      testCase.verifyTrue(islogical(logicBuffer.Node.Value), ...
+        'Expected logical output once logical buffer is full')
+      testCase.verifyEqual(logicBuffer.Node.Value, [true false], ...
+        'Expected logical buffer contents after filling')
+
+      charSrc = testCase.net.origin('charBufferSrc');
+      testCase.addTeardown(@delete, charSrc)
+      charBuffer = charSrc.buffer(2);
+
+      charSrc.post('a')
+      testCase.verifyEmpty(charBuffer.Node.Value, ...
+        'Char buffer should not fire before it is full')
+
+      charSrc.post('b')
+      testCase.verifyClass(charBuffer.Node.Value, 'char', ...
+        'Expected char output once char buffer is full')
+      testCase.verifyEqual(charBuffer.Node.Value, 'ab', ...
+        'Expected char buffer contents after filling')
+
+      uintSrc = testCase.net.origin('uintBufferSrc');
+      testCase.addTeardown(@delete, uintSrc)
+      uintBuffer = uintSrc.buffer(2);
+
+      uintSrc.post(uint8(1))
+      testCase.verifyEmpty(uintBuffer.Node.Value, ...
+        'Uint8 buffer should not fire before it is full')
+
+      uintSrc.post(uint8(2))
+      testCase.verifyClass(uintBuffer.Node.Value, 'uint8', ...
+        'Expected uint8 output once uint8 buffer is full')
+      testCase.verifyEqual(uintBuffer.Node.Value, uint8([1 2]), ...
+        'Expected uint8 buffer contents after filling')
     end
 
     function test_filter(testCase)
