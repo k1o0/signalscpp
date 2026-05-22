@@ -1191,6 +1191,20 @@ classdef Signals_test < matlab.unittest.TestCase
         seq2.post(1:100)
         testCase.verifyEqual(indexed.Node.Value, 1)
     end
+
+      function test_cell_brace_then_method_call_uses_map(testCase)
+        % Test behaviour of signals when accessed via cell indexing.
+        x = testCase.A;
+
+        signalCell = {x};
+        testCase.verifyInstanceOf(signalCell, 'cell')
+        mapped = signalCell{1}.map(@(v) v - 1);
+
+        testCase.verifyInstanceOf(mapped, 'sig.Signal')
+
+        x.post(1)
+        testCase.verifyEqual(mapped.Node.Value, 0)
+      end
   end
 
   methods (Access = private)

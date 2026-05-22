@@ -243,7 +243,7 @@ classdef Net < handle
 
     end
 
-    methods (Access = private)
+    methods %(Access = private)
         function deleteNode(obj, node)
             obj.Proxy.DeleteNode(node.Id);
         end

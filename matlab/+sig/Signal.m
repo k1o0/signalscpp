@@ -87,8 +87,7 @@ classdef Signal < handle
                 m.Node.FormatSpec = formatSpec;
             else
                 % Constant or signal: f_node holds the value to sample when this fires.
-                f_node = this.Node.from(f);
-                nodes = [this.Node, f_node];
+                nodes = this.Node.from(this, f);
                 % No callable: map_op samples inputs[1] when inputs[0] fires.
                 m = sig.Signal(net.addNode(nodes, sig.OpCode.map_op, false));
                 if nargin < 3; formatSpec = '%s.map(%s)'; end
@@ -419,7 +418,7 @@ classdef Signal < handle
             true_node = net.rootNode(true);
             tr = sig.Signal(net.addNode([true_node, not_armed.Node], sig.OpCode.at_op, false));
             tr.Node.FormatSpec    = '%s.setTrigger(%s)';
-            tr.Node.DisplayInputs = [this.Node, release_node];
+            tr.Node.DisplayInputs = [this.Node, release.Node];
         end
 
         function tr = setEpochTrigger(this, t, x, threshold)
@@ -695,12 +694,11 @@ classdef Signal < handle
             %
             % See also sig.Signal/cond, sig.Signal/indexOfFirst
             net = this.Node.Net;
-            option_nodes = this.Node.from(varargin{:});
-            nodes  = [this.Node, option_nodes];
-            n_opts = numel(option_nodes);
+            inputs = this.Node.from(this, varargin{:});
+            n_opts = numel(inputs) - 1;  % excluding selector node
             fmt = ['%s.selectFrom([ ' strjoin(repmat({'%s'}, 1, n_opts), ' ; ') ' ])'];
-            s = sig.Signal(net.addNode(nodes, sig.OpCode.select_from, false));
-            s.Node.FormatSpec    = fmt;
+            s = sig.Signal(net.addNode(inputs, sig.OpCode.select_from, false));
+            s.Node.FormatSpec = fmt;
         end
 
         function f = indexOfFirst(varargin)
