@@ -91,6 +91,9 @@ private:
         long id{ -1 };
         bool inUse{ false };
         bool queued{ false };
+        // Transferer owns both the opcode/callable and any specialised storage
+        // used by that transfer behaviour (appendValues backing stores, ring
+        // buffers, etc.).
         TransfererT<V> transferer{ Operation::nop };
         std::vector<Node*> inputs;
         std::set<Node*> targets;
@@ -107,6 +110,9 @@ private:
         bool is_available() const { return !inUse; }
         void set_working_value(const V& value);
         void set_current_value(const V& value);
+        // Returns currentValue in a form safe for generic transfer logic to read.
+        // Some bindings keep an optimized backing store in transferer and only
+        // materialize an exact V here on demand.
         std::optional<V>& current_value_for_read();
         void set_transferer(Operation t_op) { transferer = TransfererT<V>(t_op); }
         void set_callable(typename TransfererT<V>::NodeCallable fn) {

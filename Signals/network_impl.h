@@ -168,12 +168,19 @@ void NetworkT<V>::apply(const std::vector<long>& affected_ids) {
         if (!n.workingValue) continue;
 
         if (n.transferer.append_values()) {
+            // appendValues nodes commit through specialised backing storage when
+            // available. If the binding does not provide one, fall back to the
+            // simple copy-based ValueTraits::append path.
             if (!Traits::append_storage_append(n.transferer.append_storage(), n.currentValue,
                                                *n.workingValue)) {
                 V acc = n.current_value_for_read().value_or(Traits::no_value());
                 n.currentValue = Traits::append(acc, *n.workingValue);
             }
         } else {
+            // buffer_up_to previewed a visible workingValue during transfer().
+            // Commit the ring-buffer state now that the transaction is known to
+            // succeed, then move the previewed value into currentValue.
+            Traits::buffer_storage_commit(n.transferer.buffer_storage(), n.workingValue);
             n.transferer.reset_append_storage();
             n.currentValue = std::move(n.workingValue);
         }
@@ -283,6 +290,7 @@ void NetworkT<V>::Node::destroy() {
     workingValue = std::nullopt;
     currentValue = std::nullopt;
     transferer.reset_append_storage();
+    transferer.reset_buffer_storage();
     inputs.clear();
     targets.clear();
     transferer.set_callable({});
@@ -313,6 +321,7 @@ void NetworkT<V>::Node::set_working_value(const V& value) {
 template <typename V>
 void NetworkT<V>::Node::set_current_value(const V& value) {
     transferer.reset_append_storage();
+    transferer.reset_buffer_storage();
     if (Traits::has_value(value))
         currentValue = value;
     else
@@ -321,6 +330,9 @@ void NetworkT<V>::Node::set_current_value(const V& value) {
 
 template <typename V>
 std::optional<V>& NetworkT<V>::Node::current_value_for_read() {
+    // Reads go through the append storage hook so log()/other appendValues
+    // nodes can keep an optimized backing store internally and only pay the
+    // materialization cost when somebody actually observes currentValue.
     Traits::append_storage_materialize(transferer.append_storage(), currentValue);
     return currentValue;
 }
@@ -546,6 +558,8 @@ bool NetworkT<V>::Node::transfer() {
     //       inputs[1] (maxSamples) has at least a current value available.
     // Capacity: from latest(inputs[1]) via to_index.
     // Mode flag: callable present → cast on type change; absent → strict (throw).
+    // When the binding provides ring-buffer storage, preview the exact visible
+    // buffer here without mutating committed state; apply() commits the storage.
     else if (op == Operation::buffer_up_to) {
         if (inputs.size() >= 2 && inputs[0]->workingValue) {
             auto n_opt = latest(inputs[1]);
@@ -554,8 +568,11 @@ bool NetworkT<V>::Node::transfer() {
                 size_t max_n = idx ? *idx : 0;
                 const bool cast_mode = static_cast<bool>(callable);
                 const V& new_item = *inputs[0]->workingValue;
-                V curr = current_value_for_read().value_or(Traits::no_value());
-                workingValue = Traits::buffer_up_to(curr, new_item, max_n, cast_mode);
+                if (!Traits::buffer_storage_preview(transferer.buffer_storage(), currentValue,
+                                                    workingValue, new_item, max_n, cast_mode)) {
+                    V curr = current_value_for_read().value_or(Traits::no_value());
+                    workingValue = Traits::buffer_up_to(curr, new_item, max_n, cast_mode);
+                }
                 produced_output = true;
             }
         }

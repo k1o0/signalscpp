@@ -16,6 +16,9 @@
 
 template <>
 struct ValueTraits<matlab::data::Array> {
+    // Backing storage for appendValues on MATLAB struct arrays. Used by log()
+    // so the committed history can grow geometrically while reads still see an
+    // exact 1xN struct array.
     struct AppendStorage {
         bool active{ false };
         bool dirty{ false };
@@ -23,6 +26,21 @@ struct ValueTraits<matlab::data::Array> {
         size_t capacity{ 0 };
         std::vector<std::string> field_names;
         std::optional<matlab::data::Array> buffer;
+    };
+
+    // Backing storage for typed buffer_up_to nodes. `buffer` holds a fixed-size
+    // ring, while `pending_*` captures the item/max_n used to build the current
+    // transaction's preview value. apply() later commits that pending item.
+    struct BufferStorage {
+        bool active{ false };
+        bool pending{ false };
+        matlab::data::ArrayType type{ matlab::data::ArrayType::DOUBLE };
+        size_t capacity{ 0 };
+        size_t size{ 0 };
+        size_t start{ 0 };
+        std::optional<matlab::data::Array> buffer;
+        std::optional<matlab::data::Array> pending_item;
+        size_t pending_max_n{ 0 };
     };
 
     // ── Existence / truthiness ───────────────────────────────────────────────
@@ -146,6 +164,8 @@ struct ValueTraits<matlab::data::Array> {
         const size_t work_n = working.getNumberOfElements();
 
         if (!storage.active) {
+            // First append: seed the backing store from any existing concrete
+            // currentValue, then switch future growth to the overallocated store.
             size_t curr_n = 0;
             if (current && !current->isEmpty()) {
                 if (current->getType() != AT::STRUCT)
@@ -182,6 +202,8 @@ struct ValueTraits<matlab::data::Array> {
 
         const size_t needed = storage.size + work_n;
         if (needed > storage.capacity) {
+            // Grow geometrically so repeated log appends are amortized rather
+            // than copying the whole history every post.
             size_t new_capacity = storage.capacity > 0 ? storage.capacity : size_t(4);
             while (new_capacity < needed)
                 new_capacity *= 2;
@@ -209,10 +231,12 @@ struct ValueTraits<matlab::data::Array> {
         if (!storage.dirty && current.has_value())
             return true;
 
+        // Reads expose only the logical prefix [0, size), never the spare
+        // capacity kept in the backing store.
         matlab::data::ArrayFactory f;
         auto out = f.createStructArray({1, storage.size}, storage.field_names);
-    matlab::data::StructArray buffer = as_struct(*storage.buffer);
-    copy_struct_range(buffer, storage.size, out, storage.field_names, 0);
+        matlab::data::StructArray buffer = as_struct(*storage.buffer);
+        copy_struct_range(buffer, storage.size, out, storage.field_names, 0);
         current = out;
         storage.dirty = false;
         return true;
@@ -220,6 +244,131 @@ struct ValueTraits<matlab::data::Array> {
 
     static void append_storage_reset(AppendStorage& storage) {
         storage = AppendStorage{};
+    }
+
+    static bool buffer_storage_preview(BufferStorage& storage,
+                                       const std::optional<matlab::data::Array>& current,
+                                       std::optional<matlab::data::Array>& working,
+                                       const matlab::data::Array& new_item,
+                                       size_t max_n,
+                                       bool cast_on_type_change) {
+        // Only typed fixed-capacity buffers use the ring path. Mixed-type cell
+        // mode and char buffering still fall back to the older materialized path.
+        if (cast_on_type_change || max_n == 0 || !is_ring_buffer_type(new_item.getType()))
+            return false;
+
+        if (!ensure_ring_storage(storage, current, new_item.getType(), max_n))
+            return false;
+
+        if (storage.type != new_item.getType()) {
+            const matlab::data::Array& curr =
+                (current && !current->isEmpty()) ? *current : no_value();
+            throw signals::TypeError(
+                "bufferUpTo: value type changed from " + describe_array(curr) +
+                " to " + describe_array(new_item) +
+                "; use the 'cell' option to allow mixed types");
+        }
+
+        // Record the incoming item so apply() can commit exactly the previewed
+        // transaction after downstream transfer logic has run.
+        storage.pending = true;
+        storage.pending_item = new_item;
+        storage.pending_max_n = max_n;
+
+        switch (storage.type) {
+            case matlab::data::ArrayType::DOUBLE:
+                working = preview_typed<double>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::SINGLE:
+                working = preview_typed<float>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::INT8:
+                working = preview_typed<int8_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::INT16:
+                working = preview_typed<int16_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::INT32:
+                working = preview_typed<int32_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::INT64:
+                working = preview_typed<int64_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::UINT8:
+                working = preview_typed<uint8_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::UINT16:
+                working = preview_typed<uint16_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::UINT32:
+                working = preview_typed<uint32_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::UINT64:
+                working = preview_typed<uint64_t>(storage, new_item, max_n);
+                return true;
+            case matlab::data::ArrayType::LOGICAL:
+                working = preview_typed<bool>(storage, new_item, max_n);
+                return true;
+            default:
+                storage.pending = false;
+                storage.pending_item = std::nullopt;
+                return false;
+        }
+    }
+
+    static bool buffer_storage_commit(BufferStorage& storage,
+                                      const std::optional<matlab::data::Array>& /*working*/) {
+        if (!storage.pending || !storage.pending_item)
+            return false;
+
+        // Commit mutates the fixed-capacity ring only after transfer() has
+        // finished computing the visible preview value for this transaction.
+        switch (storage.type) {
+            case matlab::data::ArrayType::DOUBLE:
+                commit_typed<double>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::SINGLE:
+                commit_typed<float>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::INT8:
+                commit_typed<int8_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::INT16:
+                commit_typed<int16_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::INT32:
+                commit_typed<int32_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::INT64:
+                commit_typed<int64_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::UINT8:
+                commit_typed<uint8_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::UINT16:
+                commit_typed<uint16_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::UINT32:
+                commit_typed<uint32_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::UINT64:
+                commit_typed<uint64_t>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            case matlab::data::ArrayType::LOGICAL:
+                commit_typed<bool>(storage, *storage.pending_item, storage.pending_max_n);
+                break;
+            default:
+                return false;
+        }
+
+        storage.pending = false;
+        storage.pending_item = std::nullopt;
+        storage.pending_max_n = 0;
+        return true;
+    }
+
+    static void buffer_storage_reset(BufferStorage& storage) {
+        storage = BufferStorage{};
     }
 
     // ── to_index (select_from) ───────────────────────────────────────────────
@@ -340,6 +489,259 @@ struct ValueTraits<matlab::data::Array> {
 private:
     static matlab::data::StructArray as_struct(matlab::data::Array& arr) {
         return arr;
+    }
+
+    static bool is_ring_buffer_type(matlab::data::ArrayType type) noexcept {
+        using AT = matlab::data::ArrayType;
+        switch (type) {
+            case AT::DOUBLE:
+            case AT::SINGLE:
+            case AT::INT8:
+            case AT::INT16:
+            case AT::INT32:
+            case AT::INT64:
+            case AT::UINT8:
+            case AT::UINT16:
+            case AT::UINT32:
+            case AT::UINT64:
+            case AT::LOGICAL:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static size_t ring_index(const BufferStorage& storage, size_t logical_index) {
+        return (storage.start + logical_index) % storage.capacity;
+    }
+
+    static bool ensure_ring_storage(BufferStorage& storage,
+                                    const std::optional<matlab::data::Array>& current,
+                                    matlab::data::ArrayType item_type,
+                                    size_t max_n) {
+        if (storage.active) {
+            if (storage.type != item_type)
+                return true;
+            if (storage.capacity != max_n)
+                return resize_ring_storage(storage, max_n);
+            return true;
+        }
+
+        storage.type = item_type;
+        storage.capacity = max_n;
+        storage.size = 0;
+        storage.start = 0;
+        if (!allocate_ring_buffer(storage))
+            return false;
+        storage.active = true;
+
+        if (current && !current->isEmpty()) {
+            // Rehydrate ring state from an existing concrete currentValue when a
+            // buffer node first transitions onto the optimized storage path.
+            if (!is_ring_buffer_type(current->getType()) || current->getType() != item_type)
+                return false;
+            append_current_into_storage(storage, *current);
+        }
+        return true;
+    }
+
+    static bool allocate_ring_buffer(BufferStorage& storage) {
+        matlab::data::ArrayFactory f;
+        switch (storage.type) {
+            case matlab::data::ArrayType::DOUBLE:
+                storage.buffer = f.createArray<double>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::SINGLE:
+                storage.buffer = f.createArray<float>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::INT8:
+                storage.buffer = f.createArray<int8_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::INT16:
+                storage.buffer = f.createArray<int16_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::INT32:
+                storage.buffer = f.createArray<int32_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::INT64:
+                storage.buffer = f.createArray<int64_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::UINT8:
+                storage.buffer = f.createArray<uint8_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::UINT16:
+                storage.buffer = f.createArray<uint16_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::UINT32:
+                storage.buffer = f.createArray<uint32_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::UINT64:
+                storage.buffer = f.createArray<uint64_t>({1, storage.capacity}); return true;
+            case matlab::data::ArrayType::LOGICAL:
+                storage.buffer = f.createArray<bool>({1, storage.capacity}); return true;
+            default:
+                return false;
+        }
+    }
+
+    static bool resize_ring_storage(BufferStorage& storage, size_t new_capacity) {
+        if (storage.capacity == new_capacity)
+            return true;
+
+        BufferStorage resized;
+        resized.active = true;
+        resized.type = storage.type;
+        resized.capacity = new_capacity;
+        resized.size = 0;
+        resized.start = 0;
+        if (!allocate_ring_buffer(resized))
+            return false;
+
+        const size_t keep = std::min(storage.size, new_capacity);
+        const size_t first_keep = storage.size > keep ? storage.size - keep : 0;
+
+        switch (storage.type) {
+            case matlab::data::ArrayType::DOUBLE:
+                copy_ring_tail<double>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::SINGLE:
+                copy_ring_tail<float>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::INT8:
+                copy_ring_tail<int8_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::INT16:
+                copy_ring_tail<int16_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::INT32:
+                copy_ring_tail<int32_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::INT64:
+                copy_ring_tail<int64_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::UINT8:
+                copy_ring_tail<uint8_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::UINT16:
+                copy_ring_tail<uint16_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::UINT32:
+                copy_ring_tail<uint32_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::UINT64:
+                copy_ring_tail<uint64_t>(storage, resized, first_keep, keep); break;
+            case matlab::data::ArrayType::LOGICAL:
+                copy_ring_tail<bool>(storage, resized, first_keep, keep); break;
+            default:
+                return false;
+        }
+
+        storage = std::move(resized);
+        return true;
+    }
+
+    static void append_current_into_storage(BufferStorage& storage,
+                                            const matlab::data::Array& current) {
+        switch (storage.type) {
+            case matlab::data::ArrayType::DOUBLE:
+                append_array_into_storage<double>(storage, current); break;
+            case matlab::data::ArrayType::SINGLE:
+                append_array_into_storage<float>(storage, current); break;
+            case matlab::data::ArrayType::INT8:
+                append_array_into_storage<int8_t>(storage, current); break;
+            case matlab::data::ArrayType::INT16:
+                append_array_into_storage<int16_t>(storage, current); break;
+            case matlab::data::ArrayType::INT32:
+                append_array_into_storage<int32_t>(storage, current); break;
+            case matlab::data::ArrayType::INT64:
+                append_array_into_storage<int64_t>(storage, current); break;
+            case matlab::data::ArrayType::UINT8:
+                append_array_into_storage<uint8_t>(storage, current); break;
+            case matlab::data::ArrayType::UINT16:
+                append_array_into_storage<uint16_t>(storage, current); break;
+            case matlab::data::ArrayType::UINT32:
+                append_array_into_storage<uint32_t>(storage, current); break;
+            case matlab::data::ArrayType::UINT64:
+                append_array_into_storage<uint64_t>(storage, current); break;
+            case matlab::data::ArrayType::LOGICAL:
+                append_array_into_storage<bool>(storage, current); break;
+            default:
+                break;
+        }
+    }
+
+    template <typename T>
+    static void append_array_into_storage(BufferStorage& storage,
+                                          const matlab::data::Array& arr) {
+        matlab::data::TypedArray<T> src = const_cast<matlab::data::Array&>(arr);
+        matlab::data::TypedArray<T> dst = const_cast<matlab::data::Array&>(*storage.buffer);
+        for (const auto& value : src)
+            ring_push(storage, dst, static_cast<T>(value));
+        *storage.buffer = dst;
+    }
+
+    template <typename T>
+    static void ring_push(BufferStorage& storage,
+                          matlab::data::TypedArray<T>& dst,
+                          T value) {
+        if (storage.capacity == 0)
+            return;
+        if (storage.size < storage.capacity) {
+            dst[ring_index(storage, storage.size)] = value;
+            ++storage.size;
+        } else {
+            dst[storage.start] = value;
+            storage.start = (storage.start + 1) % storage.capacity;
+        }
+    }
+
+    template <typename T>
+    static matlab::data::Array preview_typed(const BufferStorage& storage,
+                                             const matlab::data::Array& new_item,
+                                             size_t max_n) {
+        matlab::data::TypedArray<T> src = const_cast<matlab::data::Array&>(new_item);
+        const size_t new_count = new_item.getNumberOfElements();
+        const size_t out_n = std::min(storage.size + new_count, max_n);
+
+        matlab::data::ArrayFactory f;
+        auto out = f.createArray<T>({1, out_n});
+
+        if (new_count >= out_n) {
+            // The new item alone overflows the window, so only its tail survives.
+            const size_t skip = new_count - out_n;
+            size_t out_idx = 0;
+            size_t src_idx = 0;
+            for (const auto& value : src) {
+                if (src_idx++ < skip) continue;
+                out[out_idx++] = static_cast<T>(value);
+            }
+            return out;
+        }
+
+        // Otherwise keep the newest logical prefix from the ring and append the
+        // incoming item contiguously into the visible preview buffer.
+        const size_t keep = out_n - new_count;
+        matlab::data::TypedArray<T> buffer = const_cast<matlab::data::Array&>(*storage.buffer);
+        const size_t first_keep = storage.size - keep;
+        for (size_t i = 0; i < keep; ++i)
+            out[i] = buffer[ring_index(storage, first_keep + i)];
+
+        size_t out_idx = keep;
+        for (const auto& value : src)
+            out[out_idx++] = static_cast<T>(value);
+        return out;
+    }
+
+    template <typename T>
+    static void commit_typed(BufferStorage& storage,
+                             const matlab::data::Array& new_item,
+                             size_t max_n) {
+        if (storage.capacity != max_n)
+            resize_ring_storage(storage, max_n);
+
+        // Commit writes the new item into the fixed-capacity ring in arrival
+        // order, overwriting the oldest elements once the window is full.
+        matlab::data::TypedArray<T> dst = const_cast<matlab::data::Array&>(*storage.buffer);
+        matlab::data::TypedArray<T> src = const_cast<matlab::data::Array&>(new_item);
+        for (const auto& value : src)
+            ring_push(storage, dst, static_cast<T>(value));
+        *storage.buffer = dst;
+    }
+
+    template <typename T>
+    static void copy_ring_tail(const BufferStorage& from,
+                               BufferStorage& to,
+                               size_t first_keep,
+                               size_t keep) {
+        matlab::data::TypedArray<T> src = const_cast<matlab::data::Array&>(*from.buffer);
+        matlab::data::TypedArray<T> dst = const_cast<matlab::data::Array&>(*to.buffer);
+        for (size_t i = 0; i < keep; ++i)
+            dst[i] = src[ring_index(from, first_keep + i)];
+        to.size = keep;
+        to.start = 0;
+        *to.buffer = dst;
     }
 
     static const char* array_type_name(matlab::data::ArrayType type) noexcept {

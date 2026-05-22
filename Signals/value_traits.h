@@ -30,7 +30,15 @@
 
 template <typename V>
 struct ValueTraits {
+    // Optional per-node storage used by appendValues-style nodes. Specialisations
+    // can keep an overallocated backing store here and materialize an exact V
+    // only when code actually reads currentValue.
     struct AppendStorage {};
+
+    // Optional per-node storage used by bounded buffers. The MATLAB binding uses
+    // this for a fixed-capacity ring buffer so bufferUpTo()/buffer() can update
+    // in O(k) for the new item rather than rebuilding the full buffer state.
+    struct BufferStorage {};
 
     // Required — no default body (a missing specialisation will not link).
     static bool                  has_value   (const V&);
@@ -43,15 +51,36 @@ struct ValueTraits {
     static V                     append      (const V& current, const V& working);
     static std::optional<size_t> to_index    (const V&);
 
+    // Try to update append-specific backing storage directly. Return true when
+    // the binding consumed `working` and currentValue should be treated as a
+    // lazily materialized view of that backing store.
     static bool append_storage_append(AppendStorage&, std::optional<V>&, const V&) {
         return false;
     }
 
+    // Ensure currentValue contains a concrete V readable by generic transfer
+    // logic or by the binding API. Return true when storage handled the read.
     static bool append_storage_materialize(AppendStorage&, std::optional<V>&) {
         return false;
     }
 
     static void append_storage_reset(AppendStorage&) {}
+
+    // Build the next visible buffer value from node-local buffer storage and the
+    // new incoming item. This runs during transfer(), before apply() commits the
+    // transaction, so it must not mutate committed storage yet.
+    static bool buffer_storage_preview(BufferStorage&, const std::optional<V>&,
+                                       std::optional<V>&, const V&, size_t, bool) {
+        return false;
+    }
+
+    // Commit the pending preview state after apply() decides the node should
+    // accept its working value as the new committed value.
+    static bool buffer_storage_commit(BufferStorage&, const std::optional<V>&) {
+        return false;
+    }
+
+    static void buffer_storage_reset(BufferStorage&) {}
 
     // Arithmetic / comparison — throw by default so bindings opt in incrementally.
     static V add     (const V&, const V&) { throw signals::TypeError("add not implemented for this value type");      }
@@ -79,6 +108,7 @@ struct ValueTraits {
 template <>
 struct ValueTraits<signals::Value> {
     struct AppendStorage {};
+    struct BufferStorage {};
 
     static bool has_value   (const signals::Value& v) noexcept { return signals::has_value(v);        }
     static bool is_truthy   (const signals::Value& v) noexcept { return signals::is_truthy(v);        }
@@ -119,6 +149,9 @@ struct ValueTraits<signals::Value> {
         return static_cast<size_t>(d);
     }
 
+    // The standalone Value binding keeps the simple copy-based behaviour for now,
+    // so the optional storage hooks intentionally fall back to the legacy-free
+    // generic path.
     static bool append_storage_append(AppendStorage&, std::optional<signals::Value>&,
                                       const signals::Value&) {
         return false;
@@ -129,6 +162,18 @@ struct ValueTraits<signals::Value> {
     }
 
     static void append_storage_reset(AppendStorage&) {}
+
+    static bool buffer_storage_preview(BufferStorage&, const std::optional<signals::Value>&,
+                                       std::optional<signals::Value>&, const signals::Value&,
+                                       size_t, bool) {
+        return false;
+    }
+
+    static bool buffer_storage_commit(BufferStorage&, const std::optional<signals::Value>&) {
+        return false;
+    }
+
+    static void buffer_storage_reset(BufferStorage&) {}
 
     static signals::Value buffer_up_to(const signals::Value& current,
                                        const signals::Value& new_item,

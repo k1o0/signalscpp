@@ -173,6 +173,13 @@ enum class SIGNALS_API Operation {
 // V is the value type used by the owning NetworkT<V>.  The callable takes
 // a vector of V inputs, the node's current (committed) V, and the node id,
 // and returns (new_value, was_set).
+//
+// Besides the opcode/callable pair, this object now owns the storage used by
+// specialised transfer behaviours:
+//   - appendValues nodes can keep overallocated append storage here
+//   - buffer_up_to nodes can keep fixed-capacity ring-buffer state here
+// That keeps "how this node transfers and stores derived state" together in
+// one place, similar in spirit to the legacy Transferer struct.
 // ---------------------------------------------------------------------------
 template <typename V>
 class TransfererT {
@@ -180,6 +187,7 @@ public:
     using NodeCallable = std::function<
         std::pair<V, bool>(const std::vector<V>&, const V&, long)>;
     using AppendStorage = typename ValueTraits<V>::AppendStorage;
+    using BufferStorage = typename ValueTraits<V>::BufferStorage;
 
     TransfererT() : opCode_(Operation::nop) {}
     explicit TransfererT(Operation op) : opCode_(op) {}
@@ -189,17 +197,29 @@ public:
     void set_callable(NodeCallable fn) { callable_ = std::move(fn); }
     const NodeCallable& get_callable() const noexcept { return callable_; }
     bool has_callable() const noexcept { return static_cast<bool>(callable_); }
+    // appendValues is still a node-level policy, but storing the flag here keeps
+    // it next to the backing storage it controls.
     void set_append_values(bool appendValues) noexcept { appendValues_ = appendValues; }
     bool append_values() const noexcept { return appendValues_; }
+    // Storage accessors are used by NetworkT::apply()/transfer() and remain
+    // binding-specific via ValueTraits<V>.
     AppendStorage& append_storage() noexcept { return appendStorage_; }
     const AppendStorage& append_storage() const noexcept { return appendStorage_; }
     void reset_append_storage() { ValueTraits<V>::append_storage_reset(appendStorage_); }
+    BufferStorage& buffer_storage() noexcept { return bufferStorage_; }
+    const BufferStorage& buffer_storage() const noexcept { return bufferStorage_; }
+    void reset_buffer_storage() { ValueTraits<V>::buffer_storage_reset(bufferStorage_); }
 
 private:
     Operation opCode_{ Operation::nop };
     NodeCallable callable_;
     bool appendValues_{ false };
+    // For unbounded appendValues nodes, e.g. log(), where geometric growth is
+    // better than rebuilding the full history every update.
     AppendStorage appendStorage_{};
+    // For bounded buffer_up_to nodes, where a fixed-capacity ring avoids copying
+    // the whole committed buffer on each new sample.
+    BufferStorage bufferStorage_{};
 };
 
 // Backward-compat alias used by standalone (non-MEX) code.
