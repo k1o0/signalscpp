@@ -72,7 +72,7 @@ long NetworkT<V>::add_node(const std::vector<long>& t_inputs, Operation t_op,
         return -1;
     }
     node->set_transferer(t_op);
-    node->appendValues = t_appendValues;
+    node->transferer.set_append_values(t_appendValues);
     if (callable)
         node->set_callable(std::move(callable));
     std::vector<Node*> input_nodes;
@@ -167,10 +167,14 @@ void NetworkT<V>::apply(const std::vector<long>& affected_ids) {
         Node& n = nodes[static_cast<size_t>(nid)];
         if (!n.workingValue) continue;
 
-        if (n.appendValues) {
-            V acc = n.currentValue ? *n.currentValue : Traits::no_value();
-            n.currentValue = Traits::append(acc, *n.workingValue);
+        if (n.transferer.append_values()) {
+            if (!Traits::append_storage_append(n.transferer.append_storage(), n.currentValue,
+                                               *n.workingValue)) {
+                V acc = n.current_value_for_read().value_or(Traits::no_value());
+                n.currentValue = Traits::append(acc, *n.workingValue);
+            }
         } else {
+            n.transferer.reset_append_storage();
             n.currentValue = std::move(n.workingValue);
         }
         n.workingValue = std::nullopt;
@@ -181,8 +185,8 @@ template <typename V>
 V NetworkT<V>::get_current_value(long node_id) const {
     if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size())
         return Traits::no_value();
-    const Node& n = nodes[static_cast<size_t>(node_id)];
-    return n.currentValue.value_or(Traits::no_value());
+    Node& n = const_cast<Node&>(nodes[static_cast<size_t>(node_id)]);
+    return n.current_value_for_read().value_or(Traits::no_value());
 }
 
 template <typename V>
@@ -197,9 +201,9 @@ template <typename V>
 V NetworkT<V>::get_latest_value(long node_id) const {
     if (node_id < 0 || static_cast<size_t>(node_id) >= nodes.size())
         return Traits::no_value();
-    const Node& n = nodes[static_cast<size_t>(node_id)];
+    Node& n = const_cast<Node&>(nodes[static_cast<size_t>(node_id)]);
     if (n.workingValue) return *n.workingValue;
-    return n.currentValue.value_or(Traits::no_value());
+    return n.current_value_for_read().value_or(Traits::no_value());
 }
 
 template <typename V>
@@ -278,9 +282,11 @@ void NetworkT<V>::Node::destroy() {
     queued = false;
     workingValue = std::nullopt;
     currentValue = std::nullopt;
+    transferer.reset_append_storage();
     inputs.clear();
     targets.clear();
     transferer.set_callable({});
+    transferer.set_append_values(false);
 }
 
 template <typename V>
@@ -306,10 +312,17 @@ void NetworkT<V>::Node::set_working_value(const V& value) {
 
 template <typename V>
 void NetworkT<V>::Node::set_current_value(const V& value) {
+    transferer.reset_append_storage();
     if (Traits::has_value(value))
         currentValue = value;
     else
         currentValue = std::nullopt;
+}
+
+template <typename V>
+std::optional<V>& NetworkT<V>::Node::current_value_for_read() {
+    Traits::append_storage_materialize(transferer.append_storage(), currentValue);
+    return currentValue;
 }
 
 template <typename V>
@@ -345,7 +358,7 @@ bool NetworkT<V>::Node::transfer() {
     // Prefer working value; fall back to current value.  Returns nullopt if neither set.
     auto latest = [](const Node* n) -> std::optional<V> {
         if (n->workingValue) return n->workingValue;
-        return n->currentValue;
+        return const_cast<Node*>(n)->current_value_for_read();
     };
 
     bool produced_output = false;
@@ -383,7 +396,7 @@ bool NetworkT<V>::Node::transfer() {
                     // Type doesn't support native arithmetic — fall back to callable (option ii).
                     if (callable) {
                         try {
-                            V curr = currentValue.value_or(Traits::no_value());
+                            V curr = current_value_for_read().value_or(Traits::no_value());
                             auto [res, valset] = callable({*lv_opt, *rv_opt}, curr, id);
                             if (valset) { workingValue = std::move(res); produced_output = true; }
                         } catch (const signals::Error&) { throw; }
@@ -443,7 +456,8 @@ bool NetworkT<V>::Node::transfer() {
             const bool release_new = inputs[1]->workingValue.has_value();
             const bool try_arm     = arm_new     && Traits::is_truthy(*inputs[0]->workingValue);
             const bool try_release = release_new && Traits::is_truthy(*inputs[1]->workingValue);
-            const bool armed = currentValue && Traits::is_truthy(*currentValue);
+            auto curr_opt = current_value_for_read();
+            const bool armed = curr_opt && Traits::is_truthy(*curr_opt);
             if (try_release && (try_arm || armed)) {
                 workingValue = Traits::from_bool(false);
                 produced_output = true;
@@ -462,18 +476,19 @@ bool NetworkT<V>::Node::transfer() {
         if (!inputs.empty() && inputs[0]->workingValue) {
             const V& wv = *inputs[0]->workingValue;
             bool should_fire = false;
-            if (!currentValue) {
+            auto curr_opt = current_value_for_read();
+            if (!curr_opt) {
                 should_fire = true;
             } else {
                 try {
-                    should_fire = !Traits::values_equal(wv, *currentValue);
+                    should_fire = !Traits::values_equal(wv, *curr_opt);
                 } catch (const signals::TypeError&) {
                     if (callable) {
                         // callable({wv, cv}, cv, id) returns (is_equal, valset);
                         // is_equal truthy → values match → suppress output.
                         try {
                             auto [eq_result, valset] =
-                                callable({wv, *currentValue}, *currentValue, id);
+                                callable({wv, *curr_opt}, *curr_opt, id);
                             should_fire = !valset || !Traits::is_truthy(eq_result);
                         } catch (const signals::Error&) { throw; }
                           catch (...) { should_fire = true; }
@@ -539,7 +554,7 @@ bool NetworkT<V>::Node::transfer() {
                 size_t max_n = idx ? *idx : 0;
                 const bool cast_mode = static_cast<bool>(callable);
                 const V& new_item = *inputs[0]->workingValue;
-                V curr = currentValue.value_or(Traits::no_value());
+                V curr = current_value_for_read().value_or(Traits::no_value());
                 workingValue = Traits::buffer_up_to(curr, new_item, max_n, cast_mode);
                 produced_output = true;
             }
@@ -561,7 +576,7 @@ bool NetworkT<V>::Node::transfer() {
                     auto v = latest(inp);
                     inp_latest.push_back(v ? *v : Traits::no_value());
                 }
-                V curr = currentValue.value_or(Traits::no_value());
+                V curr = current_value_for_read().value_or(Traits::no_value());
                 try {
                     auto [result, valset] = callable(inp_latest, curr, id);
                     if (valset) {
@@ -591,7 +606,7 @@ bool NetworkT<V>::Node::transfer() {
             if (callable) {
                 // map(fn): apply fn to inputs[0]
                 auto lv = latest(inputs[0]);
-                V curr = currentValue.value_or(Traits::no_value());
+                V curr = current_value_for_read().value_or(Traits::no_value());
                 try {
                     auto [result, valset] = callable({lv ? *lv : Traits::no_value()}, curr, id);
                     if (valset) { workingValue = std::move(result); produced_output = true; }
@@ -621,7 +636,7 @@ bool NetworkT<V>::Node::transfer() {
                     vals.push_back(*v);
                 }
                 if (all_available) {
-                    V curr = currentValue.value_or(Traits::no_value());
+                    V curr = current_value_for_read().value_or(Traits::no_value());
                     try {
                         auto [result, valset] = callable(vals, curr, id);
                         if (valset) { workingValue = std::move(result); produced_output = true; }
@@ -635,7 +650,7 @@ bool NetworkT<V>::Node::transfer() {
     // ── filter_op (62) ────────────────────────────────────────────────────────
     else if (op == Operation::filter_op) {
         if (!inputs.empty() && callable && inputs[0]->workingValue) {
-            V curr = currentValue.value_or(Traits::no_value());
+            V curr = current_value_for_read().value_or(Traits::no_value());
             try {
                 auto [indicator, valset] =
                     callable({*inputs[0]->workingValue}, curr, id);
@@ -667,8 +682,8 @@ bool NetworkT<V>::Node::transfer() {
                 std::optional<V> acc_opt;
                 if (seed_new)
                     acc_opt = inputs[1]->workingValue;
-                else if (currentValue)
-                    acc_opt = currentValue;
+                else if (current_value_for_read())
+                    acc_opt = current_value_for_read();
                 else
                     acc_opt = latest(inputs[1]);
 
@@ -710,7 +725,7 @@ bool NetworkT<V>::Node::transfer() {
                     auto v = latest(inp);
                     inp_latest.push_back(v ? *v : Traits::no_value());
                 }
-                V curr = currentValue.value_or(Traits::no_value());
+                V curr = current_value_for_read().value_or(Traits::no_value());
                 try {
                     auto [result, valset] = callable(inp_latest, curr, id);
                     if (valset) {
@@ -734,7 +749,7 @@ bool NetworkT<V>::Node::transfer() {
     else if (op == Operation::flatten_op) {
         if (!inputs.empty() && inputs[0]->workingValue) {
             if (callable) {
-                V curr = currentValue.value_or(Traits::no_value());
+                V curr = current_value_for_read().value_or(Traits::no_value());
                 try {
                     auto [result, valset] = callable({*inputs[0]->workingValue}, curr, id);
                     if (valset) { workingValue = std::move(result); produced_output = true; }

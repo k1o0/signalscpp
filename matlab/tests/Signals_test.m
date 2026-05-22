@@ -1312,6 +1312,64 @@ classdef Signals_test < matlab.unittest.TestCase
         x.post(1)
         testCase.verifyEqual(mapped.Node.Value, 0)
       end
+
+      function test_log_appends_timestamped_records(testCase)
+        x = testCase.A;
+        tick = 0;
+        logged = x.log(@nextTick);
+
+        testCase.verifyEmpty(logged.Node.Value)
+
+        x.post(3.5)
+        val = logged.Node.Value;
+        testCase.verifyEqual(numel(val), 1)
+        testCase.verifyEqual(val(1).time, 1)
+        testCase.verifyEqual(val(1).value, 3.5)
+
+        x.post(false)
+        val = logged.Node.Value;
+        testCase.verifyEqual(numel(val), 2)
+        testCase.verifyEqual([val.time], [1 2])
+        testCase.verifyEqual(val(2).value, false)
+
+        x.post('foo')
+        val = logged.Node.Value;
+        testCase.verifyEqual(numel(val), 3)
+        testCase.verifyEqual([val.time], [1 2 3])
+        testCase.verifyEqual(val(3).value, 'foo')
+
+        function t = nextTick()
+          tick = tick + 1;
+          t = tick;
+        end
+      end
+
+      function test_log_gated_read_sees_accumulated_history(testCase)
+        x = testCase.A;
+        gate = testCase.B;
+        tick = 0;
+
+        logged = x.log(@nextTick);
+        snapshot = logged.at(gate);
+
+        x.post(11)
+        x.post(22)
+
+        testCase.verifyEmpty(snapshot.Node.Value)
+
+        gate.post(true)
+
+        val = snapshot.Node.Value;
+        testCase.verifyEqual(numel(val), 2)
+        testCase.verifyEqual([val.time], [1 2])
+        testCase.verifyEqual(val(1).value, 11)
+        testCase.verifyEqual(val(2).value, 22)
+
+        function t = nextTick()
+          tick = tick + 1;
+          t = tick;
+        end
+      end
   end
 
   methods (Access = private)

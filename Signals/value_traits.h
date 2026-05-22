@@ -30,6 +30,8 @@
 
 template <typename V>
 struct ValueTraits {
+    struct AppendStorage {};
+
     // Required — no default body (a missing specialisation will not link).
     static bool                  has_value   (const V&);
     static bool                  is_truthy   (const V&);
@@ -40,6 +42,16 @@ struct ValueTraits {
     static double                numel       (const V&);
     static V                     append      (const V& current, const V& working);
     static std::optional<size_t> to_index    (const V&);
+
+    static bool append_storage_append(AppendStorage&, std::optional<V>&, const V&) {
+        return false;
+    }
+
+    static bool append_storage_materialize(AppendStorage&, std::optional<V>&) {
+        return false;
+    }
+
+    static void append_storage_reset(AppendStorage&) {}
 
     // Arithmetic / comparison — throw by default so bindings opt in incrementally.
     static V add     (const V&, const V&) { throw signals::TypeError("add not implemented for this value type");      }
@@ -66,6 +78,8 @@ struct ValueTraits {
 // ---------------------------------------------------------------------------
 template <>
 struct ValueTraits<signals::Value> {
+    struct AppendStorage {};
+
     static bool has_value   (const signals::Value& v) noexcept { return signals::has_value(v);        }
     static bool is_truthy   (const signals::Value& v) noexcept { return signals::is_truthy(v);        }
     static bool values_equal(const signals::Value& a,
@@ -104,6 +118,17 @@ struct ValueTraits<signals::Value> {
         if (d < 0.0) return std::nullopt;
         return static_cast<size_t>(d);
     }
+
+    static bool append_storage_append(AppendStorage&, std::optional<signals::Value>&,
+                                      const signals::Value&) {
+        return false;
+    }
+
+    static bool append_storage_materialize(AppendStorage&, std::optional<signals::Value>&) {
+        return false;
+    }
+
+    static void append_storage_reset(AppendStorage&) {}
 
     static signals::Value buffer_up_to(const signals::Value& current,
                                        const signals::Value& new_item,

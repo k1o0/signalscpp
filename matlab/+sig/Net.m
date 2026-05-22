@@ -230,6 +230,38 @@ classdef Net < handle
             n = s.Node;
             n.Name = toStr(value);
         end
+
+        function s = fromUIEvent(this, uihandle, callback)
+            % FROMUIEVENT  Create a Signal from a UI event
+            %  Returns a signal of the class 'SubscriptableOriginSignal', which
+            %  will update with the fields of an event.EventData object thrown by
+            %  the uihandle event.  This signal can be subscripted to obtain the
+            %  property values of the EventData (subscripting returns a Signal).
+            %
+            %  Inputs:
+            %    uihandle (handle) : A handle to a figure, axes or ui element
+            %    callback (char) : The name of the property to set the callback
+            %      function for.  Default: 'Callback'
+            %
+            %  Output:
+            %    s (sig.node.SubscriptableOriginSignal) : A signal which will
+            %      update with the event data each time the UI callback is
+            %      triggered
+            %
+            %  Example:
+            %   net = sig.Net; % Create network
+            %   f = figure;
+            %   keyPresses = net.fromUIEvent(f, 'KeyPressFcn');
+            %   h = output(keyPresses.Key); % print key name to command window
+            %
+            % See also sig.node.onValue
+            if nargin < 3
+                callback = 'Callback';
+            end
+            name = sprintf('%s@%sEvents', get(uihandle, 'Type'), callback);
+            s = sig.node.SubscriptableOriginSignal(rootNode(this, name));
+            set(uihandle, callback, @(src,evt)post(s, evt));
+        end
     end
 
     methods (Access = {?sig.OriginSignal, ?sig.SubscriptableOriginSignal})

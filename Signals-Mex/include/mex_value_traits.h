@@ -16,6 +16,14 @@
 
 template <>
 struct ValueTraits<matlab::data::Array> {
+    struct AppendStorage {
+        bool active{ false };
+        bool dirty{ false };
+        size_t size{ 0 };
+        size_t capacity{ 0 };
+        std::vector<std::string> field_names;
+        std::optional<matlab::data::Array> buffer;
+    };
 
     // ── Existence / truthiness ───────────────────────────────────────────────
 
@@ -103,6 +111,12 @@ struct ValueTraits<matlab::data::Array> {
                                       const matlab::data::Array& working) {
         matlab::data::ArrayFactory f;
         using AT = matlab::data::ArrayType;
+        if (working.isEmpty()) return current;
+        if (current.isEmpty()) return working;
+
+        if (current.getType() == AT::STRUCT && working.getType() == AT::STRUCT)
+            return append_struct(current, working, f);
+
         std::vector<double> acc;
         auto push = [&acc](const matlab::data::Array& arr) {
             if (arr.getType() == AT::DOUBLE && !arr.isEmpty()) {
@@ -117,6 +131,95 @@ struct ValueTraits<matlab::data::Array> {
         auto out = f.createArray<double>({1, acc.size()});
         std::copy(acc.begin(), acc.end(), out.begin());
         return out;
+    }
+
+    static bool append_storage_append(AppendStorage& storage,
+                                      std::optional<matlab::data::Array>& current,
+                                      const matlab::data::Array& working) {
+        using AT = matlab::data::ArrayType;
+        if (working.isEmpty() || working.getType() != AT::STRUCT)
+            return false;
+
+        matlab::data::ArrayFactory f;
+        matlab::data::StructArray work = const_cast<matlab::data::Array&>(working);
+        const auto work_field_names = collect_field_names(work);
+        const size_t work_n = working.getNumberOfElements();
+
+        if (!storage.active) {
+            size_t curr_n = 0;
+            if (current && !current->isEmpty()) {
+                if (current->getType() != AT::STRUCT)
+                    return false;
+                matlab::data::StructArray curr = const_cast<matlab::data::Array&>(*current);
+                storage.field_names = collect_field_names(curr);
+                if (storage.field_names != work_field_names)
+                    throw signals::TypeError("append: struct field mismatch");
+                curr_n = current->getNumberOfElements();
+            } else {
+                storage.field_names = work_field_names;
+            }
+
+            size_t needed = curr_n + work_n;
+            size_t capacity = size_t(4);
+            while (capacity < needed)
+                capacity *= 2;
+
+            storage.buffer = f.createStructArray({1, capacity}, storage.field_names);
+            storage.active = true;
+            storage.size = 0;
+            storage.capacity = capacity;
+
+            if (curr_n > 0) {
+                matlab::data::StructArray curr = const_cast<matlab::data::Array&>(*current);
+                matlab::data::StructArray buffer = as_struct(*storage.buffer);
+                copy_struct_range(curr, curr_n, buffer, storage.field_names, 0);
+                *storage.buffer = buffer;
+                storage.size = curr_n;
+            }
+        } else if (storage.field_names != work_field_names) {
+            throw signals::TypeError("append: struct field mismatch");
+        }
+
+        const size_t needed = storage.size + work_n;
+        if (needed > storage.capacity) {
+            size_t new_capacity = storage.capacity > 0 ? storage.capacity : size_t(4);
+            while (new_capacity < needed)
+                new_capacity *= 2;
+
+            auto grown = f.createStructArray({1, new_capacity}, storage.field_names);
+            matlab::data::StructArray buffer = as_struct(*storage.buffer);
+            copy_struct_range(buffer, storage.size, grown, storage.field_names, 0);
+            *storage.buffer = grown;
+            storage.capacity = new_capacity;
+        }
+
+        matlab::data::StructArray buffer = as_struct(*storage.buffer);
+        copy_struct_range(work, work_n, buffer, storage.field_names, storage.size);
+        *storage.buffer = buffer;
+        storage.size = needed;
+        storage.dirty = true;
+        current = std::nullopt;
+        return true;
+    }
+
+    static bool append_storage_materialize(AppendStorage& storage,
+                                           std::optional<matlab::data::Array>& current) {
+        if (!storage.active)
+            return false;
+        if (!storage.dirty && current.has_value())
+            return true;
+
+        matlab::data::ArrayFactory f;
+        auto out = f.createStructArray({1, storage.size}, storage.field_names);
+    matlab::data::StructArray buffer = as_struct(*storage.buffer);
+    copy_struct_range(buffer, storage.size, out, storage.field_names, 0);
+        current = out;
+        storage.dirty = false;
+        return true;
+    }
+
+    static void append_storage_reset(AppendStorage& storage) {
+        storage = AppendStorage{};
     }
 
     // ── to_index (select_from) ───────────────────────────────────────────────
@@ -235,6 +338,10 @@ struct ValueTraits<matlab::data::Array> {
     // not natively supported; route those through map2/mapn with @mtimes.
 
 private:
+    static matlab::data::StructArray as_struct(matlab::data::Array& arr) {
+        return arr;
+    }
+
     static const char* array_type_name(matlab::data::ArrayType type) noexcept {
         using AT = matlab::data::ArrayType;
         switch (type) {
@@ -313,6 +420,45 @@ private:
         if (max_n > 0 && acc.size() > max_n)
             acc.erase(0, acc.size() - max_n);
         return f.createCharArray(acc);
+    }
+
+    static matlab::data::Array append_struct(const matlab::data::Array& current,
+                                             const matlab::data::Array& working,
+                                             matlab::data::ArrayFactory& f) {
+        matlab::data::StructArray curr = const_cast<matlab::data::Array&>(current);
+        matlab::data::StructArray work = const_cast<matlab::data::Array&>(working);
+
+        std::vector<std::string> field_names = collect_field_names(curr);
+        std::vector<std::string> work_field_names = collect_field_names(work);
+
+        if (field_names != work_field_names)
+            throw signals::TypeError("append: struct field mismatch");
+
+        const size_t curr_n = current.getNumberOfElements();
+        const size_t work_n = working.getNumberOfElements();
+        auto out = f.createStructArray({1, curr_n + work_n}, field_names);
+
+        copy_struct_range(curr, curr_n, out, field_names, 0);
+        copy_struct_range(work, work_n, out, field_names, curr_n);
+        return out;
+    }
+
+    static std::vector<std::string> collect_field_names(const matlab::data::StructArray& arr) {
+        std::vector<std::string> field_names;
+        for (const auto& field_id : arr.getFieldNames())
+            field_names.push_back(static_cast<std::string>(field_id));
+        return field_names;
+    }
+
+    static void copy_struct_range(const matlab::data::StructArray& src,
+                                  size_t count,
+                                  matlab::data::StructArray& dst,
+                                  const std::vector<std::string>& field_names,
+                                  size_t dst_offset) {
+        for (size_t i = 0; i < count; ++i) {
+            for (const auto& field_name : field_names)
+                dst[dst_offset + i][field_name] = src[i][field_name];
+        }
     }
 
     template <typename T>

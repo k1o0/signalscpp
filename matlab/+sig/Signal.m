@@ -109,7 +109,6 @@ classdef Signal < handle
             %          or: out = mapn(s1, s2, ..., sN, f)   (MATLAB dispatch)
             %   f is always the last argument; all preceding args are inputs.
             %   Multi-output: [X, Y] = a.mapn(b, @meshgrid)
-            % FIXME Format specs all wrong
             if isa(varargin{end}, 'function_handle')
                 [rawInputs{1:nargin-1}, f] = varargin{:};
                 formatSpec = sprintf(['mapn(' repmat('%%s, ', 1, numel(rawInputs)) '%s)'], toStr(f));
@@ -274,6 +273,40 @@ classdef Signal < handle
             node = net.addNode(this.Node, sig.OpCode.flatten_op, false);
             node.FormatSpec    = '%s.flatten()';
             out = sig.Signal(node);
+        end
+
+        function l = log(this, clockFun)
+            % LOG  Accumulate timestamped values for later analysis.
+            %
+            %   l = this.log() appends a struct record on each update with fields:
+            %     time  - timestamp from GetSecs()
+            %     value - the signal value at that update
+            %
+            %   l = this.log(clockFun) uses the supplied zero-argument clock
+            %   function instead of GetSecs.
+            %
+            %   Unlike buffer/bufferUpTo, this log grows without a fixed limit.
+            %   The appendValues flag causes each new log record to be appended
+            %   at apply() time, preserving transaction semantics.
+            %
+            % Inputs:
+            %   this     (sig.Signal) - signal to log
+            %   clockFun (function_handle, optional) - zero-arg timestamp source
+            %
+            % Outputs:
+            %   l (sig.Signal) - signal whose value is a struct array with
+            %                    fields 'time' and 'value'
+            %
+            % See also sig.Signal/bufferUpTo, sig.Signal/buffer
+            if nargin < 2
+                clockFun = @GetSecs;
+            end
+
+            net = this.Node.Net;
+            recordFun = @(x) struct('time', {clockFun()}, 'value', {x});
+            l = sig.Signal(net.addNode(this.Node, sig.OpCode.map_op, true, recordFun));
+            l.Node.FormatSpec = '%s.log()';
+            l.Node.DisplayInputs = this.Node;
         end
 
         function s = at(what, when)

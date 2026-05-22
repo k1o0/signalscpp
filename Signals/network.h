@@ -91,7 +91,6 @@ private:
         long id{ -1 };
         bool inUse{ false };
         bool queued{ false };
-        bool appendValues{ false };
         TransfererT<V> transferer{ Operation::nop };
         std::vector<Node*> inputs;
         std::set<Node*> targets;
@@ -108,6 +107,7 @@ private:
         bool is_available() const { return !inUse; }
         void set_working_value(const V& value);
         void set_current_value(const V& value);
+        std::optional<V>& current_value_for_read();
         void set_transferer(Operation t_op) { transferer = TransfererT<V>(t_op); }
         void set_callable(typename TransfererT<V>::NodeCallable fn) {
             transferer.set_callable(std::move(fn));

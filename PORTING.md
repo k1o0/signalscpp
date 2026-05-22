@@ -97,7 +97,7 @@ this — wait for a real use case.
 | `Node::transfer()` — recompute working value from inputs | `network.c` `transfer` | ✅ | Dispatches on `Operation` enum; uses `LATEST_VALUE` semantics (working preferred over current). Clears working and propagates if output becomes unset. |
 | Topological propagation order | `network.c` | ✅ | BFS queue matches legacy `QUEUE_PUT_ALL` / `QUEUE_GET` ordering. |
 | Working-value vs. current-value semantics | `network.c` + primer | ✅ | Implemented: `transact` sets working; `apply` commits to current; bindings call both. |
-| `appendValues` behaviour | `network.c` | ✅ | `Node::appendValues` flag wired into `apply()`. Supported types: `double` → `vector<double>`, `vector<double>` → `vector<double>`. Other types (bool/string) are no-ops on the accumulator. |
+| `appendValues` behaviour | `network.c` | ✅ | `Node::appendValues` flag wired into `apply()`. In the standalone core this appends numeric values into `vector<double>`. In the MATLAB MEX binding it additionally appends struct log records, enabling `sig.Signal.log()` to accumulate `[time, value]` history. |
 
 ### Operations (`Transferer` / `Operation`)
 

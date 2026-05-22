@@ -3,6 +3,7 @@
 
 #include "signals_api.h"
 #include "value.h"
+#include "value_traits.h"
 #include <functional>
 #include <utility>
 #include <vector>
@@ -178,6 +179,7 @@ class TransfererT {
 public:
     using NodeCallable = std::function<
         std::pair<V, bool>(const std::vector<V>&, const V&, long)>;
+    using AppendStorage = typename ValueTraits<V>::AppendStorage;
 
     TransfererT() : opCode_(Operation::nop) {}
     explicit TransfererT(Operation op) : opCode_(op) {}
@@ -187,10 +189,17 @@ public:
     void set_callable(NodeCallable fn) { callable_ = std::move(fn); }
     const NodeCallable& get_callable() const noexcept { return callable_; }
     bool has_callable() const noexcept { return static_cast<bool>(callable_); }
+    void set_append_values(bool appendValues) noexcept { appendValues_ = appendValues; }
+    bool append_values() const noexcept { return appendValues_; }
+    AppendStorage& append_storage() noexcept { return appendStorage_; }
+    const AppendStorage& append_storage() const noexcept { return appendStorage_; }
+    void reset_append_storage() { ValueTraits<V>::append_storage_reset(appendStorage_); }
 
 private:
     Operation opCode_{ Operation::nop };
     NodeCallable callable_;
+    bool appendValues_{ false };
+    AppendStorage appendStorage_{};
 };
 
 // Backward-compat alias used by standalone (non-MEX) code.
